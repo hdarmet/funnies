@@ -219,7 +219,7 @@ public class DragProcessor implements Processor {
 
 		@Override
 		protected void reactToDrag(MouseEvent event, Board board) {
-			Item target = getTarget(event);
+			Item target = getTarget(dragged, event);
 			if (target!=currentTarget) {
 				if (currentTarget!=null && getExitTargetAnimation(currentTarget)!=null) {
 					getExitTargetAnimation(currentTarget).duplicate().launchFor(currentTarget);
@@ -233,7 +233,7 @@ public class DragProcessor implements Processor {
 
 		protected boolean executeDrop(MouseEvent event, Board board, SimultaneousItemAnimation animation) {
 			currentTarget = null;
-			Item target = getTarget(event);
+			Item target = getTarget(dragged, event);
 			return target==null ? false : dropOnTarget(dragged, target, animation);
 		}
 		
@@ -264,16 +264,16 @@ public class DragProcessor implements Processor {
 			return true;
 		}
 
-		protected Item getTarget(MouseEvent event) {
+		protected Item getTarget(Item dragged, MouseEvent event) {
 			for (Item target : new ArrayList<Item>(targets)) {
-				if (target.acceptEvent(event) && acceptTarget(target)) {
+				if (target.acceptEvent(event) && acceptTarget(dragged, target)) {
 					return target;
 				}
 			}
 			return null;
 		}
 
-		protected boolean acceptTarget(Item target) {
+		protected boolean acceptTarget(Item draggable, Item target) {
 			return true;
 		}
 

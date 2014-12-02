@@ -3,8 +3,9 @@ package com.ithaque.funnies.shared.funny;
 import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.Layer;
-import com.ithaque.funnies.shared.funny.manager.CircusManager;
-import com.ithaque.funnies.shared.funny.manager.DropRequest;
+import com.ithaque.funnies.shared.funny.manager.Answer;
+import com.ithaque.funnies.shared.funny.manager.Fact;
+import com.ithaque.funnies.shared.funny.manager.Question;
 
 public class Ring {
 
@@ -39,7 +40,11 @@ public class Ring {
 		return true;
 	}
 
-	public void sendRequest(CircusManager.Request request) {
-		circus.sendRequest(request);
+	public void notify(Fact fact) {
+		circus.notify(fact);
+	}
+
+	public Answer ask(Question question) {
+		return circus.ask(question);
 	}
 }

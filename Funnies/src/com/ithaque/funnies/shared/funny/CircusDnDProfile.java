@@ -1,15 +1,14 @@
 package com.ithaque.funnies.shared.funny;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Item;
-import com.ithaque.funnies.shared.basic.MouseEvent;
 import com.ithaque.funnies.shared.basic.items.animations.ItemAnimation;
 import com.ithaque.funnies.shared.basic.processors.DragProcessor.AbstractTargetedDragProfile;
-import com.ithaque.funnies.shared.funny.manager.DropRequest;
+import com.ithaque.funnies.shared.funny.manager.AcceptDropTargetQuestion;
+import com.ithaque.funnies.shared.funny.manager.Answer.BooleanAnswer;
+import com.ithaque.funnies.shared.funny.manager.DropFact;
 
 public class CircusDnDProfile extends AbstractTargetedDragProfile {
 
@@ -77,13 +76,17 @@ public class CircusDnDProfile extends AbstractTargetedDragProfile {
 	protected boolean executeDrop(Item dragged, Item target) {
 		DraggableFunny draggableFunny = getDraggableFunny(dragged);
 		DropTargetFunny targetFunny = getDropTargetFunny(target);
-		ring.sendRequest(new DropRequest(draggableFunny.getId(), targetFunny.getId()));
+		ring.notify(new DropFact(draggableFunny.getId(), targetFunny.getId()));
 		return true;
 	}
 
 	@Override
-	protected boolean acceptTarget(Item target) {
-		return true;
+	protected boolean acceptTarget(Item dragged, Item target) {
+		DraggableFunny draggableFunny = getDraggableFunny(dragged);
+		DropTargetFunny targetFunny = getDropTargetFunny(target);
+		BooleanAnswer acceptTarget = 
+			(BooleanAnswer)ring.ask(new AcceptDropTargetQuestion(draggableFunny.getId(), targetFunny.getId()));
+		return acceptTarget.getAnswer();
 	}
 
 }
