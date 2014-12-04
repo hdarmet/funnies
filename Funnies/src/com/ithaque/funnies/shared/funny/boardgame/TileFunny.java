@@ -5,6 +5,7 @@ import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
 import com.ithaque.funnies.shared.basic.items.animations.ItemAnimation;
 import com.ithaque.funnies.shared.funny.DropTargetFunny;
+import com.ithaque.funnies.shared.funny.Funny;
 import com.ithaque.funnies.shared.funny.IncompatibleRingException;
 import com.ithaque.funnies.shared.funny.Ring;
 

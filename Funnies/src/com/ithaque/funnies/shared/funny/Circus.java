@@ -5,14 +5,10 @@ import java.util.Set;
 
 import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Platform;
-import com.ithaque.funnies.shared.funny.manager.Action;
-import com.ithaque.funnies.shared.funny.manager.Answer;
-import com.ithaque.funnies.shared.funny.manager.CircusDesk;
 import com.ithaque.funnies.shared.funny.manager.CircusManager;
-import com.ithaque.funnies.shared.funny.manager.Fact;
-import com.ithaque.funnies.shared.funny.manager.Question;
+import com.ithaque.funnies.shared.funny.manager.Notification;
 
-public class Circus implements CircusDesk {
+public class Circus {
 	
 	Platform platform;
 	Board board;
@@ -55,29 +51,10 @@ public class Circus implements CircusDesk {
 		return false;
 	}
 
-	public void notify(Fact request) {
+	public void notify(Notification request) {
 		if (manager!=null) {
 			manager.process(request);
 		}
-	}
-
-	public Answer ask(Question question) {
-		if (manager!=null) {
-			return manager.respond(question);
-		}
-		return null;
-	}
-
-	@Override
-	public void execute(Action action) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public Answer respond(Question question) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 	
 }

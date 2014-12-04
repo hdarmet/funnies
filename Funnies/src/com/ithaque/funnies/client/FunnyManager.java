@@ -1,38 +1,53 @@
 package com.ithaque.funnies.client;
 
-import com.ithaque.funnies.shared.funny.manager.AcceptDropTargetQuestion;
-import com.ithaque.funnies.shared.funny.manager.Answer;
-import com.ithaque.funnies.shared.funny.manager.Answer.BooleanAnswer;
+import com.ithaque.funnies.shared.funny.AcceptDropTargetQuestion;
+import com.ithaque.funnies.shared.funny.Circus;
+import com.ithaque.funnies.shared.funny.DropEvent;
+import com.ithaque.funnies.shared.funny.Funny;
+import com.ithaque.funnies.shared.funny.boardgame.CounterFunny;
+import com.ithaque.funnies.shared.funny.boardgame.TileFunny;
 import com.ithaque.funnies.shared.funny.manager.CircusManager;
-import com.ithaque.funnies.shared.funny.manager.DropFact;
-import com.ithaque.funnies.shared.funny.manager.Fact;
-import com.ithaque.funnies.shared.funny.manager.Question;
 
-public class FunnyManager implements CircusManager {
+public class FunnyManager extends CircusManager {
 
-	String lastTarget = null;
+	Funny lastTarget = null;
+	Circus circus;
 	
-	@Override
-	public void process(Fact fact) {
-		if (fact instanceof DropFact) {
-			DropFact dropRequest = (DropFact)fact;
-			System.out.println("Drop : "+dropRequest.getDroppedId()+" on : "+dropRequest.getTargetId());
-			lastTarget = dropRequest.getTargetId();
+	CircusManager.Handler<DropEvent> dropHandler = 
+		new Handler<DropEvent>(DropEvent.class, this) {
+		@Override
+		public void process(DropEvent dropRequest) {
+			System.out.println("Drop : "+dropRequest.getDropped().getId()+" on : "+dropRequest.getTarget().getId());
+			lastTarget = dropRequest.getTarget();
 		}
+	};
+	
+	CircusManager.Handler<AcceptDropTargetQuestion> acceptDropTargetHandler = 
+		new Handler<AcceptDropTargetQuestion>(AcceptDropTargetQuestion.class, this) {
+		@Override
+		public void process(AcceptDropTargetQuestion adtQuestion) {
+			 if (lastTarget==null || lastTarget.getId().equals("t1")!=adtQuestion.getTarget().getId().equals("t1")) {
+				 adtQuestion.accept();
+			 }
+		}
+	};
+
+	public FunnyManager(Circus circus) {
+		this.circus = circus;
+	}
+	
+	public void init() {
+		float dx = 13.0f;
+		float dy = (float)(13.0f*Math.sqrt(3.0));
+		circus.enterRing(new TileFunny.HexFunny("t1", "hexagon.png", "rhexagon.png", 26.0f, 0.0f, 0.0f));
+		circus.enterRing(new TileFunny.HexFunny("t2", "hexagon.png", "rhexagon.png", 26.0f, -3*dx, -dy));
+		circus.enterRing(new TileFunny.HexFunny("t3", "hexagon.png", "rhexagon.png", 26.0f, 0, -dy*2));
+		circus.enterRing(new TileFunny.HexFunny("t4", "hexagon.png", "rhexagon.png", 26.0f, 3*dx, -dy));
+		circus.enterRing(new TileFunny.HexFunny("t5", "hexagon.png", "rhexagon.png", 26.0f, 3*dx, dy));
+		circus.enterRing(new TileFunny.HexFunny("t6", "hexagon.png", "rhexagon.png", 26.0f, 0, dy*2));
+		circus.enterRing(new TileFunny.HexFunny("t7", "hexagon.png", "rhexagon.png", 26.0f, -3*dx, dy));
+		circus.enterRing(new CounterFunny("c1", "hhexagon.png"));
 	}
 
-	@Override
-	public Answer respond(Question question) {
-		if (question instanceof AcceptDropTargetQuestion) {
-			 AcceptDropTargetQuestion adtQuestion = (AcceptDropTargetQuestion)question;
-			 if (lastTarget!=null && lastTarget.equals("t1")) {
-				 return new BooleanAnswer(!adtQuestion.getTargetId().equals("t1"));
-			 }
-			 else {
-				 return new BooleanAnswer(adtQuestion.getTargetId().equals("t1"));
-			 }
-		}
-		return null;
-	}
 
 }

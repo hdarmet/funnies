@@ -1,9 +1,27 @@
 package com.ithaque.funnies.shared.funny.manager;
 
-public interface CircusManager {
+import java.util.HashMap;
+import java.util.Map;
 
-	void process(Fact fact);
-	
-	Answer respond(Question question);
+public abstract class CircusManager {
+
+	Map<Class<? extends Notification>, Handler<? extends Notification>> handlers = 
+			new HashMap<Class<? extends Notification>, Handler<? extends Notification>>();
+		
+	public static abstract class Handler<T extends Notification> {
+		public Handler(Class<T> factClass, CircusManager manager) {
+			manager.handlers.put(factClass, this);
+		}
+
+		public abstract void process(T fact);
+	}
+		
+	public <T extends Notification> void process(T fact) {
+		@SuppressWarnings("unchecked")
+		Handler<T> handler = (Handler<T>)handlers.get(fact.getClass());
+		if (handler!=null) {
+			handler.process(fact);
+		}
+	}
 	
 }

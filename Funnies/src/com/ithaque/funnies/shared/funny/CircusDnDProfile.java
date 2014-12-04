@@ -6,9 +6,6 @@ import java.util.Map;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.items.animations.ItemAnimation;
 import com.ithaque.funnies.shared.basic.processors.DragProcessor.AbstractTargetedDragProfile;
-import com.ithaque.funnies.shared.funny.manager.AcceptDropTargetQuestion;
-import com.ithaque.funnies.shared.funny.manager.Answer.BooleanAnswer;
-import com.ithaque.funnies.shared.funny.manager.DropFact;
 
 public class CircusDnDProfile extends AbstractTargetedDragProfile {
 
@@ -76,7 +73,7 @@ public class CircusDnDProfile extends AbstractTargetedDragProfile {
 	protected boolean executeDrop(Item dragged, Item target) {
 		DraggableFunny draggableFunny = getDraggableFunny(dragged);
 		DropTargetFunny targetFunny = getDropTargetFunny(target);
-		ring.notify(new DropFact(draggableFunny.getId(), targetFunny.getId()));
+		ring.notify(new DropEvent(draggableFunny, targetFunny));
 		return true;
 	}
 
@@ -84,9 +81,9 @@ public class CircusDnDProfile extends AbstractTargetedDragProfile {
 	protected boolean acceptTarget(Item dragged, Item target) {
 		DraggableFunny draggableFunny = getDraggableFunny(dragged);
 		DropTargetFunny targetFunny = getDropTargetFunny(target);
-		BooleanAnswer acceptTarget = 
-			(BooleanAnswer)ring.ask(new AcceptDropTargetQuestion(draggableFunny.getId(), targetFunny.getId()));
-		return acceptTarget.getAnswer();
+		AcceptDropTargetQuestion question = new AcceptDropTargetQuestion(draggableFunny, targetFunny);
+		ring.notify(question);
+		return question.isAccepted();
 	}
 
 }

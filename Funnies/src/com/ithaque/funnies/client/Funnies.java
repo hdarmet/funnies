@@ -59,17 +59,9 @@ public class Funnies implements EntryPoint {
 
 	public void onModuleLoad() {
 		GameBoardCircus gbc = new GameBoardCircus(new GWTPlatform(), 1000.0f, 500.0f);
-		gbc.init(new FunnyManager());
-		float dx = 13.0f;
-		float dy = (float)(13.0f*Math.sqrt(3.0));
-		gbc.enterRing(new TileFunny.HexFunny("t1", "hexagon.png", "rhexagon.png", 26.0f, 0.0f, 0.0f));
-		gbc.enterRing(new TileFunny.HexFunny("t2", "hexagon.png", "rhexagon.png", 26.0f, -3*dx, -dy));
-		gbc.enterRing(new TileFunny.HexFunny("t3", "hexagon.png", "rhexagon.png", 26.0f, 0, -dy*2));
-		gbc.enterRing(new TileFunny.HexFunny("t4", "hexagon.png", "rhexagon.png", 26.0f, 3*dx, -dy));
-		gbc.enterRing(new TileFunny.HexFunny("t5", "hexagon.png", "rhexagon.png", 26.0f, 3*dx, dy));
-		gbc.enterRing(new TileFunny.HexFunny("t6", "hexagon.png", "rhexagon.png", 26.0f, 0, dy*2));
-		gbc.enterRing(new TileFunny.HexFunny("t7", "hexagon.png", "rhexagon.png", 26.0f, -3*dx, dy));
-		gbc.enterRing(new CounterFunny("c1", "hhexagon.png"));
+		FunnyManager funnyManager = new FunnyManager(gbc);
+		gbc.init(funnyManager);
+		funnyManager.init();
 	}	
 	
 	Board board;
