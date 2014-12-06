@@ -5,7 +5,10 @@ import java.util.Map;
 
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.items.animations.ItemAnimation;
-import com.ithaque.funnies.shared.basic.processors.DragProcessor.AbstractTargetedDragProfile;
+import com.ithaque.funnies.shared.basic.items.animations.ItemMoveAnimation;
+import com.ithaque.funnies.shared.basic.processors.AbstractTargetedDragProfile;
+import com.ithaque.funnies.shared.funny.notifications.AcceptDropTargetQuestion;
+import com.ithaque.funnies.shared.funny.notifications.DropEvent;
 
 public class CircusDnDProfile extends AbstractTargetedDragProfile {
 
@@ -64,11 +67,29 @@ public class CircusDnDProfile extends AbstractTargetedDragProfile {
 	}
 
 	@Override
-	protected ItemAnimation getDropAnimation(Item dragged) {
+	protected ItemAnimation getAdjustLocationAnimation(Item dragged) {
 		DraggableFunny funny = getDraggableFunny(dragged);
-		return funny.getDropAnimation();
+		return funny.getAdjustLocationAnimation();
 	}
 
+	@Override
+	protected ItemMoveAnimation getDraggedDropAnimation(Item dragged) {
+		DraggableFunny funny = getDraggableFunny(dragged);
+		return funny.getDraggedDropAnimation();
+	}
+
+	@Override
+	protected ItemAnimation getShowAllowedTargetAnimation(Item target) {
+		DropTargetFunny targetFunny = getDropTargetFunny(target);
+		return targetFunny.getShowAllowedTargetAnimation();
+	}
+	
+	@Override
+	protected ItemAnimation getHideAllowedTargetAnimation(Item target) {
+		DropTargetFunny targetFunny = getDropTargetFunny(target);
+		return targetFunny.getHideAllowedTargetAnimation();
+	}
+	
 	@Override
 	protected boolean executeDrop(Item dragged, Item target) {
 		DraggableFunny draggableFunny = getDraggableFunny(dragged);

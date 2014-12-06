@@ -5,7 +5,6 @@ import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
 import com.ithaque.funnies.shared.basic.items.animations.ItemAnimation;
 import com.ithaque.funnies.shared.funny.DropTargetFunny;
-import com.ithaque.funnies.shared.funny.Funny;
 import com.ithaque.funnies.shared.funny.IncompatibleRingException;
 import com.ithaque.funnies.shared.funny.Ring;
 
@@ -18,6 +17,8 @@ public class TileFunny implements DropTargetFunny {
 	
 	ItemAnimation targetDropAnimation;
 	ItemAnimation enterTargetAnimation;
+	ItemAnimation showAllowedTargetAnimation;
+	ItemAnimation hideAllowedTargetAnimation;
 	ItemAnimation exitTargetAnimation;
 	
 	public TileFunny(String id, Item tileItem, Item activableItem) {
@@ -122,9 +123,9 @@ public class TileFunny implements DropTargetFunny {
 		}
 	}
 
-	public static class HexFunny extends TileFunny {
+	public static class HHexFunny extends TileFunny {
 
-		public HexFunny(
+		public HHexFunny(
 			String id, 
 			String tileImageUrl,
 			String activableImageUrl, 
@@ -133,6 +134,35 @@ public class TileFunny implements DropTargetFunny {
 			float y) 
 		{
 			super(id, tileImageUrl, activableImageUrl, buildHHexShape(radius));
+			setLocation(new Location(x, y));
+		}
+
+		static Location[] buildHHexShape(float radius) {
+			float hradius = radius/2.0f;
+			float sqr3radius = (float)(hradius*Math.sqrt(3.0));
+			return new Location[] {
+				new Location(-radius, 0.0f),
+				new Location(-hradius, -sqr3radius),
+				new Location(hradius, -sqr3radius),
+				new Location(radius, 0.0f),
+				new Location(hradius, sqr3radius),
+				new Location(-hradius, sqr3radius),
+			};
+		}
+
+	}
+	
+	public static class VHexFunny extends TileFunny {
+
+		public VHexFunny(
+			String id, 
+			String tileImageUrl,
+			String activableImageUrl, 
+			float radius,
+			float x,
+			float y) 
+		{
+			super(id, tileImageUrl, activableImageUrl, buildVHexShape(radius));
 			setLocation(new Location(x, y));
 		}
 
@@ -149,18 +179,15 @@ public class TileFunny implements DropTargetFunny {
 			};
 		}
 
-		static Location[] buildHHexShape(float radius) {
-			float hradius = radius/2.0f;
-			float sqr3radius = (float)(hradius*Math.sqrt(3.0));
-			return new Location[] {
-				new Location(-radius, 0.0f),
-				new Location(-hradius, -sqr3radius),
-				new Location(hradius, -sqr3radius),
-				new Location(radius, 0.0f),
-				new Location(hradius, sqr3radius),
-				new Location(-hradius, sqr3radius),
-			};
-		}
+	}
 
+	@Override
+	public ItemAnimation getShowAllowedTargetAnimation() {
+		return showAllowedTargetAnimation;
+	}
+
+	@Override
+	public ItemAnimation getHideAllowedTargetAnimation() {
+		return hideAllowedTargetAnimation;
 	}
 }

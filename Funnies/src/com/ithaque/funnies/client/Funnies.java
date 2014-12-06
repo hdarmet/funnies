@@ -26,7 +26,7 @@ import com.ithaque.funnies.shared.basic.MultiLayered;
 import com.ithaque.funnies.shared.basic.Processor;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
 import com.ithaque.funnies.shared.basic.items.animations.ImageItemFadingAnimation;
-import com.ithaque.funnies.shared.basic.items.animations.MoveItemAnimation;
+import com.ithaque.funnies.shared.basic.items.animations.ItemChangeAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.OutBackEasing;
 import com.ithaque.funnies.shared.basic.processors.DragProcessor;
 import com.ithaque.funnies.shared.basic.processors.GestureEvent;
@@ -35,6 +35,7 @@ import com.ithaque.funnies.shared.basic.processors.GestureRecognition.Gesture;
 import com.ithaque.funnies.shared.basic.processors.GestureRecognition.MatchHandler;
 import com.ithaque.funnies.shared.basic.processors.ScalingProcessor;
 import com.ithaque.funnies.shared.basic.processors.ScrollProfile;
+import com.ithaque.funnies.shared.basic.processors.SimpleTargetedDragProfile;
 import com.ithaque.funnies.shared.funny.boardgame.CounterFunny;
 import com.ithaque.funnies.shared.funny.boardgame.GameBoardCircus;
 import com.ithaque.funnies.shared.funny.boardgame.TileFunny;
@@ -57,7 +58,7 @@ public class Funnies implements EntryPoint {
 	private final GreetingServiceAsync greetingService = GWT
 			.create(GreetingService.class);
 
-	public void onModuleLoad() {
+	public void onnModuleLoad() {
 		GameBoardCircus gbc = new GameBoardCircus(new GWTPlatform(), 1000.0f, 500.0f);
 		FunnyManager funnyManager = new FunnyManager(gbc);
 		gbc.init(funnyManager);
@@ -66,7 +67,7 @@ public class Funnies implements EntryPoint {
 	
 	Board board;
 	
-	public void onNModuleLoad() {
+	public void onModuleLoad() {
 		board = new Board(new GWTPlatform());
 		board.start();
 
@@ -80,15 +81,17 @@ public class Funnies implements EntryPoint {
 		sitem2.setScale(1.0f);
 		sitem2.setLocation(0, -50);
 		
-		ImageItem titem = new ImageItem("hhexagon.png");
+		ImageItem titem = new ImageItem("hhexagon.png","h2exagon.png");
 		titem.setOpacity("hhexagon.png", 0.0f);
+		titem.setOpacity("h2exagon.png", 0.0f);
 		titem.setRotation(0.0f);
 		titem.setScale(1.0f);
 		titem.setLocation(100, 0);
 		titem.setShape(-25, 0, -12, -22, 12, -22, 25, 0, 12, 22, -12, 22);
 
-		ImageItem titem2 = new ImageItem("hhexagon.png");
+		ImageItem titem2 = new ImageItem("hhexagon.png","h2exagon.png");
 		titem2.setOpacity("hhexagon.png", 0.0f);
+		titem2.setOpacity("h2exagon.png", 0.0f);
 		titem2.setRotation(0.0f);
 		titem2.setScale(1.0f);
 		titem2.setLocation(0, -50);
@@ -129,15 +132,18 @@ public class Funnies implements EntryPoint {
 		layerOne.setLocation(new Location(-50.0f, 15.0f));
 
 		DragProcessor dragProcessor = new DragProcessor();
-		DragProcessor.SimpleTargetedDragProfile profile = new DragProcessor.SimpleTargetedDragProfile();
+		SimpleTargetedDragProfile profile = new SimpleTargetedDragProfile();
 		profile.setDragLayer(dragLayer);
 		profile.addDraggeable(iitem);
 		profile.addTarget(titem);
 		profile.addTarget(titem2);
-		profile.setBeginDragAnimation(new MoveItemAnimation(500, null, null, 0.6f));
-		profile.setDropAnimation(new MoveItemAnimation(500, null, null, 0.5f));
+		profile.setBeginDragAnimation(new ItemChangeAnimation(500, null, null, 0.6f));
+		profile.setAdjustLocationAnimation(new ItemChangeAnimation(500, null, null, 0.5f));
 		profile.setEnterTargetAnimation(new ImageItemFadingAnimation(1000).fade("hhexagon.png", 1.0f));
 		profile.setExitTargetAnimation(new ImageItemFadingAnimation(1000).fade("hhexagon.png", 0.0f));
+		profile.setDraggedDropAnimation(new ItemChangeAnimation(new OutBackEasing(1000), null, null, null));
+		profile.setShowAllowedTargetAnimation(new ImageItemFadingAnimation(500).fade("h2exagon.png", 0.2f));
+		profile.setHideAllowedTargetAnimation(new ImageItemFadingAnimation(500).fade("h2exagon.png", 0.0f));
 		
 		MatchHandler dMatch = new MatchHandler() {
 			@Override
@@ -259,7 +265,7 @@ public class Funnies implements EntryPoint {
 			
 		});
 		
-		new MoveItemAnimation(new OutBackEasing(5000), new Location(100, 100), 2.0f, 2.0f).launchFor(iitem2);
+		new ItemChangeAnimation(new OutBackEasing(5000), new Location(100, 100), 2.0f, 2.0f).launchFor(iitem2);
 	}
 	
 	/**

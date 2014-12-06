@@ -4,6 +4,7 @@ import com.ithaque.funnies.shared.basic.Event.Type;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
 import com.ithaque.funnies.shared.basic.items.animations.ItemAnimation;
+import com.ithaque.funnies.shared.basic.items.animations.ItemMoveAnimation;
 import com.ithaque.funnies.shared.funny.DraggableFunny;
 import com.ithaque.funnies.shared.funny.IncompatibleRingException;
 import com.ithaque.funnies.shared.funny.Ring;
@@ -13,7 +14,8 @@ public class CounterFunny implements DraggableFunny {
 	String id;
 	Item counterItem;
 	ItemAnimation beginDragAnimation;
-	ItemAnimation dropAnimation;
+	ItemAnimation adjustLocationAnimation;
+	ItemMoveAnimation draggedDropAnimation;
 	
 	public CounterFunny(String id, Item counterItem) {
 		this.id = id;
@@ -29,6 +31,18 @@ public class CounterFunny implements DraggableFunny {
 		}
 	}
 	
+	public void setBeginDragAnimation(ItemAnimation beginDragAnimation) {
+		this.beginDragAnimation = beginDragAnimation;
+	}
+
+	public void setAdjustLocationAnimation(ItemAnimation adjustLocationAnimation) {
+		this.adjustLocationAnimation = adjustLocationAnimation;
+	}
+
+	public void setDraggedDropAnimation(ItemMoveAnimation draggedDropAnimation) {
+		this.draggedDropAnimation = draggedDropAnimation;
+	}
+
 	@Override
 	public String getId() {
 		return id;
@@ -63,8 +77,13 @@ public class CounterFunny implements DraggableFunny {
 	}
 
 	@Override
-	public ItemAnimation getDropAnimation() {
-		return dropAnimation;
+	public ItemAnimation getAdjustLocationAnimation() {
+		return adjustLocationAnimation;
+	}
+
+	@Override
+	public ItemMoveAnimation getDraggedDropAnimation() {
+		return draggedDropAnimation;
 	}
 
 }

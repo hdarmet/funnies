@@ -1,5 +1,6 @@
-package com.ithaque.funnies.shared.funny;
+package com.ithaque.funnies.shared.funny.notifications;
 
+import com.ithaque.funnies.shared.funny.Funny;
 import com.ithaque.funnies.shared.funny.manager.Notification;
 
 public class DropEvent extends Notification {

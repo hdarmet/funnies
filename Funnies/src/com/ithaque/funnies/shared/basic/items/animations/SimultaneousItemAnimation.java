@@ -16,11 +16,13 @@ public class SimultaneousItemAnimation extends ItemAnimation {
 	List<ItemAnimation> animations = new ArrayList<ItemAnimation>();
 	
 	protected void launch(Item item) {
-		registerOnBoard(item);
-		for (ItemAnimation child : animations) {
-			child.launch(item);
-			if (child.getEasing().getEndTime()>endTime) {
-				this.easing = child.getEasing();
+		if (!animations.isEmpty()) {
+			registerOnBoard(item);
+			for (ItemAnimation child : animations) {
+				child.launch(item);
+				if (child.getEasing().getEndTime()>endTime) {
+					this.easing = child.getEasing();
+				}
 			}
 		}
 	}
