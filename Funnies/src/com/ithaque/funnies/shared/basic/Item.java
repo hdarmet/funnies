@@ -7,6 +7,8 @@ import com.ithaque.funnies.shared.Trace;
 
 public class Item implements Moveable {
 
+	public static final float TWO_PI = (float)(Math.PI*2);
+	
 	ItemHolder parent = null;
 	Location location = Location.ORIGIN;
 	float scale = ItemHolder.STANDARD_SCALE;
@@ -89,6 +91,12 @@ public class Item implements Moveable {
 	}
 
 	public void setRotation(float rotation) {
+		while (rotation<0) {
+			rotation+=TWO_PI;
+		}
+		while (rotation>TWO_PI) {
+			rotation-=TWO_PI;
+		}
 		this.rotation = rotation;
 		dirty();
 	}

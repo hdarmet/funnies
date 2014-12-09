@@ -85,11 +85,11 @@ public abstract class AbstractDragProfile implements DragProfile {
 			originalHolder.addItem(dragged);
 		}
 		SimultaneousItemAnimation animation = new SimultaneousItemAnimation();
-		if (!executeDrop(event, board, animation)) {
+		if (!resolveDrop(event, board, animation)) {
 			adjustDraggedLocationOnDrop(animation, startLocation);
 		}
-		if (getAdjustLocationAnimation(dragged)!=null) {
-		    animation.addAnimation(getAdjustLocationAnimation(dragged).duplicate());
+		if (getDraggedDropAnimation(dragged)!=null) {
+		    animation.addAnimation(getDraggedDropAnimation(dragged).duplicate());
 		}
 		animation.launchFor(dragged);
 		dragged = null;
@@ -97,7 +97,7 @@ public abstract class AbstractDragProfile implements DragProfile {
 
 	protected void adjustDraggedLocationOnDrop(
 			SimultaneousItemAnimation animation, Location draggedLocation) {
-		ItemMoveAnimation revertToOrigin = getDraggedDropAnimation(dragged);
+		ItemMoveAnimation revertToOrigin = getAdjustLocationAnimation(dragged);
 		if (revertToOrigin!=null) {
 			revertToOrigin = revertToOrigin.duplicate();
 			revertToOrigin.setLocation(draggedLocation);
@@ -110,11 +110,11 @@ public abstract class AbstractDragProfile implements DragProfile {
 
 	protected abstract ItemAnimation getBeginDragAnimation(Item dragged);
 
-	protected abstract ItemAnimation getAdjustLocationAnimation(Item dragged);
+	protected abstract ItemMoveAnimation getAdjustLocationAnimation(Item dragged);
 	
-	protected abstract ItemMoveAnimation getDraggedDropAnimation(Item dragged);
+	protected abstract ItemAnimation getDraggedDropAnimation(Item dragged);
 
-	protected boolean executeDrop(MouseEvent event, Board board, SimultaneousItemAnimation animation) {
+	protected boolean resolveDrop(MouseEvent event, Board board, SimultaneousItemAnimation animation) {
 		Location mouseLocation = DragProcessor.followMouse(event, dragged, anchor);
 		dragged.setLocation(mouseLocation);
 		return true;

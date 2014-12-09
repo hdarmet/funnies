@@ -10,8 +10,8 @@ public interface DraggableFunny extends Funny {
 
 	ItemAnimation getBeginDragAnimation();
 
-	ItemAnimation getAdjustLocationAnimation();
+	ItemMoveAnimation getAdjustLocationAnimation();
 
-	ItemMoveAnimation getDraggedDropAnimation();
+	ItemAnimation getDraggedDropAnimation();
 
 }

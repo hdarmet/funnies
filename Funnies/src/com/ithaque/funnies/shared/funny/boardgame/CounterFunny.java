@@ -2,6 +2,7 @@ package com.ithaque.funnies.shared.funny.boardgame;
 
 import com.ithaque.funnies.shared.basic.Event.Type;
 import com.ithaque.funnies.shared.basic.Item;
+import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
 import com.ithaque.funnies.shared.basic.items.animations.ItemAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.ItemMoveAnimation;
@@ -14,8 +15,8 @@ public class CounterFunny implements DraggableFunny {
 	String id;
 	Item counterItem;
 	ItemAnimation beginDragAnimation;
-	ItemAnimation adjustLocationAnimation;
-	ItemMoveAnimation draggedDropAnimation;
+	ItemMoveAnimation adjustLocationAnimation;
+	ItemAnimation draggedDropAnimation;
 	
 	public CounterFunny(String id, Item counterItem) {
 		this.id = id;
@@ -35,7 +36,7 @@ public class CounterFunny implements DraggableFunny {
 		this.beginDragAnimation = beginDragAnimation;
 	}
 
-	public void setAdjustLocationAnimation(ItemAnimation adjustLocationAnimation) {
+	public void setAdjustLocationAnimation(ItemMoveAnimation adjustLocationAnimation) {
 		this.adjustLocationAnimation = adjustLocationAnimation;
 	}
 
@@ -77,13 +78,31 @@ public class CounterFunny implements DraggableFunny {
 	}
 
 	@Override
-	public ItemAnimation getAdjustLocationAnimation() {
+	public ItemMoveAnimation getAdjustLocationAnimation() {
 		return adjustLocationAnimation;
 	}
 
 	@Override
-	public ItemMoveAnimation getDraggedDropAnimation() {
+	public ItemAnimation getDraggedDropAnimation() {
 		return draggedDropAnimation;
+	}
+
+	public void setLocation(Location location) {
+		if (counterItem!=null) {
+			counterItem.setLocation(location);
+		}
+	}
+	
+	public void setRotation(float rotation) {
+		if (counterItem!=null) {
+			counterItem.setRotation(rotation);
+		}
+	}
+	
+	public void setScale(float scale) {
+		if (counterItem!=null) {
+			counterItem.setScale(scale);
+		}
 	}
 
 }

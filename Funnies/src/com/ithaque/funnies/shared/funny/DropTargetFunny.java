@@ -16,4 +16,6 @@ public interface DropTargetFunny extends Funny {
 	ItemAnimation getShowAllowedTargetAnimation();
 
 	ItemAnimation getHideAllowedTargetAnimation();
+
+	Item getHilightItem(Item target);
 }

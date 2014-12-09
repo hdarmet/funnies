@@ -17,6 +17,7 @@ public class LinearEasing implements Easing {
 	public void launch(Board board) {
 		this.board = board;
 		this.endTime = duration+board.getTime();
+		System.out.println("end time:"+this.endTime);
 	}
 
 	@Override

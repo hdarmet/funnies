@@ -55,12 +55,13 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 		showAllowedTargets(dragged);
 	}
 
-	protected boolean executeDrop(MouseEvent event, Board board, SimultaneousItemAnimation animation) {
+	protected boolean resolveDrop(MouseEvent event, Board board, SimultaneousItemAnimation animation) {
 		currentTarget = null;
 		Item target = getTarget(dragged, event);
 		if (target!=null) {
 			adjustDraggedLocationOnDrop(animation, target.getLocation());
 			animateTargetOnDrop(dragged, target);
+			executeDrop(dragged, target);
 			return true;
 		}
 		else {
@@ -87,13 +88,13 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 	{
 		for (Item aTarget : targets) {
 			if (acceptTarget(dragged, aTarget)) {
-				ItemAnimation aTargetAnimation = getHideAllowedTargetAnimation(target);
+				ItemAnimation aTargetAnimation = getHideAllowedTargetAnimation(aTarget);
 				if (aTargetAnimation != null) {
-					if (aTarget==target && targetAnimation!=null) {
+					if (getHilightItem(aTarget)==target && targetAnimation!=null) {
 						targetAnimation.addAnimation(aTargetAnimation);
 					}
 					else {
-						aTargetAnimation.duplicate().launchFor(aTarget);
+						aTargetAnimation.duplicate().launchFor(getHilightItem(aTarget));
 					}
 				}
 			}
@@ -105,10 +106,14 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 			if (acceptTarget(dragged, target)) {
 				ItemAnimation targetAnimation = getShowAllowedTargetAnimation(target);
 				if (targetAnimation != null) {
-					targetAnimation.duplicate().launchFor(target);
+					targetAnimation.duplicate().launchFor(getHilightItem(target));
 				}
 			}
 		}
+	}
+	
+	protected Item getHilightItem(Item target) {
+		return target;
 	}
 	
 	protected abstract ItemAnimation getTargetDropAnimation(Item target);
@@ -121,8 +126,7 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 
 	protected abstract ItemAnimation getExitTargetAnimation(Item target);
 	
-	protected boolean executeDrop(Item dragged, Item target) {
-		return true;
+	protected void executeDrop(Item dragged, Item target) {
 	}
 
 	protected Item getTarget(Item dragged, MouseEvent event) {

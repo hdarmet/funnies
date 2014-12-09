@@ -71,7 +71,7 @@ public class GWTGraphics implements Graphics {
 			processMouseUp(event);
 		}
 	};
-
+	
 	MouseMoveHandler mouseMoveHandler = new MouseMoveHandler() {
 		@Override
 		public void onMouseMove(MouseMoveEvent event) {
@@ -210,7 +210,7 @@ public class GWTGraphics implements Graphics {
 	}
 	
 	@Override
-	public Integer loadImage(String url) {
+	public Integer loadImage(final String url) {
 		Integer token = imageTokens.get(url);
 		if (token!=null) {
 			ImageElementRecord record = imageElements.get(token);
@@ -220,11 +220,13 @@ public class GWTGraphics implements Graphics {
 		token = tokenCount++;
 		final ImageElementRecord record = new ImageElementRecord(url);
 		imageElements.put(token, record);
+		imageTokens.put(url, token);
 	    final Image img = new Image(url);
 	    record.image = ImageElement.as(img.getElement());
 	    img.addLoadHandler(new LoadHandler() {
 	        @Override
 	        public void onLoad(LoadEvent event) {
+	        	System.out.println("loaded : "+url);
 	        	RootPanel.get("images").remove(img);
 	        	record.ready = true;
 	        	for (DrawImageRequest request : new ArrayList<DrawImageRequest>(record.requests)) {

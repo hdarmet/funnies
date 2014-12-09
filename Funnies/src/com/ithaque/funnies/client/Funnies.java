@@ -58,7 +58,7 @@ public class Funnies implements EntryPoint {
 	private final GreetingServiceAsync greetingService = GWT
 			.create(GreetingService.class);
 
-	public void onnModuleLoad() {
+	public void onModuleLoad() {
 		GameBoardCircus gbc = new GameBoardCircus(new GWTPlatform(), 1000.0f, 500.0f);
 		FunnyManager funnyManager = new FunnyManager(gbc);
 		gbc.init(funnyManager);
@@ -67,7 +67,32 @@ public class Funnies implements EntryPoint {
 	
 	Board board;
 	
-	public void onModuleLoad() {
+	public void onpModuleLoad() {
+		board = new Board(new GWTPlatform());
+		board.start();
+		
+		ImageItem iitem = new ImageItem("hexagon.png");
+		iitem.setRotation(0.0f);
+		iitem.setScale(0.5f);
+		iitem.addEventType(Type.MOUSE_CLICK);
+		iitem.addEventType(Type.MOUSE_DOWN);
+
+		MultiLayered layered = new MultiLayered(-500, -300, 500, 300);
+		Layer layerTwo = layered.addLayer("unit");
+		Layer dragLayer = layered.addLayer("drag");
+		
+		layerTwo.addItem(iitem);
+		board.addItem(layered);
+		DragProcessor dragProcessor = new DragProcessor();
+		SimpleTargetedDragProfile profile = new SimpleTargetedDragProfile();
+		profile.setDragLayer(dragLayer);
+		profile.addDraggeable(iitem);
+
+		dragProcessor.addDragProfile(profile);
+		board.addProcessor(dragProcessor);
+	}
+	
+	public void onnModuleLoad() {
 		board = new Board(new GWTPlatform());
 		board.start();
 

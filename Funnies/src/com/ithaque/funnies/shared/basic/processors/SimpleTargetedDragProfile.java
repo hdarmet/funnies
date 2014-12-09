@@ -12,15 +12,15 @@ public class SimpleTargetedDragProfile extends AbstractTargetedDragProfile {
 	ItemAnimation exitTargetAnimation = null;
 	ItemAnimation targetDropAnimation = null;
 	ItemAnimation beginDragAnimation = null;
-	ItemAnimation adjustLocationAnimation = null;
-	ItemMoveAnimation draggedDropAnimation = null;
+	ItemMoveAnimation adjustLocationAnimation = null;
+	ItemAnimation draggedDropAnimation = null;
 	
 	public void setBeginDragAnimation(ItemAnimation beginDragAnimation) {
 		this.beginDragAnimation = beginDragAnimation;
 	}
 
-	public void setAdjustLocationAnimation(ItemAnimation dropAnimation) {
-		this.adjustLocationAnimation = dropAnimation;
+	public void setAdjustLocationAnimation(ItemMoveAnimation adjustLocationAnimation) {
+		this.adjustLocationAnimation = adjustLocationAnimation;
 	}
 
 	public void setEnterTargetAnimation(ItemAnimation enterTargetAnimation) {
@@ -35,7 +35,7 @@ public class SimpleTargetedDragProfile extends AbstractTargetedDragProfile {
 		this.targetDropAnimation = targetDropAnimation;
 	}
 
-	public void setDraggedDropAnimation(ItemMoveAnimation draggedDropAnimation) {
+	public void setDraggedDropAnimation(ItemAnimation draggedDropAnimation) {
 		this.draggedDropAnimation = draggedDropAnimation;
 	}
 
@@ -78,12 +78,12 @@ public class SimpleTargetedDragProfile extends AbstractTargetedDragProfile {
 	}
 
 	@Override
-	protected ItemAnimation getAdjustLocationAnimation(Item dragged) {
+	protected ItemMoveAnimation getAdjustLocationAnimation(Item dragged) {
 		return adjustLocationAnimation;
 	}
 
 	@Override
-	protected ItemMoveAnimation getDraggedDropAnimation(Item dragged) {
+	protected ItemAnimation getDraggedDropAnimation(Item dragged) {
 		return draggedDropAnimation;
 	}
 	

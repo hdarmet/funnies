@@ -62,8 +62,8 @@ public class Board implements ItemHolder {
 				animation.finish(time);
 				if (finished==null) {
 					finished = new ArrayList<Animation>();
-					finished.add(animation);
 				}
+				finished.add(animation);
 			}
 		}
 		if (finished != null) {

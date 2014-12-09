@@ -17,6 +17,7 @@ public class GameBoardRing extends Ring {
 
 	private static final String BACKGROUND_LAYER = "background";
 	private static final String BOARD_LAYER = "board";
+	private static final String HILIGHT_LAYER = "hilight";
 	private static final String TILESET_LAYER = "tileset";
 	private static final String PIECES_LAYER = "pieces";
 	private static final String DRAG_LAYER = "drag";
@@ -27,6 +28,7 @@ public class GameBoardRing extends Ring {
 
 	Layer backgroundLayer;
 	Layer boardLayer;
+	Layer hilightLayer;
 	Layer tilesetLayer;
 	Layer piecesLayer;
 	Layer dragLayer;
@@ -40,6 +42,7 @@ public class GameBoardRing extends Ring {
 		MultiLayered baseLayer = new MultiLayered(-width/2.0f, -height/2.0f, width/2.0f, height/2.0f);
 		backgroundLayer = baseLayer.addLayer(BACKGROUND_LAYER);
 		boardLayer = baseLayer.addLayer(BOARD_LAYER);
+		hilightLayer = baseLayer.addLayer(HILIGHT_LAYER);
 		tilesetLayer = baseLayer.addLayer(TILESET_LAYER);
 		piecesLayer = baseLayer.addLayer(PIECES_LAYER);
 		dragLayer = baseLayer.addLayer(DRAG_LAYER);

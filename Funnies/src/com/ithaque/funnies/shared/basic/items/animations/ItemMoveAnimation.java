@@ -10,6 +10,11 @@ public abstract class ItemMoveAnimation extends ItemAnimation {
 		super(easing);
 	}
 
+	protected ItemMoveAnimation(Easing easing, Location location) {
+		super(easing);
+		this.location = location;
+	}
+	
 	public ItemMoveAnimation(long duration) {
 		super(duration);
 	}

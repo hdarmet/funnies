@@ -43,6 +43,12 @@ public class CircusDnDProfile extends AbstractTargetedDragProfile {
 	}
 	
 	@Override
+	protected Item getHilightItem(Item target) {
+		DropTargetFunny funny = getDropTargetFunny(target);
+		return funny.getHilightItem(target);
+	}
+	
+	@Override
 	protected ItemAnimation getTargetDropAnimation(Item target) {
 		DropTargetFunny funny = getDropTargetFunny(target);
 		return funny.getTargetDropAnimation();
@@ -61,24 +67,6 @@ public class CircusDnDProfile extends AbstractTargetedDragProfile {
 	}
 
 	@Override
-	protected ItemAnimation getBeginDragAnimation(Item dragged) {
-		DraggableFunny funny = getDraggableFunny(dragged);
-		return funny.getBeginDragAnimation();
-	}
-
-	@Override
-	protected ItemAnimation getAdjustLocationAnimation(Item dragged) {
-		DraggableFunny funny = getDraggableFunny(dragged);
-		return funny.getAdjustLocationAnimation();
-	}
-
-	@Override
-	protected ItemMoveAnimation getDraggedDropAnimation(Item dragged) {
-		DraggableFunny funny = getDraggableFunny(dragged);
-		return funny.getDraggedDropAnimation();
-	}
-
-	@Override
 	protected ItemAnimation getShowAllowedTargetAnimation(Item target) {
 		DropTargetFunny targetFunny = getDropTargetFunny(target);
 		return targetFunny.getShowAllowedTargetAnimation();
@@ -91,11 +79,28 @@ public class CircusDnDProfile extends AbstractTargetedDragProfile {
 	}
 	
 	@Override
-	protected boolean executeDrop(Item dragged, Item target) {
+	protected ItemAnimation getBeginDragAnimation(Item dragged) {
+		DraggableFunny funny = getDraggableFunny(dragged);
+		return funny.getBeginDragAnimation();
+	}
+
+	@Override
+	protected ItemMoveAnimation getAdjustLocationAnimation(Item dragged) {
+		DraggableFunny funny = getDraggableFunny(dragged);
+		return funny.getAdjustLocationAnimation();
+	}
+
+	@Override
+	protected ItemAnimation getDraggedDropAnimation(Item dragged) {
+		DraggableFunny funny = getDraggableFunny(dragged);
+		return funny.getDraggedDropAnimation();
+	}
+	
+	@Override
+	protected void executeDrop(Item dragged, Item target) {
 		DraggableFunny draggableFunny = getDraggableFunny(dragged);
 		DropTargetFunny targetFunny = getDropTargetFunny(target);
 		ring.notify(new DropEvent(draggableFunny, targetFunny));
-		return true;
 	}
 
 	@Override

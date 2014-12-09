@@ -13,6 +13,7 @@ public class TileFunny implements DropTargetFunny {
 	String id;
 	
 	Item tileItem;
+	Item hilightItem;
 	Item activableItem;
 	
 	ItemAnimation targetDropAnimation;
@@ -21,21 +22,22 @@ public class TileFunny implements DropTargetFunny {
 	ItemAnimation hideAllowedTargetAnimation;
 	ItemAnimation exitTargetAnimation;
 	
-	public TileFunny(String id, Item tileItem, Item activableItem) {
+	public TileFunny(String id, Item tileItem, Item hilightItem, Item activableItem) {
 		this.id = id;
 		this.tileItem = tileItem;
+		this.hilightItem = hilightItem;
 		this.activableItem = activableItem;
 	}
 	
-	public TileFunny(String id, String tileImageUrl, String activableImageUrl, Location[] shape) {
+	public TileFunny(String id, String tileImageUrl, String activableImageUrl, String targetImageUrl, Location[] shape) {
 		this(id,
 			new ImageItem(tileImageUrl),
-			new ImageItem(activableImageUrl)
+			new ImageItem(activableImageUrl),
+			new ImageItem(targetImageUrl)
 		);
-		if (activableItem!=null) {
-			activableItem.setShape(shape);
-			((ImageItem)activableItem).setOpacity(0, 0.0f);
-		}
+		activableItem.setShape(shape);
+		((ImageItem)activableItem).setOpacity(0, 0.0f);
+		((ImageItem)hilightItem).setOpacity(0, 0.0f);
 	}
 	
 	@Override
@@ -47,6 +49,9 @@ public class TileFunny implements DropTargetFunny {
 		if (tileItem!=null) {
 			tileItem.setLocation(location);
 		}
+		if (hilightItem != null) {
+			hilightItem.setLocation(location);
+		}
 		if (activableItem != null) {
 			activableItem.setLocation(location);
 		}
@@ -55,6 +60,9 @@ public class TileFunny implements DropTargetFunny {
 	public void setRotation(float rotation) {
 		if (tileItem!=null) {
 			tileItem.setRotation(rotation);
+		}
+		if (hilightItem != null) {
+			hilightItem.setRotation(rotation);
 		}
 		if (activableItem != null) {
 			activableItem.setRotation(rotation);
@@ -65,6 +73,9 @@ public class TileFunny implements DropTargetFunny {
 		if (tileItem!=null) {
 			tileItem.setScale(scale);
 		}
+		if (hilightItem != null) {
+			hilightItem.setScale(scale);
+		}
 		if (activableItem != null) {
 			activableItem.setScale(scale);
 		}
@@ -73,7 +84,7 @@ public class TileFunny implements DropTargetFunny {
 	@Override
 	public Item[] getDropTargetItems() {
 		if (activableItem!=null) {
-		return new Item[] {activableItem};
+			return new Item[] {activableItem};
 		}
 		else {
 			return new Item[0]; 
@@ -108,11 +119,39 @@ public class TileFunny implements DropTargetFunny {
 	}
 
 	@Override
+	public ItemAnimation getShowAllowedTargetAnimation() {
+		return showAllowedTargetAnimation;
+	}
+
+	@Override
+	public ItemAnimation getHideAllowedTargetAnimation() {
+		return hideAllowedTargetAnimation;
+	}
+	
+	public void setShowAllowedTargetAnimation(
+			ItemAnimation showAllowedTargetAnimation) {
+		this.showAllowedTargetAnimation = showAllowedTargetAnimation;
+	}
+
+	public void setHideAllowedTargetAnimation(
+			ItemAnimation hideAllowedTargetAnimation) {
+		this.hideAllowedTargetAnimation = hideAllowedTargetAnimation;
+	}
+
+	@Override
+	public Item getHilightItem(Item target) {
+		return hilightItem;
+	}
+	
+	@Override
 	public void enterRing(Ring ring) {
 		if (ring instanceof GameBoardRing) {
 			GameBoardRing gbRing = (GameBoardRing)ring;
 			if (tileItem!=null) {
 				gbRing.boardLayer.addItem(tileItem);
+			}
+			if (hilightItem!=null) {
+				gbRing.hilightLayer.addItem(hilightItem);
 			}
 			if (activableItem!=null) {
 				gbRing.tilesetLayer.addItem(activableItem);
@@ -128,12 +167,13 @@ public class TileFunny implements DropTargetFunny {
 		public HHexFunny(
 			String id, 
 			String tileImageUrl,
-			String activableImageUrl, 
+			String activableImageUrl,
+			String targetImageUrl,
 			float radius,
 			float x,
 			float y) 
 		{
-			super(id, tileImageUrl, activableImageUrl, buildHHexShape(radius));
+			super(id, tileImageUrl, activableImageUrl, targetImageUrl, buildHHexShape(radius));
 			setLocation(new Location(x, y));
 		}
 
@@ -157,12 +197,13 @@ public class TileFunny implements DropTargetFunny {
 		public VHexFunny(
 			String id, 
 			String tileImageUrl,
-			String activableImageUrl, 
+			String activableImageUrl,
+			String targetImageUrl,
 			float radius,
 			float x,
 			float y) 
 		{
-			super(id, tileImageUrl, activableImageUrl, buildVHexShape(radius));
+			super(id, tileImageUrl, activableImageUrl, targetImageUrl, buildVHexShape(radius));
 			setLocation(new Location(x, y));
 		}
 
@@ -181,13 +222,4 @@ public class TileFunny implements DropTargetFunny {
 
 	}
 
-	@Override
-	public ItemAnimation getShowAllowedTargetAnimation() {
-		return showAllowedTargetAnimation;
-	}
-
-	@Override
-	public ItemAnimation getHideAllowedTargetAnimation() {
-		return hideAllowedTargetAnimation;
-	}
 }

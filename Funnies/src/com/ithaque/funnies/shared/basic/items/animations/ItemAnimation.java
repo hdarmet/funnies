@@ -103,5 +103,8 @@ public abstract class ItemAnimation implements Animation {
 	
 	@Override
 	public abstract ItemAnimation duplicate();
-	
+
+	public Item getItem() {
+		return item;
+	}
 }

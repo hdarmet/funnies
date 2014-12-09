@@ -22,6 +22,7 @@ public class SimultaneousItemAnimation extends ItemAnimation {
 				child.launch(item);
 				if (child.getEasing().getEndTime()>endTime) {
 					this.easing = child.getEasing();
+					endTime = child.getEasing().getEndTime();
 				}
 			}
 		}

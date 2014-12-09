@@ -9,8 +9,8 @@ public abstract class CircusManager {
 			new HashMap<Class<? extends Notification>, Handler<? extends Notification>>();
 		
 	public static abstract class Handler<T extends Notification> {
-		public Handler(Class<T> factClass, CircusManager manager) {
-			manager.handlers.put(factClass, this);
+		public Handler(Class<T> notificationClass, CircusManager manager) {
+			manager.handlers.put(notificationClass, this);
 		}
 
 		public abstract void process(T fact);
