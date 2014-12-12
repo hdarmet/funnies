@@ -36,4 +36,8 @@ public class SineInOutEasing implements Easing {
 		return new SineInOutEasing(duration);
 	}
 
+	@Override
+	public long getDuration() {
+		return duration;
+	}
 }

@@ -37,6 +37,10 @@ public class Board implements ItemHolder {
 		return platform.getTime();
 	}
 	
+	public float randomize() {
+		return platform.randomize();
+	}
+	
 	public void render() {
 		if (dirty) {
 			platform.getGraphics().setLayer(token);

@@ -11,6 +11,8 @@ import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DoubleClickEvent;
+import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
@@ -58,6 +60,13 @@ public class GWTGraphics implements Graphics {
 		}
 	};
 
+	DoubleClickHandler doubleClickHandler = new DoubleClickHandler() {
+		@Override
+		public void onDoubleClick(DoubleClickEvent event) {
+			processDoubleClick(event);
+		}
+	};
+	
 	MouseDownHandler mouseDownHandler = new MouseDownHandler() {
 		@Override
 		public void onMouseDown(MouseDownEvent event) {
@@ -237,6 +246,12 @@ public class GWTGraphics implements Graphics {
 	    img.setVisible(false);
 	    RootPanel.get("images").add(img);
 	    return token;
+	}
+	
+	void processDoubleClick(DoubleClickEvent event) {
+		platform.sendEvent(new MouseEvent(Type.MOUSE_DOUBLE_CLICK, event.getX(), event.getY(), 
+			getButton(event.getNativeButton()), 
+			event.isShiftKeyDown(), event.isControlKeyDown(), event.isAltKeyDown()));
 	}
 	
 	void processClick(ClickEvent event) {
@@ -419,6 +434,7 @@ public class GWTGraphics implements Graphics {
 	    canvas.setCoordinateSpaceWidth(1000);
 	    canvas.setCoordinateSpaceHeight(500);
 	    canvas.addClickHandler(clickHandler);
+	    canvas.addDoubleClickHandler(doubleClickHandler);
 	    canvas.addMouseDownHandler(mouseDownHandler);
 	    canvas.addMouseUpHandler(mouseUpHandler);
 	    canvas.addMouseMoveHandler(mouseMoveHandler);

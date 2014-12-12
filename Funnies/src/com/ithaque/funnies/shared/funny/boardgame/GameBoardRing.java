@@ -6,6 +6,8 @@ import com.ithaque.funnies.shared.basic.MultiLayered;
 import com.ithaque.funnies.shared.basic.processors.DragProcessor;
 import com.ithaque.funnies.shared.basic.processors.ScalingProcessor;
 import com.ithaque.funnies.shared.basic.processors.ScrollProfile;
+import com.ithaque.funnies.shared.funny.ActivableFunny;
+import com.ithaque.funnies.shared.funny.ActivationProcessor;
 import com.ithaque.funnies.shared.funny.Circus;
 import com.ithaque.funnies.shared.funny.CircusDnDProfile;
 import com.ithaque.funnies.shared.funny.DraggableFunny;
@@ -36,6 +38,7 @@ public class GameBoardRing extends Ring {
 	CircusDnDProfile dragCounterProfile;
 	ScrollProfile scrollProfile;
 	ScalingProcessor scalingProcessor;
+	ActivationProcessor activationProcessor;
 	
 	@Override
 	protected Item buildContent(float width, float height) {
@@ -55,21 +58,27 @@ public class GameBoardRing extends Ring {
 		dragProcessor.addDragProfile(scrollProfile);
 		scalingProcessor = new ScalingProcessor(1.1f, 0.25f, 4.0f);
 		scalingProcessor.addScalable(backgroundLayer);
+		activationProcessor= new ActivationProcessor(this);
 		
 		getBoard().addProcessor(dragProcessor);
 		getBoard().addProcessor(scalingProcessor);
+		getBoard().addProcessor(activationProcessor);
 		return baseLayer;
 	}
 
 	@Override
 	protected boolean enterRing(Funny funny) {
+		boolean result = super.enterRing(funny);
 		if (funny instanceof DraggableFunny) {
 			dragCounterProfile.registerDraggableFunny((DraggableFunny)funny);
 		}
 		if (funny instanceof DropTargetFunny) {
 			dragCounterProfile.registerDroppableFunny((DropTargetFunny)funny);
 		}
-		return super.enterRing(funny);
+		if (funny instanceof ActivableFunny) {
+			activationProcessor.registerActivableFunny((ActivableFunny)funny);
+		}
+		return result;
 	}
 
 }

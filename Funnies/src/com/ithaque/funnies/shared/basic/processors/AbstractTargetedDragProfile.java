@@ -7,7 +7,7 @@ import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.MouseEvent;
 import com.ithaque.funnies.shared.basic.items.animations.ItemAnimation;
-import com.ithaque.funnies.shared.basic.items.animations.SimultaneousItemAnimation;
+import com.ithaque.funnies.shared.basic.items.animations.ParallelItemAnimation;
 
 public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 
@@ -55,7 +55,7 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 		showAllowedTargets(dragged);
 	}
 
-	protected boolean resolveDrop(MouseEvent event, Board board, SimultaneousItemAnimation animation) {
+	protected boolean resolveDrop(MouseEvent event, Board board, ParallelItemAnimation animation) {
 		currentTarget = null;
 		Item target = getTarget(dragged, event);
 		if (target!=null) {
@@ -75,7 +75,7 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 		if (itemAnimation==null) {
 			itemAnimation = getExitTargetAnimation(target);
 		}
-		SimultaneousItemAnimation targetAnimation = new SimultaneousItemAnimation();
+		ParallelItemAnimation targetAnimation = new ParallelItemAnimation();
 		if (itemAnimation!=null) {
 			targetAnimation.addAnimation(itemAnimation);
 		}
@@ -84,7 +84,7 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 	}
 
 	void hideAllowedTargets(Item dragged, Item target,
-			SimultaneousItemAnimation targetAnimation) 
+			ParallelItemAnimation targetAnimation) 
 	{
 		for (Item aTarget : targets) {
 			if (acceptTarget(dragged, aTarget)) {

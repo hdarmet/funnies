@@ -11,7 +11,7 @@ import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.MouseEvent;
 import com.ithaque.funnies.shared.basic.items.animations.ItemAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.ItemMoveAnimation;
-import com.ithaque.funnies.shared.basic.items.animations.SimultaneousItemAnimation;
+import com.ithaque.funnies.shared.basic.items.animations.ParallelItemAnimation;
 import com.ithaque.funnies.shared.basic.processors.DragProcessor.DragProfile;
 
 public abstract class AbstractDragProfile implements DragProfile {
@@ -84,7 +84,7 @@ public abstract class AbstractDragProfile implements DragProfile {
 			dragLayer.removeItem(dragged);
 			originalHolder.addItem(dragged);
 		}
-		SimultaneousItemAnimation animation = new SimultaneousItemAnimation();
+		ParallelItemAnimation animation = new ParallelItemAnimation();
 		if (!resolveDrop(event, board, animation)) {
 			adjustDraggedLocationOnDrop(animation, startLocation);
 		}
@@ -96,7 +96,7 @@ public abstract class AbstractDragProfile implements DragProfile {
 	}
 
 	protected void adjustDraggedLocationOnDrop(
-			SimultaneousItemAnimation animation, Location draggedLocation) {
+			ParallelItemAnimation animation, Location draggedLocation) {
 		ItemMoveAnimation revertToOrigin = getAdjustLocationAnimation(dragged);
 		if (revertToOrigin!=null) {
 			revertToOrigin = revertToOrigin.duplicate();
@@ -114,7 +114,7 @@ public abstract class AbstractDragProfile implements DragProfile {
 	
 	protected abstract ItemAnimation getDraggedDropAnimation(Item dragged);
 
-	protected boolean resolveDrop(MouseEvent event, Board board, SimultaneousItemAnimation animation) {
+	protected boolean resolveDrop(MouseEvent event, Board board, ParallelItemAnimation animation) {
 		Location mouseLocation = DragProcessor.followMouse(event, dragged, anchor);
 		dragged.setLocation(mouseLocation);
 		return true;

@@ -2,6 +2,7 @@ package com.ithaque.funnies.client.platform;
 
 import java.util.Date;
 
+import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.Timer;
 import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.Board;
@@ -46,6 +47,11 @@ public class GWTPlatform implements Platform {
 	@Override
 	public boolean isReady() {
 		return graphics.isReady();
+	}
+
+	@Override
+	public float randomize() {
+		return (float)Random.nextDouble();
 	}
 
 }

@@ -81,6 +81,10 @@ public class ImageItem extends Item {
 		return tokens;
 	}
 	
+	public int getImageCount() {
+		return facets.size();
+	}
+	
 	@Override
 	public void render(Graphics graphics) {
 		graphics.drawImage(this);
@@ -98,6 +102,15 @@ public class ImageItem extends Item {
 		return facet!=null ? facet.opacity : 0.0f;
 	}
 	
+	public Integer getIndex(String url) {
+		for (int index=0; index<facets.size(); index++) {
+			if (facets.get(index).url.equals(url)) {
+				return index;
+			}
+		}
+		return null;
+	}
+	
 	public String toString() {
 		StringBuffer label = new StringBuffer("ImageItem[");
 		boolean start = true;
@@ -113,4 +126,5 @@ public class ImageItem extends Item {
 		label.append("]");
 		return label.toString();
 	}
+
 }

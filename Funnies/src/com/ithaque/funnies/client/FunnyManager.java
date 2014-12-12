@@ -4,19 +4,21 @@ import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.items.animations.ImageItemFadingAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.ItemChangeAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.ItemJumpAnimation;
-import com.ithaque.funnies.shared.basic.items.animations.OutBackEasing;
 import com.ithaque.funnies.shared.funny.Circus;
 import com.ithaque.funnies.shared.funny.Funny;
 import com.ithaque.funnies.shared.funny.boardgame.CounterFunny;
+import com.ithaque.funnies.shared.funny.boardgame.DiceFunny;
 import com.ithaque.funnies.shared.funny.boardgame.TileFunny;
 import com.ithaque.funnies.shared.funny.manager.CircusManager;
 import com.ithaque.funnies.shared.funny.notifications.AcceptDropTargetQuestion;
+import com.ithaque.funnies.shared.funny.notifications.ActivateEvent;
 import com.ithaque.funnies.shared.funny.notifications.DropEvent;
 
 public class FunnyManager extends CircusManager {
 
 	Funny lastTarget = null;
 	Circus circus;
+	DiceFunny dice;
 	
 	CircusManager.Handler<DropEvent> dropHandler = 
 		new Handler<DropEvent>(DropEvent.class, this) {
@@ -26,7 +28,16 @@ public class FunnyManager extends CircusManager {
 			lastTarget = dropRequest.getTarget();
 		}
 	};
-	
+
+	CircusManager.Handler<ActivateEvent> activateHandler = 
+		new Handler<ActivateEvent>(ActivateEvent.class, this) {
+		@Override
+		public void process(ActivateEvent activateRequest) {
+			System.out.println("Activate : "+activateRequest.getActivated().getId());
+			dice.rollFor(1);
+		}
+	};
+		
 	CircusManager.Handler<AcceptDropTargetQuestion> acceptDropTargetHandler = 
 		new Handler<AcceptDropTargetQuestion>(AcceptDropTargetQuestion.class, this) {
 		@Override
@@ -62,6 +73,11 @@ public class FunnyManager extends CircusManager {
 		return counter;
 	}
 	
+	DiceFunny createDiceFunny() {
+		DiceFunny dice = new DiceFunny("d6", -300.0f, -100.0f, "d{0}.png", 1, 6);
+		return dice;
+	}
+	
 	public void init() {
 		for (int col=-6; col<=6; col++) {
 			int inc = (col%2)==0?1:0;
@@ -76,6 +92,8 @@ public class FunnyManager extends CircusManager {
 		circus.enterRing(createCounter(1, "u2", 400, -50));
 		circus.enterRing(createCounter(1, "u2", 400, 0));
 		circus.enterRing(createCounter(1, "u2", 400, 50));
+		
+		circus.enterRing(dice=createDiceFunny());
 	}
 
 

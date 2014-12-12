@@ -29,27 +29,30 @@ public class ItemChangeAnimation extends ItemMoveAnimation {
 	
 	@Override
 	protected void launch(Item item) {
+		System.out.println("I: "+item);
 		super.launch(item);
 		this.baseLocation = item.getLocation();
 		this.baseAngle = item.getRotation();
 		this.baseScale = item.getScale();
+		System.out.println("I: "+getItem());
+
 	}
 	
 	@Override
 	public boolean executeAnimation(Easing easing, long time) {
 		if (getLocation() != null) {
-			Location location = item.getLocation();
+			Location location = getItem().getLocation();
 			if (location!=null && getLocation()!=null) {
-				item.setLocation(
+				getItem().setLocation(
 					easing.getValue(baseLocation.getX(), getLocation().getX()),
 					easing.getValue(baseLocation.getY(), getLocation().getY()));
 			}
 		}
 		if (newAngle!=null) {
-			item.setRotation(easing.getValue(baseAngle, newAngle));
+			getItem().setRotation(easing.getValue(baseAngle, newAngle));
 		}
 		if (newScale!=null) {
-			item.setScale(easing.getValue(baseScale, newScale));
+			getItem().setScale(easing.getValue(baseScale, newScale));
 		}
 		return true;
 	}
@@ -57,19 +60,21 @@ public class ItemChangeAnimation extends ItemMoveAnimation {
 	@Override
 	public void finish(long time) {
 		if (getLocation()!=null) {
-			item.setLocation(getLocation());
+			getItem().setLocation(getLocation());
 		}
 		if (this.newAngle!=null) {
-			item.setRotation(newAngle);
+			System.out.println("A : "+this.newAngle+" "+getItem());
+			getItem().setRotation(newAngle);
 		}
 		if (this.newScale!=null) {
-			item.setScale(newScale);
+			getItem().setScale(newScale);
 		}
 		super.finish(time);
 	}
 
 	@Override
 	public ItemMoveAnimation duplicate() {
+		System.out.println("dup");
 		return new ItemChangeAnimation(easing.duplicate(), getLocation(), newAngle, newScale);
 	}
 

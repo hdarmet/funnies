@@ -6,6 +6,7 @@ public class Event {
 		MOUSE_DOWN,
 		MOUSE_UP,
 		MOUSE_CLICK,
+		MOUSE_DOUBLE_CLICK,
 		MOUSE_MOVE,
 		MOUSE_DRAG,
 		MOUSE_WHEEL,

@@ -38,4 +38,8 @@ public class OutBackEasing implements Easing {
 		return new OutBackEasing(duration);
 	}
 	
+	@Override
+	public long getDuration() {
+		return duration;
+	}
 }

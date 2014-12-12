@@ -5,12 +5,13 @@ import java.util.List;
 
 import com.ithaque.funnies.shared.basic.Item;
 
-public class SimultaneousItemAnimation extends ItemAnimation {
+public class ParallelItemAnimation extends ItemAnimation {
 
+	Long duration = null;
 	long endTime = 0;
 	
-	public SimultaneousItemAnimation() {
-		super(null);
+	public ParallelItemAnimation() {
+		super();
 	}
 
 	List<ItemAnimation> animations = new ArrayList<ItemAnimation>();
@@ -20,12 +21,27 @@ public class SimultaneousItemAnimation extends ItemAnimation {
 			registerOnBoard(item);
 			for (ItemAnimation child : animations) {
 				child.launch(item);
-				if (child.getEasing().getEndTime()>endTime) {
-					this.easing = child.getEasing();
-					endTime = child.getEasing().getEndTime();
+			}
+			endTime = item.getBoard().getTime()+getDuration();
+		}
+	}
+	
+	@Override
+	public long getEndTime() {
+		return endTime;
+	}
+
+	@Override
+	public long getDuration() {
+		if (duration==null) {
+			for (ItemAnimation child : animations) {
+				duration = 0L;
+				if (child.getDuration()>duration) {
+					duration = child.getDuration();
 				}
 			}
 		}
+		return duration;
 	}
 	
 	@Override
@@ -41,7 +57,7 @@ public class SimultaneousItemAnimation extends ItemAnimation {
 
 	@Override
 	public ItemAnimation duplicate() {
-		SimultaneousItemAnimation animation = new SimultaneousItemAnimation();
+		ParallelItemAnimation animation = new ParallelItemAnimation();
 		for (ItemAnimation child : animations) {
 			animation.addAnimation(child.duplicate());
 		}

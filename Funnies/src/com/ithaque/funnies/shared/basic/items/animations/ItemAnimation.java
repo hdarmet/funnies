@@ -15,6 +15,9 @@ public abstract class ItemAnimation implements Animation {
 	boolean managed = false;
 
 	static Map<Item, List<ItemAnimation>> programmed = new HashMap<Item, List<ItemAnimation>>();
+
+	public ItemAnimation() {
+	}
 	
 	public ItemAnimation(Easing easing) {
 		this.easing = easing;
@@ -79,7 +82,8 @@ public abstract class ItemAnimation implements Animation {
 	
 	@Override
 	public boolean animate(long time) {
-		if (time+Animation.INTERVAL>=easing.getEndTime()) {
+		if (time+Animation.INTERVAL>=getEndTime()) {
+			System.out.println("T:"+time+" "+getEndTime()+" "+this);
 			return false;
 		}
 		else {
@@ -106,5 +110,13 @@ public abstract class ItemAnimation implements Animation {
 
 	public Item getItem() {
 		return item;
+	}
+
+	public long getDuration() {
+		return getEasing().getDuration();
+	}
+	
+	public long getEndTime() {
+		return getEasing().getEndTime();
 	}
 }

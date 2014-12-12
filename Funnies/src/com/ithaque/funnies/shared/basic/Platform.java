@@ -9,4 +9,6 @@ public interface Platform {
 	Integer start(Board board);
 
 	boolean isReady();
+	
+	float randomize();
 }

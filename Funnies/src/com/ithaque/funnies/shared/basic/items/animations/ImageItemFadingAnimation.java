@@ -79,7 +79,7 @@ public class ImageItemFadingAnimation extends ItemAnimation {
 
 	@Override
 	public ItemAnimation duplicate() {
-		ImageItemFadingAnimation animation =  new ImageItemFadingAnimation(easing);
+		ImageItemFadingAnimation animation =  new ImageItemFadingAnimation(easing.duplicate());
 		for (FacetChange change : facetChanges) {
 			animation.fade(change.index, change.url, change.targetOpacity);
 		}

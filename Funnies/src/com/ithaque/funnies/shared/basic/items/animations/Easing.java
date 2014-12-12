@@ -7,6 +7,8 @@ public interface Easing {
 	void launch(Board board);
 
 	long getEndTime();
+	
+	long getDuration();
 
 	float getValue(float base, float target);
 	
