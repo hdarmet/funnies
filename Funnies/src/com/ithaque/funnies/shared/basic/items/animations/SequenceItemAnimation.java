@@ -3,25 +3,35 @@ package com.ithaque.funnies.shared.basic.items.animations;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.Item;
 
-public class SequenceItemAnimation extends ItemAnimation {
+public class SequenceItemAnimation extends Animation {
 
 	public SequenceItemAnimation() {
-		super(null);
 	}
 
-	List<ItemAnimation> animations = new ArrayList<ItemAnimation>();
-	ItemAnimation currentChild;
+	List<Animation> animations = new ArrayList<Animation>();
+	Animation currentChild;
 	Long duration = null;
 	long endTime;
 	
-	protected void launch(Item item) {
+	public void setItem(Item item) {
+		super.setItem(item);
 		if (!animations.isEmpty()) {
-			registerOnBoard(item);
-			endTime = item.getBoard().getTime()+getDuration();
+			for (Animation child : animations) {
+				child.setItem(item);
+			}
+		}
+	}
+	
+	@Override
+	public void launch() {
+		if (!animations.isEmpty()) {
+			registerOnBoard(getItem());
+			endTime = getItem().getBoard().getTime()+getDuration();
 			currentChild = animations.remove(0);
-			currentChild.launch(item);
+			currentChild.launch();
 		}
 	}
 	
@@ -29,7 +39,7 @@ public class SequenceItemAnimation extends ItemAnimation {
 	public long getDuration() {
 		if (duration==null) {
 			duration = 0L;
-			for (ItemAnimation child : animations) {
+			for (Animation child : animations) {
 				duration += child.getDuration();
 			}
 		}
@@ -37,7 +47,7 @@ public class SequenceItemAnimation extends ItemAnimation {
 	}
 	
 	@Override
-	protected boolean executeAnimation(Easing easing, long time) {
+	protected boolean executeAnimation(long time) {
 		if (currentChild==null) {
 			return false;
 		}
@@ -48,32 +58,18 @@ public class SequenceItemAnimation extends ItemAnimation {
 			}
 			else {
 				currentChild = animations.remove(0);
-				currentChild.launch(item);
+				currentChild.launch();
 			}
 		}
 		return true;
 	}
 
 	@Override
-	public ItemAnimation duplicate() {
-		SequenceItemAnimation animation = new SequenceItemAnimation();
-		for (ItemAnimation child : animations) {
-			animation.addAnimation(child.duplicate());
-		}
-		return animation;
-	}
-
-	public void addAnimation(ItemAnimation animation) {
-		animation.manage();
-		animations.add(animation);
-	}
-	
-	@Override
 	public void finish(long time) {
 		if (currentChild!=null) {
 			currentChild.finish(time);
 		}
-		for (ItemAnimation child : animations) {
+		for (Animation child : animations) {
 			child.finish(time);
 		}		
 		super.finish(time);
@@ -84,4 +80,32 @@ public class SequenceItemAnimation extends ItemAnimation {
 		return endTime;
 	}
 
+	public void addAnimation(Animation animation) {
+		animation.manage();
+		animations.add(animation);
+	}
+	
+	public static class Builder implements Factory {
+
+		List<Animation.Factory> animations = new ArrayList<Animation.Factory>();
+		
+		public Builder() {
+			super();
+		}
+
+		public void addAnimation(Animation.Factory animation) {
+			animations.add(animation);
+		}
+		
+		@Override
+		public SequenceItemAnimation create() {
+			SequenceItemAnimation animation = new SequenceItemAnimation();
+			for (Animation.Factory child : animations) {
+				Animation childAnimation = child.create();
+				animation.addAnimation(childAnimation);
+			}
+			return animation;
+		}	
+
+	}
 }

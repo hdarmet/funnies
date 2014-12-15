@@ -4,7 +4,7 @@ import com.ithaque.funnies.shared.basic.items.ImageItem;
 
 public interface Graphics {
 	
-	Integer loadImage(String url);
+	Token loadImage(String url);
 
 	void drawImage(ImageItem imageItem);
 
@@ -28,8 +28,8 @@ public interface Graphics {
 
 	float getDisplayHeight();
 
-	Integer createLayer();
+	Token createLayer();
 
-	void setLayer(Integer token);
+	void setLayer(Token token);
 	
 }

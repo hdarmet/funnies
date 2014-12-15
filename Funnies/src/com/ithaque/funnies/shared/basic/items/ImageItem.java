@@ -8,6 +8,7 @@ import java.util.Map;
 import com.ithaque.funnies.shared.basic.Graphics;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.Location;
+import com.ithaque.funnies.shared.basic.Token;
 
 public class ImageItem extends Item {
 
@@ -15,13 +16,13 @@ public class ImageItem extends Item {
 		public Facet(String url) {
 			this.url = url;
 		}
-		Integer token = null;
+		Token token = null;
 		String url = null;
 		float opacity = 1.0f;
 	}
 	
 	List<Facet> facets = new ArrayList<ImageItem.Facet>();
-	Map<Integer, Facet> facetsMap = new HashMap<Integer, Facet>();
+	Map<Token, Facet> facetsMap = new HashMap<Token, Facet>();
 	Map<String, Facet> urlsMap = new HashMap<String, Facet>();
 	
 	public ImageItem(String ... urls) {
@@ -48,6 +49,7 @@ public class ImageItem extends Item {
 	public void setOpacity(int facetIndex, float opacity) {
 		Facet facet = facets.get(facetIndex);
 		facet.opacity = opacity;
+		dirty();
 	}
 	
 	public void setUrls(String ... urls) {
@@ -68,8 +70,8 @@ public class ImageItem extends Item {
 		return urls;
 	}
 
-	public Integer[] getTokens() {
-		Integer[] tokens = new Integer[facets.size()];
+	public Token[] getTokens() {
+		Token[] tokens = new Token[facets.size()];
 		int i = 0;
 		for (Facet facet : facets) {
 			if (facet.token==null) {
@@ -97,7 +99,7 @@ public class ImageItem extends Item {
 		return shape!=null ? shape : getBoard().getGraphics().getShape(this);
 	}
 
-	public float getOpacity(Integer token) {
+	public float getOpacity(Token token) {
 		Facet facet = facetsMap.get(token);
 		return facet!=null ? facet.opacity : 0.0f;
 	}

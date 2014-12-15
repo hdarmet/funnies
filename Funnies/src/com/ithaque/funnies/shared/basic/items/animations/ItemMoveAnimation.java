@@ -1,5 +1,6 @@
 package com.ithaque.funnies.shared.basic.items.animations;
 
+import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.Location;
 
 public abstract class ItemMoveAnimation extends ItemAnimation {
@@ -14,10 +15,6 @@ public abstract class ItemMoveAnimation extends ItemAnimation {
 		super(easing);
 		this.location = location;
 	}
-	
-	public ItemMoveAnimation(long duration) {
-		super(duration);
-	}
 
 	public Location getLocation() {
 		return location;
@@ -27,6 +24,10 @@ public abstract class ItemMoveAnimation extends ItemAnimation {
 		this.location = location;
 	}
 
-	@Override
-	public abstract ItemMoveAnimation duplicate();
+	public interface Builder extends Animation.Factory {
+		@Override
+		ItemMoveAnimation create();
+		
+		void setLocation(Location location);
+	}
 }

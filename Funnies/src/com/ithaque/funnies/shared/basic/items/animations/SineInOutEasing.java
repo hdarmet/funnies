@@ -32,12 +32,21 @@ public class SineInOutEasing implements Easing {
 	}
 
 	@Override
-	public Easing duplicate() {
-		return new SineInOutEasing(duration);
-	}
-
-	@Override
 	public long getDuration() {
 		return duration;
+	}
+	
+	public static class Builder implements Factory {
+
+		long duration;
+
+		public Builder(long duration) {
+			this.duration = duration;
+		}
+		
+		@Override
+		public Easing create() {
+			return new SineInOutEasing(duration);
+		}
 	}
 }

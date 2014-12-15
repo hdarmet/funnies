@@ -3,7 +3,7 @@ package com.ithaque.funnies.client;
 import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.items.animations.ImageItemFadingAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.ItemChangeAnimation;
-import com.ithaque.funnies.shared.basic.items.animations.ItemJumpAnimation;
+import com.ithaque.funnies.shared.basic.items.animations.OutBackEasing;
 import com.ithaque.funnies.shared.funny.Circus;
 import com.ithaque.funnies.shared.funny.Funny;
 import com.ithaque.funnies.shared.funny.boardgame.CounterFunny;
@@ -56,20 +56,19 @@ public class FunnyManager extends CircusManager {
 		float dx = 13.0f;
 		float dy = (float)(13.0f*Math.sqrt(3.0));
 		TileFunny.HHexFunny tile = new TileFunny.HHexFunny("t"+id, "hexagon.png", "hhexagon.png", "rhexagon.png", 26.0f, x*dx, y*dy);
-		tile.setEnterTargetAnimation(new ImageItemFadingAnimation(100).fade("rhexagon.png", 1.0f));
-		tile.setExitTargetAnimation(new ImageItemFadingAnimation(100).fade("rhexagon.png", 0.0f));
-		tile.setShowAllowedTargetAnimation(new ImageItemFadingAnimation(0).fade("hhexagon.png", 0.2f));
-		tile.setHideAllowedTargetAnimation(new ImageItemFadingAnimation(0).fade("hhexagon.png", 0.0f));
+		tile.setEnterTargetAnimation(new ImageItemFadingAnimation.Builder(100).fade("rhexagon.png", 1.0f));
+		tile.setExitTargetAnimation(new ImageItemFadingAnimation.Builder(100).fade("rhexagon.png", 0.0f));
+		tile.setShowAllowedTargetAnimation(new ImageItemFadingAnimation.Builder(0).fade("hhexagon.png", 0.2f));
+		tile.setHideAllowedTargetAnimation(new ImageItemFadingAnimation.Builder(0).fade("hhexagon.png", 0.0f));
 		return tile;
 	}
 	
 	CounterFunny createCounter(int id, String url, float x, float y) {
 		CounterFunny counter = new CounterFunny("c"+id, url+".png");
 		counter.setLocation(new Location(x, y));
-		counter.setBeginDragAnimation(new ItemChangeAnimation(500, null, null, 1.1f));
-//		counter.setAdjustLocationAnimation(new ItemChangeAnimation(new OutBackEasing(1000), null, null, null));
-		counter.setAdjustLocationAnimation(new ItemJumpAnimation(1000, 1.0f));
-		counter.setDraggedDropAnimation(new ItemChangeAnimation(500, null, null, 1.0f));
+		counter.setBeginDragAnimation(new ItemChangeAnimation.Builder(500, null, 1.1f));
+		counter.setAdjustLocationAnimation(new ItemChangeAnimation.Builder(new OutBackEasing.Builder(1000), null, null));
+		counter.setDraggedDropAnimation(new ItemChangeAnimation.Builder(500, null, 1.0f));
 		return counter;
 	}
 	

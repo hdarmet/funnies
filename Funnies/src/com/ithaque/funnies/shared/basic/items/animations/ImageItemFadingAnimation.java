@@ -3,40 +3,74 @@ package com.ithaque.funnies.shared.basic.items.animations;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ithaque.funnies.shared.basic.Item;
+import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
 
 public class ImageItemFadingAnimation extends ItemAnimation {
 
-	class FacetChange {
-		public FacetChange(Integer index, String url, float opacity) {
-			this.url = url;
+	static class FacetChange {
+		public FacetChange(Integer index, String url, Float targetOpacity) {
 			this.index = index;
-			this.targetOpacity = opacity;
+			this.url = url;
+			this.targetOpacity = targetOpacity;
 		}
 
-		String url = null;
-		Integer index = null;
 		float baseOpacity;
-		float targetOpacity;
+		Integer index;
+		String url;
+		Float targetOpacity;
+		
+		public Integer getIndex(ImageItem item) {
+			if (index==null) {
+				index = item.getIndex(url);
+			}
+			return index;
+		}
 	}
-	
+
 	List<FacetChange> facetChanges = new ArrayList<FacetChange>();
 
 	public ImageItemFadingAnimation(Easing easing) {
 		super(easing);
 	}
-
-	public ImageItemFadingAnimation(long duration) {
-		this(new SineInOutEasing(duration));
-	}
-
 	
-	ImageItemFadingAnimation fade(Integer index, String url, float opacity) {
-		facetChanges.add(new FacetChange(index, url, opacity));
-		return this;
+	@Override
+	public void launch() {
+		super.launch();
+		for (FacetChange change : facetChanges) {
+			change.baseOpacity = getOpacity(change);
+		}
 	}
 	
+	@Override
+	public ImageItem getItem() {
+		return (ImageItem)super.getItem();
+	}
+
+	@Override
+	protected boolean executeAnimation(long time) {
+		for (FacetChange change : facetChanges) {
+			setOpacity(change, getEasing().getValue(change.baseOpacity, change.targetOpacity));
+		}
+		return true;
+	}
+
+	@Override
+	public void finish(long time) {
+		for (FacetChange change : facetChanges) {
+			setOpacity(change, change.targetOpacity);
+		}
+		super.finish(time);
+	}
+
+	float getOpacity(FacetChange facet) {
+		return getItem().getOpacity(facet.getIndex(getItem()));
+	}
+	
+	void setOpacity(FacetChange facet, float opacity) {
+		getItem().setOpacity(facet.getIndex(getItem()), opacity);
+	}
+
 	public ImageItemFadingAnimation fade(String url, float opacity) {
 		facetChanges.add(new FacetChange(null, url, opacity));
 		return this;
@@ -47,60 +81,60 @@ public class ImageItemFadingAnimation extends ItemAnimation {
 		return this;
 	}
 	
-	@Override
-	protected void launch(Item item) {
-		super.launch(item);
-		for (FacetChange change : facetChanges) {
-			change.baseOpacity = getOpacity(change);
-		}
-	}
-	
-	private ImageItem getImageItem() {
-		return (ImageItem)item;
+	public void addFacetChange(FacetChange facetChange) {
+		facetChanges.add(facetChange);
 	}
 
-	@Override
-	protected boolean executeAnimation(Easing easing, long time) {
-		for (FacetChange change : facetChanges) {
-			change.baseOpacity = getOpacity(change);
-			setOpacity(change, easing.getValue(change.baseOpacity, change.targetOpacity));
+	public static class Builder implements Factory {
+		
+		List<FacetChangeBuilder> facetChanges = new ArrayList<FacetChangeBuilder>();
+		Easing.Factory easing;
+
+		public Builder(Easing.Factory easing) {
+			super();
+			this.easing = easing;
 		}
-		return true;
+
+		public Builder(long duration) {
+			this(new SineInOutEasing.Builder(duration));
+		}
+		
+		public ImageItemFadingAnimation.Builder fade(String url, float opacity) {
+			facetChanges.add(new FacetChangeBuilder(null, url, opacity));
+			return this;
+		}
+		
+		public ImageItemFadingAnimation.Builder fade(Integer index, float opacity) {
+			facetChanges.add(new FacetChangeBuilder(index, null, opacity));
+			return this;
+		}
+		
+		@Override
+		public Animation create() {
+			ImageItemFadingAnimation animation = new ImageItemFadingAnimation(easing.create());
+			for (FacetChangeBuilder fcBuilder : facetChanges) {
+				animation.addFacetChange(fcBuilder.create());
+			}
+			return animation;
+		}	
+
 	}
 
-	@Override
-	public void finish(long time) {
-		for (FacetChange change : facetChanges) {
-			change.baseOpacity = getOpacity(change);
-			setOpacity(change, change.targetOpacity);
+	static class FacetChangeBuilder {
+		
+		public FacetChangeBuilder(Integer index, String url, float opacity) {
+			this.url = url;
+			this.index = index;
+			this.targetOpacity = opacity;
 		}
-		super.finish(time);
+
+		FacetChange create() {
+			return new FacetChange(index, url, targetOpacity);
+		}
+		
+		String url = null;
+		Integer index = null;
+		float targetOpacity;		
 	}
 
-	@Override
-	public ItemAnimation duplicate() {
-		ImageItemFadingAnimation animation =  new ImageItemFadingAnimation(easing.duplicate());
-		for (FacetChange change : facetChanges) {
-			animation.fade(change.index, change.url, change.targetOpacity);
-		}
-		return animation;
-	}
-
-	float getOpacity(FacetChange facet) {
-		if (facet.index!=null) {
-			return getImageItem().getOpacity(facet.index);
-		}
-		else {
-			return getImageItem().getOpacity(facet.url);
-		}
-	}
-	
-	void setOpacity(FacetChange facet, float opacity) {
-		if (facet.index!=null) {
-			getImageItem().setOpacity(facet.index, opacity);
-		}
-		else {
-			getImageItem().setOpacity(facet.url, opacity);
-		}
-	}
 }

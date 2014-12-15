@@ -32,12 +32,20 @@ public class LinearEasing implements Easing {
 	}
 
 	@Override
-	public Easing duplicate() {
-		return new LinearEasing(duration);
-	}
-
-	@Override
 	public long getDuration() {
 		return duration;
+	}
+	
+	public static class Builder implements Factory {
+		long duration;
+
+		public Builder(long duration) {
+			this.duration = duration;
+		}
+		
+		@Override
+		public Easing create() {
+			return new LinearEasing(duration);
+		}
 	}
 }

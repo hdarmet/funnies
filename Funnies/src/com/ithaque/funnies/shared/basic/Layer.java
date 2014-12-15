@@ -8,7 +8,7 @@ public class Layer extends GroupItem {
 	String id;
 	boolean adjusted = false;
 	boolean dirty = true;
-	Integer token = null;
+	Token token = null;
 	
 	public Layer(String id, float minX, float minY, float maxX, float maxY) {
 		super.setShape(new Location(minX, minY), new Location(maxX, minY), new Location(maxX, maxY), new Location(minX, maxY));

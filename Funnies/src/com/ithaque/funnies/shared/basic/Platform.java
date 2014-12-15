@@ -6,7 +6,7 @@ public interface Platform {
 
 	long getTime();
 
-	Integer start(Board board);
+	Token start(Board board);
 
 	boolean isReady();
 	

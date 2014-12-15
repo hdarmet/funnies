@@ -12,6 +12,9 @@ public interface Easing {
 
 	float getValue(float base, float target);
 	
-	Easing duplicate();
+//	Easing duplicate();
 
+	public interface Factory {
+		Easing create();
+	}
 }

@@ -19,7 +19,7 @@ public class Board implements ItemHolder {
 	Platform platform;
 	Map<Event.Type, Set<Item>> events = new HashMap<Event.Type, Set<Item>>();
 	boolean dirty = false;
-	Integer token;
+	Token token;
 	
 	public Board(Platform platform) {
 		this.platform = platform;

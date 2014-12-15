@@ -1,9 +1,9 @@
 package com.ithaque.funnies.shared.funny.boardgame;
 
+import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
-import com.ithaque.funnies.shared.basic.items.animations.ItemAnimation;
 import com.ithaque.funnies.shared.funny.DropTargetFunny;
 import com.ithaque.funnies.shared.funny.IncompatibleRingException;
 import com.ithaque.funnies.shared.funny.Ring;
@@ -16,11 +16,11 @@ public class TileFunny implements DropTargetFunny {
 	Item hilightItem;
 	Item activableItem;
 	
-	ItemAnimation targetDropAnimation;
-	ItemAnimation enterTargetAnimation;
-	ItemAnimation showAllowedTargetAnimation;
-	ItemAnimation hideAllowedTargetAnimation;
-	ItemAnimation exitTargetAnimation;
+	Animation.Factory targetDropAnimation;
+	Animation.Factory enterTargetAnimation;
+	Animation.Factory showAllowedTargetAnimation;
+	Animation.Factory hideAllowedTargetAnimation;
+	Animation.Factory exitTargetAnimation;
 	
 	public TileFunny(String id, Item tileItem, Item hilightItem, Item activableItem) {
 		this.id = id;
@@ -92,49 +92,49 @@ public class TileFunny implements DropTargetFunny {
 	}
 
 	@Override
-	public ItemAnimation getTargetDropAnimation() {
+	public Animation.Factory getTargetDropAnimation() {
 		return targetDropAnimation;
 	}
 
 	@Override
-	public ItemAnimation getEnterTargetAnimation() {
+	public Animation.Factory getEnterTargetAnimation() {
 		return enterTargetAnimation;
 	}
 
 	@Override
-	public ItemAnimation getExitTargetAnimation() {
+	public Animation.Factory getExitTargetAnimation() {
 		return exitTargetAnimation;
 	}
 
-	public void setTargetDropAnimation(ItemAnimation targetDropAnimation) {
+	public void setTargetDropAnimation(Animation.Factory targetDropAnimation) {
 		this.targetDropAnimation = targetDropAnimation;
 	}
 
-	public void setEnterTargetAnimation(ItemAnimation enterTargetAnimation) {
+	public void setEnterTargetAnimation(Animation.Factory enterTargetAnimation) {
 		this.enterTargetAnimation = enterTargetAnimation;
 	}
 
-	public void setExitTargetAnimation(ItemAnimation exitTargetAnimation) {
+	public void setExitTargetAnimation(Animation.Factory exitTargetAnimation) {
 		this.exitTargetAnimation = exitTargetAnimation;
 	}
 
 	@Override
-	public ItemAnimation getShowAllowedTargetAnimation() {
+	public Animation.Factory getShowAllowedTargetAnimation() {
 		return showAllowedTargetAnimation;
 	}
 
 	@Override
-	public ItemAnimation getHideAllowedTargetAnimation() {
+	public Animation.Factory getHideAllowedTargetAnimation() {
 		return hideAllowedTargetAnimation;
 	}
 	
 	public void setShowAllowedTargetAnimation(
-			ItemAnimation showAllowedTargetAnimation) {
+			Animation.Factory showAllowedTargetAnimation) {
 		this.showAllowedTargetAnimation = showAllowedTargetAnimation;
 	}
 
 	public void setHideAllowedTargetAnimation(
-			ItemAnimation hideAllowedTargetAnimation) {
+			Animation.Factory hideAllowedTargetAnimation) {
 		this.hideAllowedTargetAnimation = hideAllowedTargetAnimation;
 	}
 

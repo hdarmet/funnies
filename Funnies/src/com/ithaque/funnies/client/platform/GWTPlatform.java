@@ -9,6 +9,7 @@ import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Event;
 import com.ithaque.funnies.shared.basic.Graphics;
 import com.ithaque.funnies.shared.basic.Platform;
+import com.ithaque.funnies.shared.basic.Token;
 
 public class GWTPlatform implements Platform {
 
@@ -26,8 +27,8 @@ public class GWTPlatform implements Platform {
 	}
 	
 	@Override
-	public Integer start(Board board) {
-		Integer token = graphics.start();
+	public Token start(Board board) {
+		Token token = graphics.start();
 		this.board = board;
 	    Timer timer = new Timer() {
 	        @Override

@@ -1,51 +1,41 @@
 package com.ithaque.funnies.shared.basic.items.animations;
 
-import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.Location;
 
 public class ItemChangeAnimation extends ItemMoveAnimation {
 
+	Location baseLocation;
 	Float newAngle;
 	Float newScale;
-	
-	Location baseLocation;
 	float baseAngle;
 	float baseScale;
 	
-	public ItemChangeAnimation(Easing easing, Location newLocation, Float newAngle, Float newScale) {
+	public ItemChangeAnimation(Easing easing, Float newAngle, Float newScale) {
 		super(easing);
-		setLocation(newLocation);
 		this.newAngle = newAngle;
 		this.newScale = newScale;
 	}
-
-	public ItemChangeAnimation(long duration, float x, float y, Float newAngle, Float newScale) {
-		this(new SineInOutEasing(duration), new Location(x, y), newAngle, newScale);
-	}
 	
-	public ItemChangeAnimation(long duration, Location newLocation, Float newAngle, Float newScale) {
-		this(new SineInOutEasing(duration), newLocation, newAngle, newScale);
+	public ItemChangeAnimation(long duration, Float newAngle, Float newScale) {
+		this(new SineInOutEasing(duration), newAngle, newScale);
 	}
 	
 	@Override
-	protected void launch(Item item) {
-		System.out.println("I: "+item);
-		super.launch(item);
-		this.baseLocation = item.getLocation();
-		this.baseAngle = item.getRotation();
-		this.baseScale = item.getScale();
-		System.out.println("I: "+getItem());
-
+	public void launch() {
+		super.launch();
+		this.baseLocation = getItem().getLocation();
+		this.baseAngle = getItem().getRotation();
+		this.baseScale = getItem().getScale();
 	}
 	
 	@Override
-	public boolean executeAnimation(Easing easing, long time) {
+	public boolean executeAnimation(long time) {
 		if (getLocation() != null) {
 			Location location = getItem().getLocation();
 			if (location!=null && getLocation()!=null) {
 				getItem().setLocation(
-					easing.getValue(baseLocation.getX(), getLocation().getX()),
-					easing.getValue(baseLocation.getY(), getLocation().getY()));
+					getEasing().getValue(baseLocation.getX(), getLocation().getX()),
+					getEasing().getValue(baseLocation.getY(), getLocation().getY()));
 			}
 		}
 		if (newAngle!=null) {
@@ -63,7 +53,6 @@ public class ItemChangeAnimation extends ItemMoveAnimation {
 			getItem().setLocation(getLocation());
 		}
 		if (this.newAngle!=null) {
-			System.out.println("A : "+this.newAngle+" "+getItem());
 			getItem().setRotation(newAngle);
 		}
 		if (this.newScale!=null) {
@@ -72,10 +61,35 @@ public class ItemChangeAnimation extends ItemMoveAnimation {
 		super.finish(time);
 	}
 
-	@Override
-	public ItemMoveAnimation duplicate() {
-		System.out.println("dup");
-		return new ItemChangeAnimation(easing.duplicate(), getLocation(), newAngle, newScale);
-	}
+	public static class Builder implements ItemMoveAnimation.Builder {
+		Easing.Factory easing;
+		Float newAngle;
+		Float newScale;
+		Location location;
+		
+		public Builder(Easing.Factory easing, Float newAngle, Float newScale) {
+			super();
+			this.easing = easing;
+			this.newAngle = newAngle;
+			this.newScale = newScale;
+		}
 
+		public Builder(long duration, Float newAngle, Float newScale) {
+			this(new SineInOutEasing.Builder(duration), newAngle, newScale);
+		}
+		
+		@Override
+		public ItemChangeAnimation create() {
+			ItemChangeAnimation animation = new ItemChangeAnimation(easing.create(), newAngle, newScale);
+			animation.setLocation(location);
+			return animation;
+		}
+
+		@Override
+		public void setLocation(Location location) {
+			this.location = location;
+		}	
+
+	}
+	
 }

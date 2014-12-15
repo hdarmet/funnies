@@ -26,6 +26,7 @@ import com.google.gwt.event.dom.client.MouseWheelHandler;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.ithaque.funnies.shared.Geometric;
+import com.ithaque.funnies.shared.Trace;
 import com.ithaque.funnies.shared.Transform;
 import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Event.Type;
@@ -36,6 +37,7 @@ import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.MouseEvent;
 import com.ithaque.funnies.shared.basic.MouseEvent.Button;
 import com.ithaque.funnies.shared.basic.Moveable;
+import com.ithaque.funnies.shared.basic.Token;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
 
 public class GWTGraphics implements Graphics {
@@ -44,8 +46,8 @@ public class GWTGraphics implements Graphics {
 	int tokenCount = 0;
 	Canvas mouseCanvas;
 	Context2d context2d;
-	Map<String, Integer> imageTokens = new HashMap<String, Integer>();
-	Map<Integer, ImageElementRecord> imageElements = new HashMap<Integer, ImageElementRecord>();
+	Map<String, Token> imageTokens = new HashMap<String, Token>();
+	Map<Token, ImageElementRecord> imageElements = new HashMap<Token, ImageElementRecord>();
 	boolean drag = false;
 	boolean debug = false;
 	
@@ -189,7 +191,7 @@ public class GWTGraphics implements Graphics {
 	
 	void drawRequest(DrawImageRequest request) {
 		boolean ready = true;
-		for (Integer token : request.getImageItem().getTokens()) {
+		for (Token token : request.getImageItem().getTokens()) {
 			ImageElementRecord record = imageElements.get(token);
 			if (record.ready && record.requests!=null) {
 				record.requests.remove(request);
@@ -200,7 +202,7 @@ public class GWTGraphics implements Graphics {
 			ready &= record.ready;
 		}
 		if (ready) {
-			for (Integer token : request.getImageItem().getTokens()) {
+			for (Token token : request.getImageItem().getTokens()) {
 				ImageElementRecord record = imageElements.get(token);
 				request.draw(context2d, record.image, request.getImageItem().getOpacity(token));
 				if (debug) {
@@ -209,7 +211,7 @@ public class GWTGraphics implements Graphics {
 			}
 		}
 		else {
-			for (Integer token : request.getImageItem().getTokens()) {
+			for (Token token : request.getImageItem().getTokens()) {
 				ImageElementRecord record = imageElements.get(token);
 				if (!record.ready && (record.requests==null || !record.requests.contains(request))) {
 					record.addRequest(request);
@@ -219,14 +221,14 @@ public class GWTGraphics implements Graphics {
 	}
 	
 	@Override
-	public Integer loadImage(final String url) {
-		Integer token = imageTokens.get(url);
+	public Token loadImage(final String url) {
+		Token token = imageTokens.get(url);
 		if (token!=null) {
 			ImageElementRecord record = imageElements.get(token);
 			record.count++;
-			return token;
+			return token; 
 		}
-		token = tokenCount++;
+		token = new Token(tokenCount++);
 		final ImageElementRecord record = new ImageElementRecord(url);
 		imageElements.put(token, record);
 		imageTokens.put(url, token);
@@ -235,7 +237,9 @@ public class GWTGraphics implements Graphics {
 	    img.addLoadHandler(new LoadHandler() {
 	        @Override
 	        public void onLoad(LoadEvent event) {
-	        	System.out.println("loaded : "+url);
+	        	if (Trace.debug) {
+	        		Trace.debug("loaded : "+url);
+	        	}
 	        	RootPanel.get("images").remove(img);
 	        	record.ready = true;
 	        	for (DrawImageRequest request : new ArrayList<DrawImageRequest>(record.requests)) {
@@ -333,7 +337,7 @@ public class GWTGraphics implements Graphics {
 	public Location[] getShape(ImageItem imageItem) {
 		float width = 0.0f;
 		float height = 0.0f;
-		for (Integer token : imageItem.getTokens()) {
+		for (Token token : imageItem.getTokens()) {
 			ImageElementRecord imageRecord = imageElements.get(token);
 			if (!imageRecord.ready) {
 				return null;
@@ -385,9 +389,9 @@ public class GWTGraphics implements Graphics {
 		context2d.clearRect(0, 0, getDisplayWidth(), getDisplayHeight());
 	}
 
-	public Integer start() {
+	public Token start() {
 	    mouseCanvas = createMouseCanvas();
-	    Integer token = createLayer();
+	    Token token = createLayer();
 	    return token;
 	}	
 	
@@ -405,19 +409,19 @@ public class GWTGraphics implements Graphics {
 		return currentLayer != null;
 	}
 
-	Map<Integer, GWTLayer> layers = new HashMap<Integer, GWTLayer>();
+	Map<Token, GWTLayer> layers = new HashMap<Token, GWTLayer>();
 	int layerTokenGenerator = 0;
 	
 	@Override
-	public Integer createLayer() {
-		int token = layerTokenGenerator++;
+	public Token createLayer() {
+		Token token = new Token(layerTokenGenerator++);
 		GWTLayer layer = new GWTLayer(this);
 		layers.put(token, layer);
 		return token;
 	}
 
 	@Override
-	public void setLayer(Integer token) {
+	public void setLayer(Token token) {
 		currentLayer = layers.get(token);
 	}
 

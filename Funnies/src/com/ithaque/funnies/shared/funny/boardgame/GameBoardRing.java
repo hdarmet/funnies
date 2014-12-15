@@ -53,6 +53,7 @@ public class GameBoardRing extends Ring {
 
 		dragProcessor = new DragProcessor();
 		dragCounterProfile = new CircusDnDProfile(this);
+		dragCounterProfile.setDragLayer(dragLayer);
 		dragProcessor.addDragProfile(dragCounterProfile);
 		scrollProfile = new ScrollProfile(backgroundLayer); 
 		dragProcessor.addDragProfile(scrollProfile);

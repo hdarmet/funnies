@@ -3,8 +3,8 @@ package com.ithaque.funnies.shared.funny;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.Item;
-import com.ithaque.funnies.shared.basic.items.animations.ItemAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.ItemMoveAnimation;
 import com.ithaque.funnies.shared.basic.processors.AbstractTargetedDragProfile;
 import com.ithaque.funnies.shared.funny.notifications.AcceptDropTargetQuestion;
@@ -49,49 +49,49 @@ public class CircusDnDProfile extends AbstractTargetedDragProfile {
 	}
 	
 	@Override
-	protected ItemAnimation getTargetDropAnimation(Item target) {
+	protected Animation.Factory getTargetDropAnimation(Item target) {
 		DropTargetFunny funny = getDropTargetFunny(target);
 		return funny.getTargetDropAnimation();
 	}
 
 	@Override
-	protected ItemAnimation getEnterTargetAnimation(Item target) {
+	protected Animation.Factory getEnterTargetAnimation(Item target) {
 		DropTargetFunny funny = getDropTargetFunny(target);
 		return funny.getEnterTargetAnimation();
 	}
 
 	@Override
-	protected ItemAnimation getExitTargetAnimation(Item target) {
+	protected Animation.Factory getExitTargetAnimation(Item target) {
 		DropTargetFunny funny = getDropTargetFunny(target);
 		return funny.getExitTargetAnimation();
 	}
 
 	@Override
-	protected ItemAnimation getShowAllowedTargetAnimation(Item target) {
+	protected Animation.Factory getShowAllowedTargetAnimation(Item target) {
 		DropTargetFunny targetFunny = getDropTargetFunny(target);
 		return targetFunny.getShowAllowedTargetAnimation();
 	}
 	
 	@Override
-	protected ItemAnimation getHideAllowedTargetAnimation(Item target) {
+	protected Animation.Factory getHideAllowedTargetAnimation(Item target) {
 		DropTargetFunny targetFunny = getDropTargetFunny(target);
 		return targetFunny.getHideAllowedTargetAnimation();
 	}
 	
 	@Override
-	protected ItemAnimation getBeginDragAnimation(Item dragged) {
+	protected Animation.Factory getBeginDragAnimation(Item dragged) {
 		DraggableFunny funny = getDraggableFunny(dragged);
 		return funny.getBeginDragAnimation();
 	}
 
 	@Override
-	protected ItemMoveAnimation getAdjustLocationAnimation(Item dragged) {
+	protected ItemMoveAnimation.Builder getAdjustLocationAnimation(Item dragged) {
 		DraggableFunny funny = getDraggableFunny(dragged);
 		return funny.getAdjustLocationAnimation();
 	}
 
 	@Override
-	protected ItemAnimation getDraggedDropAnimation(Item dragged) {
+	protected Animation.Factory getDraggedDropAnimation(Item dragged) {
 		DraggableFunny funny = getDraggableFunny(dragged);
 		return funny.getDraggedDropAnimation();
 	}

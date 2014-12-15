@@ -32,14 +32,22 @@ public class OutBackEasing implements Easing {
 		time = time/duration -1.0f;
 		return increment*(time*time*((factor+1)*time + factor) + 1.0f) + base;
 	}
-
-	@Override
-	public Easing duplicate() {
-		return new OutBackEasing(duration);
-	}
 	
 	@Override
 	public long getDuration() {
 		return duration;
+	}
+	
+	public static class Builder implements Factory {
+		long duration;
+
+		public Builder(long duration) {
+			this.duration = duration;
+		}
+		
+		@Override
+		public Easing create() {
+			return new OutBackEasing(duration);
+		}
 	}
 }

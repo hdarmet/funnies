@@ -1,31 +1,34 @@
 package com.ithaque.funnies.shared.basic.items.animations;
 
-import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
 
 public class ChangeFaceAnimation extends ItemAnimation {
 
-	String url = null;
-	Integer targetIndex = null;
 	Integer baseIndex = null;
+	Integer targetIndex = null;
+	String url = null;
 
-	public ChangeFaceAnimation(Easing easing, String url, Integer index) {
+	public ChangeFaceAnimation(Easing easing, Integer targetIndex, String url) {
 		super(easing);
+		this.targetIndex = targetIndex;
 		this.url = url;
-		this.targetIndex = index;
 	}
-
-	public ChangeFaceAnimation(long duration, String url, Integer index) {
-		this(new SineInOutEasing(duration), url, index);
+	
+	public ChangeFaceAnimation(long duration, String url) {
+		this(new SineInOutEasing(duration), null, url);
+	}
+	
+	public ChangeFaceAnimation(long duration, Integer index) {
+		this(new SineInOutEasing(duration), index, null);
 	}
 	
 	@Override
-	protected void launch(Item item) {
-		super.launch(item);
-		if (url!=null) {
-			targetIndex = ((ImageItem)item).getIndex(url);
+	public void launch() {
+		super.launch();
+		baseIndex = getCurrentIndex(getItem());
+		if (targetIndex==null) {
+			targetIndex = getItem().getIndex(url);
 		}
-		baseIndex = getCurrentIndex((ImageItem)item);
 		if (targetIndex<baseIndex) {
 			getItem().setOpacity(targetIndex, 1.0f);
 		}
@@ -40,17 +43,13 @@ public class ChangeFaceAnimation extends ItemAnimation {
 		return null;
 	}
 
-	private ImageItem getImageItem() {
-		return (ImageItem)item;
-	}
-
 	@Override
-	protected boolean executeAnimation(Easing easing, long time) {
+	protected boolean executeAnimation(long time) {
 		if (targetIndex<baseIndex) {
-			setOpacity(baseIndex, easing.getValue(1.0f, 0.0f));
+			setOpacity(baseIndex, getEasing().getValue(1.0f, 0.0f));
 		}
 		else if (targetIndex>baseIndex) {
-			setOpacity(targetIndex, 1.0f-easing.getValue(1.0f, 0.0f));
+			setOpacity(targetIndex, 1.0f-getEasing().getValue(1.0f, 0.0f));
 		}
 		return true;
 	}
@@ -71,13 +70,39 @@ public class ChangeFaceAnimation extends ItemAnimation {
 		super.finish(time);
 	}
 
-	@Override
-	public ItemAnimation duplicate() {
-		return new ChangeFaceAnimation(easing.duplicate(), this.url, this.targetIndex);
-	}
-	
 	void setOpacity(int imageIndex, float opacity) {
-		getImageItem().setOpacity(imageIndex, opacity);
+		getItem().setOpacity(imageIndex, opacity);
 	}
 	
+	public static class Builder implements Factory {
+		Easing.Factory easing;
+		String url = null;
+		Integer targetIndex = null;
+		
+		public Builder(Easing.Factory easing, String url) {
+			super();
+			this.easing = easing;
+			this.url = url;
+		}
+
+		public Builder(Easing.Factory easing, Integer targetIndex) {
+			super();
+			this.easing = easing;
+			this.targetIndex = targetIndex;
+		}
+
+		public Builder(long duration, String url) {
+			this(new SineInOutEasing.Builder(duration), url);
+		}
+		
+		public Builder(long duration, Integer index) {
+			this(new SineInOutEasing.Builder(duration), index);
+		}
+		
+		@Override
+		public ChangeFaceAnimation create() {
+			return new ChangeFaceAnimation(easing.create(), targetIndex, url);
+		}	
+
+	}
 }

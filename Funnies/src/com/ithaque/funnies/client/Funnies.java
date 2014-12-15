@@ -27,6 +27,7 @@ import com.ithaque.funnies.shared.basic.Processor;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
 import com.ithaque.funnies.shared.basic.items.animations.ImageItemFadingAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.ItemChangeAnimation;
+import com.ithaque.funnies.shared.basic.items.animations.ItemMoveAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.OutBackEasing;
 import com.ithaque.funnies.shared.basic.processors.DragProcessor;
 import com.ithaque.funnies.shared.basic.processors.GestureEvent;
@@ -36,9 +37,7 @@ import com.ithaque.funnies.shared.basic.processors.GestureRecognition.MatchHandl
 import com.ithaque.funnies.shared.basic.processors.ScalingProcessor;
 import com.ithaque.funnies.shared.basic.processors.ScrollProfile;
 import com.ithaque.funnies.shared.basic.processors.SimpleTargetedDragProfile;
-import com.ithaque.funnies.shared.funny.boardgame.CounterFunny;
 import com.ithaque.funnies.shared.funny.boardgame.GameBoardCircus;
-import com.ithaque.funnies.shared.funny.boardgame.TileFunny;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -67,7 +66,7 @@ public class Funnies implements EntryPoint {
 	
 	Board board;
 	
-	public void onpModuleLoad() {
+	public void onjModuleLoad() {
 		board = new Board(new GWTPlatform());
 		board.start();
 		
@@ -92,7 +91,7 @@ public class Funnies implements EntryPoint {
 		board.addProcessor(dragProcessor);
 	}
 	
-	public void onnModuleLoad() {
+	public void onlModuleLoad() {
 		board = new Board(new GWTPlatform());
 		board.start();
 
@@ -162,13 +161,13 @@ public class Funnies implements EntryPoint {
 		profile.addDraggeable(iitem);
 		profile.addTarget(titem);
 		profile.addTarget(titem2);
-		profile.setBeginDragAnimation(new ItemChangeAnimation(500, null, null, 0.6f));
-		profile.setAdjustLocationAnimation(new ItemChangeAnimation(500, null, null, 0.5f));
-		profile.setEnterTargetAnimation(new ImageItemFadingAnimation(1000).fade("hhexagon.png", 1.0f));
-		profile.setExitTargetAnimation(new ImageItemFadingAnimation(1000).fade("hhexagon.png", 0.0f));
-		profile.setDraggedDropAnimation(new ItemChangeAnimation(new OutBackEasing(1000), null, null, null));
-		profile.setShowAllowedTargetAnimation(new ImageItemFadingAnimation(500).fade("h2exagon.png", 0.2f));
-		profile.setHideAllowedTargetAnimation(new ImageItemFadingAnimation(500).fade("h2exagon.png", 0.0f));
+		profile.setBeginDragAnimation(new ItemChangeAnimation.Builder(500, null, 0.6f));
+		profile.setAdjustLocationAnimation(new ItemChangeAnimation.Builder(500, null, 0.5f));
+		profile.setEnterTargetAnimation(new ImageItemFadingAnimation.Builder(1000).fade("hhexagon.png", 1.0f));
+		profile.setExitTargetAnimation(new ImageItemFadingAnimation.Builder(1000).fade("hhexagon.png", 0.0f));
+		profile.setDraggedDropAnimation(new ItemChangeAnimation.Builder(new OutBackEasing.Builder(1000), null, null));
+		profile.setShowAllowedTargetAnimation(new ImageItemFadingAnimation.Builder(500).fade("h2exagon.png", 0.2f));
+		profile.setHideAllowedTargetAnimation(new ImageItemFadingAnimation.Builder(500).fade("h2exagon.png", 0.0f));
 		
 		MatchHandler dMatch = new MatchHandler() {
 			@Override
@@ -290,7 +289,10 @@ public class Funnies implements EntryPoint {
 			
 		});
 		
-		new ItemChangeAnimation(new OutBackEasing(5000), new Location(100, 100), 2.0f, 2.0f).launchFor(iitem2);
+		ItemMoveAnimation animation = new ItemChangeAnimation(new OutBackEasing(5000), 2.0f, 2.0f);
+		animation.setLocation(new Location(100, 100));
+		animation.setItem(iitem2);
+		animation.launchFor();
 	}
 	
 	/**

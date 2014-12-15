@@ -1,47 +1,37 @@
 package com.ithaque.funnies.shared.basic.items.animations;
 
-import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.Location;
 
 public class ItemJumpAnimation extends ItemMoveAnimation {
 
+	Location baseLocation;
 	float factor;
 	
-	public ItemJumpAnimation(long duration, float factor) {
-		this(new LinearEasing(duration), factor);
-	}
-
 	public ItemJumpAnimation(Easing easing, float factor) {
 		super(easing);
 		this.factor = factor;
 	}
-	
-	protected ItemJumpAnimation(Easing easing, Location location, float factor) {
-		super(easing, location);
-		this.factor = factor;
-	}
-	
-	Location baseLocation;
-	
-	@Override
-	public ItemMoveAnimation duplicate() {
-		return new ItemJumpAnimation(getEasing().duplicate(), getLocation(), factor);
-	}
 
-	@Override
-	protected void launch(Item item) {
-		super.launch(item);
-		this.baseLocation = item.getLocation();
+	public ItemJumpAnimation(long duration, float factor) {
+		this(new LinearEasing(duration), factor);
 	}
 	
 	@Override
-	protected boolean executeAnimation(Easing easing, long time) {
+	public void launch() {
+		super.launch();
+		this.baseLocation = getItem().getLocation();
+		System.out.println("start jump !");
+	}
+	
+	@Override
+	protected boolean executeAnimation(long time) {
+		System.out.println("animate jump !");
 		float dx = baseLocation.getX()-getLocation().getX();
 		if (dx==0) {
 			return false;
 		}
-		float x = easing.getValue(baseLocation.getX(), getLocation().getX());
-		float y = easing.getValue(baseLocation.getY(), getLocation().getY());
+		float x = getEasing().getValue(baseLocation.getX(), getLocation().getX());
+		float y = getEasing().getValue(baseLocation.getY(), getLocation().getY());
 		float dy = (baseLocation.getX()-x)*(getLocation().getX()-x)/dx*4*factor;
 		dy=dy<0?dy:-dy;
 		getItem().setLocation(new Location(x, y+dy));
@@ -50,10 +40,39 @@ public class ItemJumpAnimation extends ItemMoveAnimation {
 
 	@Override
 	public void finish(long time) {
+		System.out.println("finish jump !");
 		if (getLocation()!=null) {
-			item.setLocation(getLocation());
+			getItem().setLocation(getLocation());
 		}
 		super.finish(time);
 	}
 
+	public static class Builder implements ItemMoveAnimation.Builder {
+		Easing.Factory easing;
+		float factor;
+		Location location;
+		
+		public Builder(Easing.Factory easing, float factor) {
+			super();
+			this.easing = easing;
+			this.factor = factor;
+		}
+
+		public Builder(long duration, float factor) {
+			this(new LinearEasing.Builder(duration), factor);
+		}
+		
+		@Override
+		public ItemJumpAnimation create() {
+			ItemJumpAnimation animation =  new ItemJumpAnimation(easing.create(), factor);
+			animation.setLocation(location);
+			return animation;
+		}
+
+		@Override
+		public void setLocation(Location location) {
+			this.location = location;
+		}	
+
+	}
 }

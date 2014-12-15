@@ -1,21 +1,21 @@
 package com.ithaque.funnies.shared.funny;
 
+import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.Item;
-import com.ithaque.funnies.shared.basic.items.animations.ItemAnimation;
 
 public interface DropTargetFunny extends Funny {
 
 	Item[] getDropTargetItems();
 
-	ItemAnimation getTargetDropAnimation();
+	Animation.Factory getTargetDropAnimation();
 
-	ItemAnimation getEnterTargetAnimation();
+	Animation.Factory getEnterTargetAnimation();
 
-	ItemAnimation getExitTargetAnimation();
+	Animation.Factory getExitTargetAnimation();
 
-	ItemAnimation getShowAllowedTargetAnimation();
+	Animation.Factory getShowAllowedTargetAnimation();
 
-	ItemAnimation getHideAllowedTargetAnimation();
+	Animation.Factory getHideAllowedTargetAnimation();
 
 	Item getHilightItem(Item target);
 }

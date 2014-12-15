@@ -3,10 +3,10 @@ package com.ithaque.funnies.shared.basic.processors;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.MouseEvent;
-import com.ithaque.funnies.shared.basic.items.animations.ItemAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.ParallelItemAnimation;
 
 public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
@@ -40,10 +40,14 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 		Item target = getTarget(dragged, event);
 		if (target!=currentTarget) {
 			if (currentTarget!=null && getExitTargetAnimation(currentTarget)!=null) {
-				getExitTargetAnimation(currentTarget).duplicate().launchFor(currentTarget);
+				Animation animation = getExitTargetAnimation(currentTarget).create();
+				animation.setItem(currentTarget);
+				animation.launchFor();
 			}
 			if (target!=null && getEnterTargetAnimation(target)!=null) {
-				getEnterTargetAnimation(target).duplicate().launchFor(target);
+				Animation animation = getEnterTargetAnimation(target).create();
+				animation.setItem(target);
+				animation.launchFor();
 			}
 			currentTarget = target;
 		}
@@ -71,16 +75,17 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 	}
 	
 	protected void animateTargetOnDrop(Item dragged, Item target) {
-		ItemAnimation itemAnimation = getTargetDropAnimation(target);
+		Animation.Factory itemAnimation = getTargetDropAnimation(target);
 		if (itemAnimation==null) {
 			itemAnimation = getExitTargetAnimation(target);
 		}
 		ParallelItemAnimation targetAnimation = new ParallelItemAnimation();
 		if (itemAnimation!=null) {
-			targetAnimation.addAnimation(itemAnimation);
+			targetAnimation.addAnimation(itemAnimation.create());
 		}
 		hideAllowedTargets(dragged, target, targetAnimation);
-		targetAnimation.duplicate().launchFor(target);
+		targetAnimation.setItem(target);
+		targetAnimation.launchFor();
 	}
 
 	void hideAllowedTargets(Item dragged, Item target,
@@ -88,13 +93,15 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 	{
 		for (Item aTarget : targets) {
 			if (acceptTarget(dragged, aTarget)) {
-				ItemAnimation aTargetAnimation = getHideAllowedTargetAnimation(aTarget);
+				Animation.Factory aTargetAnimation = getHideAllowedTargetAnimation(aTarget);
 				if (aTargetAnimation != null) {
 					if (getHilightItem(aTarget)==target && targetAnimation!=null) {
-						targetAnimation.addAnimation(aTargetAnimation);
+						targetAnimation.addAnimation(aTargetAnimation.create());
 					}
 					else {
-						aTargetAnimation.duplicate().launchFor(getHilightItem(aTarget));
+						Animation animation = aTargetAnimation.create();
+						animation.setItem(getHilightItem(aTarget));
+						animation.launchFor();
 					}
 				}
 			}
@@ -104,9 +111,10 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 	void showAllowedTargets(Item dragged) {
 		for (Item target : targets) {
 			if (acceptTarget(dragged, target)) {
-				ItemAnimation targetAnimation = getShowAllowedTargetAnimation(target);
+				Animation targetAnimation = getShowAllowedTargetAnimation(target).create();
 				if (targetAnimation != null) {
-					targetAnimation.duplicate().launchFor(getHilightItem(target));
+					targetAnimation.setItem(getHilightItem(target));
+					targetAnimation.launchFor();
 				}
 			}
 		}
@@ -116,15 +124,15 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 		return target;
 	}
 	
-	protected abstract ItemAnimation getTargetDropAnimation(Item target);
+	protected abstract Animation.Factory getTargetDropAnimation(Item target);
 
-	protected abstract ItemAnimation getEnterTargetAnimation(Item target);
+	protected abstract Animation.Factory getEnterTargetAnimation(Item target);
 	
-	protected abstract ItemAnimation getShowAllowedTargetAnimation(Item target);
+	protected abstract Animation.Factory getShowAllowedTargetAnimation(Item target);
 
-	protected abstract ItemAnimation getHideAllowedTargetAnimation(Item target);
+	protected abstract Animation.Factory getHideAllowedTargetAnimation(Item target);
 
-	protected abstract ItemAnimation getExitTargetAnimation(Item target);
+	protected abstract Animation.Factory getExitTargetAnimation(Item target);
 	
 	protected void executeDrop(Item dragged, Item target) {
 	}

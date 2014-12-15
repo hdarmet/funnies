@@ -137,7 +137,8 @@ public class DiceFunny implements ActivableFunny {
 		}
 		addJump(actualLocation, (float)(actualRotation+Math.PI*2*factor), animation, 25f+25f*factor, factor, randomFace());
 		addJump(actualLocation, (float)(actualRotation), animation, 0.0f, factor*0.85f, lastFace);
-		animation.launchFor(diceItem);
+		animation.setItem(diceItem);
+		animation.launchFor();
 	}
 
 	private void addJump(
@@ -148,12 +149,12 @@ public class DiceFunny implements ActivableFunny {
 			int secondIndex) 
 	{
 		ParallelItemAnimation aggregate = new ParallelItemAnimation();
-		ItemChangeAnimation turn = new ItemChangeAnimation(500, null, actualRotation, null);
+		ItemChangeAnimation turn = new ItemChangeAnimation(500, actualRotation, null);
 		aggregate.addAnimation(turn);
 		ItemJumpAnimation jump = new ItemJumpAnimation(500, jumpFactor);
 		jump.setLocation(new Location(actualLocation.getX()+xOffset, actualLocation.getY()));
 		aggregate.addAnimation(jump);
-		ChangeFaceAnimation changeFace = new ChangeFaceAnimation(500, null, secondIndex);
+		ChangeFaceAnimation changeFace = new ChangeFaceAnimation(500, secondIndex);
 		aggregate.addAnimation(changeFace);
 		animation.addAnimation(aggregate);
 	}
