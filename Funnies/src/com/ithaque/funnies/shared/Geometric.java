@@ -65,4 +65,39 @@ public class Geometric {
 		}
 		return new Location[] {new Location(minX, minY), new Location(maxX, maxY)};
 	}
+	
+	public static float pow (float t, int i) {
+		if (i==0) {
+			return 1;
+		}
+		float r = t;
+		for (int j=1; j<i; j++) {
+			r*=t;
+		}
+		return r;
+	}
+	
+	public static int fact(int k) {
+	    if(k==0 || k==1) {
+	    	return 1;
+	    }
+	    else{
+	    	return k * fact(k-1);
+	    }
+	}
+
+	public static float bernstain(int i, int n, float t) {
+	    return fact(n) / (fact(i) * fact(n-i))* pow(t, i) * pow(1-t, n-i);
+	}                            
+
+	public static Location getBezier(float t, Location ... points) {
+	    float x = 0;
+	    float y = 0;
+	    int n = points.length-1;
+	    for(int i=0; i <= n; i++){
+			x += points[i].getX() * bernstain(i, n, t);
+			y += points[i].getY() * bernstain(i, n, t);
+	    }                
+	    return new Location(x, y);
+	}
 }

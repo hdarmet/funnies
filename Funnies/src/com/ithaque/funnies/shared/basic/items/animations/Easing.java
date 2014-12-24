@@ -11,8 +11,6 @@ public interface Easing {
 	long getDuration();
 
 	float getValue(float base, float target);
-	
-//	Easing duplicate();
 
 	public interface Factory {
 		Easing create();

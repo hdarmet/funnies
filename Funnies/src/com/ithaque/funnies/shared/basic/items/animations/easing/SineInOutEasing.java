@@ -1,14 +1,16 @@
-package com.ithaque.funnies.shared.basic.items.animations;
+package com.ithaque.funnies.shared.basic.items.animations.easing;
 
 import com.ithaque.funnies.shared.basic.Board;
+import com.ithaque.funnies.shared.basic.items.animations.Easing;
+import com.ithaque.funnies.shared.basic.items.animations.Easing.Factory;
 
-public class LinearEasing implements Easing {
+public class SineInOutEasing implements Easing {
 
 	long duration;
 	long endTime;
 	Board board;
 	
-	public LinearEasing(long duration) {
+	public SineInOutEasing(long duration) {
 		super();
 		this.duration = duration;
 	}
@@ -27,8 +29,8 @@ public class LinearEasing implements Easing {
 	@Override
 	public float getValue(float base, float target) {
 		float time = board.getTime() - (endTime-duration);
-		float increment = (target-base)/duration;
-		return base + time*increment;
+		float increment = target-base;
+		return -increment/2.0f * ((float)(Math.cos(Math.PI*(time/duration)) - 1.0f)) + base;
 	}
 
 	@Override
@@ -37,6 +39,7 @@ public class LinearEasing implements Easing {
 	}
 	
 	public static class Builder implements Factory {
+
 		long duration;
 
 		public Builder(long duration) {
@@ -45,7 +48,7 @@ public class LinearEasing implements Easing {
 		
 		@Override
 		public Easing create() {
-			return new LinearEasing(duration);
+			return new SineInOutEasing(duration);
 		}
 	}
 }
