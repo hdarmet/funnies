@@ -1,8 +1,10 @@
 package com.ithaque.funnies.shared.basic.items.animations;
 
+import com.ithaque.funnies.shared.basic.AnimationContext;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
+import com.ithaque.funnies.shared.basic.items.animations.easing.SineInOutEasing;
 
-public class ChangeFaceAnimation extends ItemAnimation {
+public class ChangeFaceAnimation extends SoftenAnimation {
 
 	Integer baseIndex = null;
 	Integer targetIndex = null;
@@ -23,15 +25,18 @@ public class ChangeFaceAnimation extends ItemAnimation {
 	}
 	
 	@Override
-	public void launch() {
-		super.launch();
-		baseIndex = getCurrentIndex(getItem());
-		if (targetIndex==null) {
-			targetIndex = getItem().getIndex(url);
+	public boolean start(long time, AnimationContext context) {
+		boolean result = super.start(time, context);
+		if (result) {
+			baseIndex = getCurrentIndex(getItem());
+			if (targetIndex==null) {
+				targetIndex = getItem().getIndex(url);
+			}
+			if (targetIndex<baseIndex) {
+				getItem().setOpacity(targetIndex, 1.0f);
+			}
 		}
-		if (targetIndex<baseIndex) {
-			getItem().setOpacity(targetIndex, 1.0f);
-		}
+		return result;
 	}
 	
 	Integer getCurrentIndex(ImageItem item) {

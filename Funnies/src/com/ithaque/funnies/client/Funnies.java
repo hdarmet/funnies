@@ -26,9 +26,10 @@ import com.ithaque.funnies.shared.basic.MultiLayered;
 import com.ithaque.funnies.shared.basic.Processor;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
 import com.ithaque.funnies.shared.basic.items.animations.ImageItemFadingAnimation;
-import com.ithaque.funnies.shared.basic.items.animations.ItemChangeAnimation;
-import com.ithaque.funnies.shared.basic.items.animations.ItemMoveAnimation;
-import com.ithaque.funnies.shared.basic.items.animations.OutBackEasing;
+import com.ithaque.funnies.shared.basic.items.animations.MoveAnimation;
+import com.ithaque.funnies.shared.basic.items.animations.RotateAnimation;
+import com.ithaque.funnies.shared.basic.items.animations.ScalingAnimation;
+import com.ithaque.funnies.shared.basic.items.animations.easing.OutBackEasing;
 import com.ithaque.funnies.shared.basic.processors.DragProcessor;
 import com.ithaque.funnies.shared.basic.processors.GestureEvent;
 import com.ithaque.funnies.shared.basic.processors.GestureProfile;
@@ -66,7 +67,7 @@ public class Funnies implements EntryPoint {
 	
 	Board board;
 	
-	public void onjModuleLoad() {
+	public void onvModuleLoad() {
 		board = new Board(new GWTPlatform());
 		board.start();
 		
@@ -83,7 +84,7 @@ public class Funnies implements EntryPoint {
 		layerTwo.addItem(iitem);
 		board.addItem(layered);
 		DragProcessor dragProcessor = new DragProcessor();
-		SimpleTargetedDragProfile profile = new SimpleTargetedDragProfile();
+		SimpleTargetedDragProfile profile = new SimpleTargetedDragProfile(board);
 		profile.setDragLayer(dragLayer);
 		profile.addDraggeable(iitem);
 
@@ -91,7 +92,7 @@ public class Funnies implements EntryPoint {
 		board.addProcessor(dragProcessor);
 	}
 	
-	public void onlModuleLoad() {
+	public void onjModuleLoad() {
 		board = new Board(new GWTPlatform());
 		board.start();
 
@@ -156,18 +157,19 @@ public class Funnies implements EntryPoint {
 		layerOne.setLocation(new Location(-50.0f, 15.0f));
 
 		DragProcessor dragProcessor = new DragProcessor();
-		SimpleTargetedDragProfile profile = new SimpleTargetedDragProfile();
+		SimpleTargetedDragProfile profile = new SimpleTargetedDragProfile(board);
 		profile.setDragLayer(dragLayer);
 		profile.addDraggeable(iitem);
 		profile.addTarget(titem);
 		profile.addTarget(titem2);
-		profile.setBeginDragAnimation(new ItemChangeAnimation.Builder(500, null, 0.6f));
-		profile.setAdjustLocationAnimation(new ItemChangeAnimation.Builder(500, null, 0.5f));
-		profile.setEnterTargetAnimation(new ImageItemFadingAnimation.Builder(1000).fade("hhexagon.png", 1.0f));
-		profile.setExitTargetAnimation(new ImageItemFadingAnimation.Builder(1000).fade("hhexagon.png", 0.0f));
-		profile.setDraggedDropAnimation(new ItemChangeAnimation.Builder(new OutBackEasing.Builder(1000), null, null));
-		profile.setShowAllowedTargetAnimation(new ImageItemFadingAnimation.Builder(500).fade("h2exagon.png", 0.2f));
-		profile.setHideAllowedTargetAnimation(new ImageItemFadingAnimation.Builder(500).fade("h2exagon.png", 0.0f));
+		profile.setBeginDragAnimation(new ScalingAnimation.Builder(500, 0.6f).setItemKey(profile.DRAGGED_ITEM_KEY));
+//		profile.setAdjustLocationAnimation(new ScalingAnimation.Builder(500, 0.5f));
+		profile.setAdjustLocationAnimation(new MoveAnimation.Builder(500).setItemKey(profile.DRAGGED_ITEM_KEY));
+		profile.setEnterTargetAnimation(new ImageItemFadingAnimation.Builder(1000, "hhexagon.png", 1.0f).setItemKey(profile.NEW_TARGET_KEY));
+		profile.setExitTargetAnimation(new ImageItemFadingAnimation.Builder(1000, "hhexagon.png", 0.0f).setItemKey(profile.PREVIOUS_TARGET_KEY));
+		profile.setDraggedDropAnimation(new MoveAnimation.Builder(new OutBackEasing.Builder(1000)));
+		profile.setShowAllowedTargetAnimation(new ImageItemFadingAnimation.Builder(500, "h2exagon.png", 0.2f).setItemKey(profile.OTHER_TARGET_KEY));
+		profile.setHideAllowedTargetAnimation(new ImageItemFadingAnimation.Builder(500, "h2exagon.png", 0.0f).setItemKey(profile.OTHER_TARGET_KEY));
 		
 		MatchHandler dMatch = new MatchHandler() {
 			@Override
@@ -289,10 +291,16 @@ public class Funnies implements EntryPoint {
 			
 		});
 		
-		ItemMoveAnimation animation = new ItemChangeAnimation(new OutBackEasing(5000), 2.0f, 2.0f);
+		MoveAnimation animation = new MoveAnimation(new OutBackEasing(5000));
 		animation.setLocation(new Location(100, 100));
 		animation.setItem(iitem2);
-		animation.launchFor();
+		ScalingAnimation scalingAnimation = new ScalingAnimation(new OutBackEasing(5000), 2.0f);
+		scalingAnimation.setItem(iitem2);
+		RotateAnimation rotateAnimation = new RotateAnimation(new OutBackEasing(5000), 2.0f);
+		rotateAnimation.setItem(iitem2);
+		board.launchAnimation(animation, null);
+		board.launchAnimation(scalingAnimation, null);
+		board.launchAnimation(rotateAnimation, null);
 	}
 	
 	/**

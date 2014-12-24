@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ithaque.funnies.shared.basic.Animation;
-import com.ithaque.funnies.shared.basic.Item;
+import com.ithaque.funnies.shared.basic.AnimationContext;
 
 public class ParallelItemAnimation extends Animation {
 
@@ -17,25 +17,18 @@ public class ParallelItemAnimation extends Animation {
 
 	List<Animation> animations = new ArrayList<Animation>();
 	
-	public void setItem(Item item) {
-		super.setItem(item);
-		if (!animations.isEmpty()) {
-			for (Animation child : animations) {
-				child.setItem(item);
-			}
-		}
-	}
-	
 	@Override
-	public void launch() {
-		System.out.println("start //");
-		if (!animations.isEmpty()) {
-			registerOnBoard(getItem());
-			for (Animation child : animations) {
-				child.launch();
+	public boolean start(long time, AnimationContext context) {
+		boolean result = super.start(time, context);
+		if (result) {
+			if (!animations.isEmpty()) {
+				for (Animation child : animations) {
+					child.start(time, getContext());
+				}
+				endTime = time+getDuration();
 			}
-			endTime = getItem().getBoard().getTime()+getDuration();
 		}
+		return result;
 	}
 	
 	@Override
@@ -58,14 +51,12 @@ public class ParallelItemAnimation extends Animation {
 	
 	@Override
 	protected boolean executeAnimation(long time) {
-		System.out.println("animate //");
 		for (Animation child : new ArrayList<Animation>(animations)) {
 			if (!child.animate(time)) {
 				child.finish(time);
 				animations.remove(child);
 			}
 		}
-		System.out.println("end animate //");
 		return true;
 	}
 	
@@ -75,11 +66,10 @@ public class ParallelItemAnimation extends Animation {
 			child.finish(time);
 		}		
 		super.finish(time);
-		System.out.println("finish //");
 	}
 	
 	public void addAnimation(Animation animation) {
-		animation.manage();
+//		animation.manage();
 		animations.add(animation);
 	}
 	

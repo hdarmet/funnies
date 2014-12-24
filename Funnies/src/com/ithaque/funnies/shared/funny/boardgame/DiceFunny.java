@@ -4,10 +4,11 @@ import com.ithaque.funnies.shared.basic.Event.Type;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
+import com.ithaque.funnies.shared.basic.items.animations.BezierAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.ChangeFaceAnimation;
-import com.ithaque.funnies.shared.basic.items.animations.ItemChangeAnimation;
-import com.ithaque.funnies.shared.basic.items.animations.ItemJumpAnimation;
+import com.ithaque.funnies.shared.basic.items.animations.JumpAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.ParallelItemAnimation;
+import com.ithaque.funnies.shared.basic.items.animations.RotateAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.SequenceItemAnimation;
 import com.ithaque.funnies.shared.funny.ActivableFunny;
 import com.ithaque.funnies.shared.funny.IncompatibleRingException;
@@ -131,30 +132,39 @@ public class DiceFunny implements ActivableFunny {
 		SequenceItemAnimation animation = new SequenceItemAnimation();
 		float factor = 1.0f;
 		while (factor>0.6f) {
-			addJump(actualLocation, (float)(actualRotation+Math.PI*2*factor), animation, 25f+25f*factor, factor, randomFace());
-			addJump(actualLocation, (float)(actualRotation), animation, 0.0f, factor*0.85f, randomFace());
+			float halfOffset = (25f+25f*factor)/2.0f;
+			addJump(actualLocation, (float)(actualRotation+Math.PI*2*factor), animation, 25f+25f*factor, halfOffset, factor*100, randomFace());
+			addJump(actualLocation, (float)(actualRotation), animation, 0.0f, halfOffset, factor*0.85f*100, randomFace());
 			factor*=0.7f;
 		}
-		addJump(actualLocation, (float)(actualRotation+Math.PI*2*factor), animation, 25f+25f*factor, factor, randomFace());
-		addJump(actualLocation, (float)(actualRotation), animation, 0.0f, factor*0.85f, lastFace);
-		animation.setItem(diceItem);
-		animation.launchFor();
+		float halfOffset = (25f+25f*factor)/2.0f;
+		addJump(actualLocation, (float)(actualRotation+Math.PI*2*factor), animation, 25f+25f*factor, halfOffset, factor*100, randomFace());
+		addJump(actualLocation, (float)(actualRotation), animation, 0.0f, halfOffset, factor*0.85f*100, lastFace);
+		diceItem.getBoard().launchAnimation(animation, null);
 	}
 
 	private void addJump(
 			Location actualLocation, 
 			float actualRotation,
-			SequenceItemAnimation animation, 
-			float xOffset, float jumpFactor,
+			SequenceItemAnimation animation,
+			float xOffset,
+			float xHalfOffset,
+			float yOffset,
 			int secondIndex) 
 	{
 		ParallelItemAnimation aggregate = new ParallelItemAnimation();
-		ItemChangeAnimation turn = new ItemChangeAnimation(500, actualRotation, null);
+		RotateAnimation turn = new RotateAnimation(500, actualRotation);
+		turn.setItem(diceItem);
 		aggregate.addAnimation(turn);
-		ItemJumpAnimation jump = new ItemJumpAnimation(500, jumpFactor);
+		
+		BezierAnimation jump = new BezierAnimation(500, 
+			new Location(actualLocation.getX()+xHalfOffset, actualLocation.getY()-yOffset));
+		jump.setItem(diceItem);
 		jump.setLocation(new Location(actualLocation.getX()+xOffset, actualLocation.getY()));
 		aggregate.addAnimation(jump);
+		
 		ChangeFaceAnimation changeFace = new ChangeFaceAnimation(500, secondIndex);
+		changeFace.setItem(diceItem);
 		aggregate.addAnimation(changeFace);
 		animation.addAnimation(aggregate);
 	}

@@ -3,9 +3,9 @@ package com.ithaque.funnies.shared.funny;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.Item;
-import com.ithaque.funnies.shared.basic.items.animations.ItemMoveAnimation;
+import com.ithaque.funnies.shared.basic.items.animations.SoftenAnimation;
+import com.ithaque.funnies.shared.basic.items.animations.MoveAnimation;
 import com.ithaque.funnies.shared.basic.processors.AbstractTargetedDragProfile;
 import com.ithaque.funnies.shared.funny.notifications.AcceptDropTargetQuestion;
 import com.ithaque.funnies.shared.funny.notifications.DropEvent;
@@ -17,6 +17,7 @@ public class CircusDnDProfile extends AbstractTargetedDragProfile {
 	Ring ring;
 	
 	public CircusDnDProfile(Ring ring) {
+		super(ring.getBoard());
 		this.ring = ring;
 	}
 	
@@ -49,49 +50,49 @@ public class CircusDnDProfile extends AbstractTargetedDragProfile {
 	}
 	
 	@Override
-	protected Animation.Factory getTargetDropAnimation(Item target) {
+	protected SoftenAnimation.Builder getTargetDropAnimation(Item target) {
 		DropTargetFunny funny = getDropTargetFunny(target);
 		return funny.getTargetDropAnimation();
 	}
 
 	@Override
-	protected Animation.Factory getEnterTargetAnimation(Item target) {
+	protected SoftenAnimation.Builder getEnterTargetAnimation(Item target) {
 		DropTargetFunny funny = getDropTargetFunny(target);
 		return funny.getEnterTargetAnimation();
 	}
 
 	@Override
-	protected Animation.Factory getExitTargetAnimation(Item target) {
+	protected SoftenAnimation.Builder getExitTargetAnimation(Item target) {
 		DropTargetFunny funny = getDropTargetFunny(target);
 		return funny.getExitTargetAnimation();
 	}
 
 	@Override
-	protected Animation.Factory getShowAllowedTargetAnimation(Item target) {
+	protected SoftenAnimation.Builder getShowAllowedTargetAnimation(Item target) {
 		DropTargetFunny targetFunny = getDropTargetFunny(target);
 		return targetFunny.getShowAllowedTargetAnimation();
 	}
 	
 	@Override
-	protected Animation.Factory getHideAllowedTargetAnimation(Item target) {
+	protected SoftenAnimation.Builder getHideAllowedTargetAnimation(Item target) {
 		DropTargetFunny targetFunny = getDropTargetFunny(target);
 		return targetFunny.getHideAllowedTargetAnimation();
 	}
 	
 	@Override
-	protected Animation.Factory getBeginDragAnimation(Item dragged) {
+	protected SoftenAnimation.Builder getBeginDragAnimation(Item dragged) {
 		DraggableFunny funny = getDraggableFunny(dragged);
 		return funny.getBeginDragAnimation();
 	}
 
 	@Override
-	protected ItemMoveAnimation.Builder getAdjustLocationAnimation(Item dragged) {
+	protected MoveAnimation.Builder getAdjustLocationAnimation(Item dragged) {
 		DraggableFunny funny = getDraggableFunny(dragged);
 		return funny.getAdjustLocationAnimation();
 	}
 
 	@Override
-	protected Animation.Factory getDraggedDropAnimation(Item dragged) {
+	protected SoftenAnimation.Builder getDraggedDropAnimation(Item dragged) {
 		DraggableFunny funny = getDraggableFunny(dragged);
 		return funny.getDraggedDropAnimation();
 	}

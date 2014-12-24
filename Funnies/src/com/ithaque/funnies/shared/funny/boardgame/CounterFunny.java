@@ -1,11 +1,11 @@
 package com.ithaque.funnies.shared.funny.boardgame;
 
-import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.Event.Type;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
-import com.ithaque.funnies.shared.basic.items.animations.ItemMoveAnimation;
+import com.ithaque.funnies.shared.basic.items.animations.SoftenAnimation;
+import com.ithaque.funnies.shared.basic.items.animations.MoveAnimation;
 import com.ithaque.funnies.shared.funny.DraggableFunny;
 import com.ithaque.funnies.shared.funny.IncompatibleRingException;
 import com.ithaque.funnies.shared.funny.Ring;
@@ -14,9 +14,9 @@ public class CounterFunny implements DraggableFunny {
 
 	String id;
 	Item counterItem;
-	Animation.Factory beginDragAnimation;
-	ItemMoveAnimation.Builder adjustLocationAnimation;
-	Animation.Factory draggedDropAnimation;
+	SoftenAnimation.Builder beginDragAnimation;
+	MoveAnimation.Builder adjustLocationAnimation;
+	SoftenAnimation.Builder draggedDropAnimation;
 	
 	public CounterFunny(String id, Item counterItem) {
 		this.id = id;
@@ -32,15 +32,15 @@ public class CounterFunny implements DraggableFunny {
 		}
 	}
 	
-	public void setBeginDragAnimation(Animation.Factory beginDragAnimation) {
+	public void setBeginDragAnimation(SoftenAnimation.Builder beginDragAnimation) {
 		this.beginDragAnimation = beginDragAnimation;
 	}
 
-	public void setAdjustLocationAnimation(ItemMoveAnimation.Builder adjustLocationAnimation) {
+	public void setAdjustLocationAnimation(MoveAnimation.Builder adjustLocationAnimation) {
 		this.adjustLocationAnimation = adjustLocationAnimation;
 	}
 
-	public void setDraggedDropAnimation(Animation.Factory draggedDropAnimation) {
+	public void setDraggedDropAnimation(SoftenAnimation.Builder draggedDropAnimation) {
 		this.draggedDropAnimation = draggedDropAnimation;
 	}
 
@@ -73,17 +73,17 @@ public class CounterFunny implements DraggableFunny {
 	}
 
 	@Override
-	public Animation.Factory getBeginDragAnimation() {
+	public SoftenAnimation.Builder getBeginDragAnimation() {
 		return beginDragAnimation;
 	}
 
 	@Override
-	public ItemMoveAnimation.Builder getAdjustLocationAnimation() {
+	public MoveAnimation.Builder getAdjustLocationAnimation() {
 		return adjustLocationAnimation;
 	}
 
 	@Override
-	public Animation.Factory getDraggedDropAnimation() {
+	public SoftenAnimation.Builder getDraggedDropAnimation() {
 		return draggedDropAnimation;
 	}
 

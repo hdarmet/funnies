@@ -126,9 +126,9 @@ public class Board implements ItemHolder {
 		return this;
 	}
 
-	public void launchAnimation(Animation animation) {
+	public void launchAnimation(Animation animation, AnimationContext context) {
 		long time = platform.getTime();
-		if (animation.start(time)) {
+		if (animation.start(time, context)) {
 			animations.add(animation);			
 		}
 		else {

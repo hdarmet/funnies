@@ -1,9 +1,9 @@
 package com.ithaque.funnies.shared.funny.boardgame;
 
-import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
+import com.ithaque.funnies.shared.basic.items.animations.SoftenAnimation;
 import com.ithaque.funnies.shared.funny.DropTargetFunny;
 import com.ithaque.funnies.shared.funny.IncompatibleRingException;
 import com.ithaque.funnies.shared.funny.Ring;
@@ -16,11 +16,11 @@ public class TileFunny implements DropTargetFunny {
 	Item hilightItem;
 	Item activableItem;
 	
-	Animation.Factory targetDropAnimation;
-	Animation.Factory enterTargetAnimation;
-	Animation.Factory showAllowedTargetAnimation;
-	Animation.Factory hideAllowedTargetAnimation;
-	Animation.Factory exitTargetAnimation;
+	SoftenAnimation.Builder targetDropAnimation;
+	SoftenAnimation.Builder enterTargetAnimation;
+	SoftenAnimation.Builder showAllowedTargetAnimation;
+	SoftenAnimation.Builder hideAllowedTargetAnimation;
+	SoftenAnimation.Builder exitTargetAnimation;
 	
 	public TileFunny(String id, Item tileItem, Item hilightItem, Item activableItem) {
 		this.id = id;
@@ -92,49 +92,49 @@ public class TileFunny implements DropTargetFunny {
 	}
 
 	@Override
-	public Animation.Factory getTargetDropAnimation() {
+	public SoftenAnimation.Builder getTargetDropAnimation() {
 		return targetDropAnimation;
 	}
 
 	@Override
-	public Animation.Factory getEnterTargetAnimation() {
+	public SoftenAnimation.Builder getEnterTargetAnimation() {
 		return enterTargetAnimation;
 	}
 
 	@Override
-	public Animation.Factory getExitTargetAnimation() {
+	public SoftenAnimation.Builder getExitTargetAnimation() {
 		return exitTargetAnimation;
 	}
 
-	public void setTargetDropAnimation(Animation.Factory targetDropAnimation) {
+	public void setTargetDropAnimation(SoftenAnimation.Builder targetDropAnimation) {
 		this.targetDropAnimation = targetDropAnimation;
 	}
 
-	public void setEnterTargetAnimation(Animation.Factory enterTargetAnimation) {
+	public void setEnterTargetAnimation(SoftenAnimation.Builder enterTargetAnimation) {
 		this.enterTargetAnimation = enterTargetAnimation;
 	}
 
-	public void setExitTargetAnimation(Animation.Factory exitTargetAnimation) {
+	public void setExitTargetAnimation(SoftenAnimation.Builder exitTargetAnimation) {
 		this.exitTargetAnimation = exitTargetAnimation;
 	}
 
 	@Override
-	public Animation.Factory getShowAllowedTargetAnimation() {
+	public SoftenAnimation.Builder getShowAllowedTargetAnimation() {
 		return showAllowedTargetAnimation;
 	}
 
 	@Override
-	public Animation.Factory getHideAllowedTargetAnimation() {
+	public SoftenAnimation.Builder getHideAllowedTargetAnimation() {
 		return hideAllowedTargetAnimation;
 	}
 	
 	public void setShowAllowedTargetAnimation(
-			Animation.Factory showAllowedTargetAnimation) {
+			SoftenAnimation.Builder showAllowedTargetAnimation) {
 		this.showAllowedTargetAnimation = showAllowedTargetAnimation;
 	}
 
 	public void setHideAllowedTargetAnimation(
-			Animation.Factory hideAllowedTargetAnimation) {
+			SoftenAnimation.Builder hideAllowedTargetAnimation) {
 		this.hideAllowedTargetAnimation = hideAllowedTargetAnimation;
 	}
 

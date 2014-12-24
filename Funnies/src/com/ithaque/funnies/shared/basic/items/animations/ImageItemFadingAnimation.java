@@ -1,45 +1,53 @@
 package com.ithaque.funnies.shared.basic.items.animations;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.ithaque.funnies.shared.basic.Animation;
+import com.ithaque.funnies.shared.basic.AnimationContext;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
+import com.ithaque.funnies.shared.basic.items.animations.easing.SineInOutEasing;
 
-public class ImageItemFadingAnimation extends ItemAnimation {
+public class ImageItemFadingAnimation extends SoftenAnimation {
 
-	static class FacetChange {
-		public FacetChange(Integer index, String url, Float targetOpacity) {
-			this.index = index;
-			this.url = url;
-			this.targetOpacity = targetOpacity;
-		}
-
-		float baseOpacity;
-		Integer index;
-		String url;
-		Float targetOpacity;
-		
-		public Integer getIndex(ImageItem item) {
-			if (index==null) {
-				index = item.getIndex(url);
-			}
-			return index;
-		}
-	}
-
-	List<FacetChange> facetChanges = new ArrayList<FacetChange>();
-
-	public ImageItemFadingAnimation(Easing easing) {
-		super(easing);
+	float baseOpacity;
+	Integer index = null;
+	String url = null;
+	Float targetOpacity;
+	
+	public ImageItemFadingAnimation(Easing easing, int index, Float targetOpacity) {
+		this(easing, index, null, targetOpacity);
 	}
 	
-	@Override
-	public void launch() {
-		super.launch();
-		for (FacetChange change : facetChanges) {
-			change.baseOpacity = getOpacity(change);
+	public ImageItemFadingAnimation(Easing easing, String url, Float targetOpacity) {
+		this(easing, null, url, targetOpacity);
+	}
+	
+	protected ImageItemFadingAnimation(Easing easing, Integer index, String url, Float targetOpacity) {
+		super(easing);
+		this.url = url;
+		this.index = index;
+		this.targetOpacity = targetOpacity;
+	}
+	
+	public ImageItemFadingAnimation(long duration, int index, Float targetOpacity) {
+		this(new SineInOutEasing(duration), index, null, targetOpacity);
+	}
+	
+	public ImageItemFadingAnimation(long duration, String url, Float targetOpacity) {
+		this(new SineInOutEasing(duration), null, url, targetOpacity);
+	}
+	
+	public Integer getIndex(ImageItem item) {
+		if (index==null) {
+			index = item.getIndex(url);
 		}
+		return index;
+	}
+
+	@Override
+	public boolean start(long time, AnimationContext context) {
+		boolean result = super.start(time, context);
+		if (result) {
+			baseOpacity = getOpacity();
+		}
+		return result;
 	}
 	
 	@Override
@@ -49,92 +57,60 @@ public class ImageItemFadingAnimation extends ItemAnimation {
 
 	@Override
 	protected boolean executeAnimation(long time) {
-		for (FacetChange change : facetChanges) {
-			setOpacity(change, getEasing().getValue(change.baseOpacity, change.targetOpacity));
-		}
+		setOpacity(getEasing().getValue(baseOpacity, targetOpacity));
 		return true;
 	}
 
 	@Override
 	public void finish(long time) {
-		for (FacetChange change : facetChanges) {
-			setOpacity(change, change.targetOpacity);
-		}
+		setOpacity(targetOpacity);
 		super.finish(time);
 	}
 
-	float getOpacity(FacetChange facet) {
-		return getItem().getOpacity(facet.getIndex(getItem()));
+	float getOpacity() {
+		return getItem().getOpacity(getIndex(getItem()));
 	}
 	
-	void setOpacity(FacetChange facet, float opacity) {
-		getItem().setOpacity(facet.getIndex(getItem()), opacity);
+	void setOpacity(float opacity) {
+		getItem().setOpacity(getIndex(getItem()), opacity);
 	}
 
-	public ImageItemFadingAnimation fade(String url, float opacity) {
-		facetChanges.add(new FacetChange(null, url, opacity));
-		return this;
-	}
-	
-	public ImageItemFadingAnimation fade(Integer index, float opacity) {
-		facetChanges.add(new FacetChange(index, null, opacity));
-		return this;
-	}
-	
-	public void addFacetChange(FacetChange facetChange) {
-		facetChanges.add(facetChange);
-	}
-
-	public static class Builder implements Factory {
-		
-		List<FacetChangeBuilder> facetChanges = new ArrayList<FacetChangeBuilder>();
-		Easing.Factory easing;
-
-		public Builder(Easing.Factory easing) {
-			super();
-			this.easing = easing;
-		}
-
-		public Builder(long duration) {
-			this(new SineInOutEasing.Builder(duration));
-		}
-		
-		public ImageItemFadingAnimation.Builder fade(String url, float opacity) {
-			facetChanges.add(new FacetChangeBuilder(null, url, opacity));
-			return this;
-		}
-		
-		public ImageItemFadingAnimation.Builder fade(Integer index, float opacity) {
-			facetChanges.add(new FacetChangeBuilder(index, null, opacity));
-			return this;
-		}
-		
-		@Override
-		public Animation create() {
-			ImageItemFadingAnimation animation = new ImageItemFadingAnimation(easing.create());
-			for (FacetChangeBuilder fcBuilder : facetChanges) {
-				animation.addFacetChange(fcBuilder.create());
-			}
-			return animation;
-		}	
-
-	}
-
-	static class FacetChangeBuilder {
-		
-		public FacetChangeBuilder(Integer index, String url, float opacity) {
-			this.url = url;
-			this.index = index;
-			this.targetOpacity = opacity;
-		}
-
-		FacetChange create() {
-			return new FacetChange(index, url, targetOpacity);
-		}
+	public static class Builder extends SoftenAnimation.Builder {
 		
 		String url = null;
 		Integer index = null;
-		float targetOpacity;		
+		float targetOpacity;
+		
+		protected Builder(Easing.Factory easing, Integer index, String url, float targetOpacity) {
+			super(easing);
+			this.url = url;
+			this.index = index;
+			this.targetOpacity = targetOpacity;
+		}
+		
+		public Builder(Easing.Factory easing, int index, float targetOpacity) {
+			this(easing, index, null, targetOpacity);
+		}
+		
+		public Builder(Easing.Factory easing, String url, float targetOpacity) {
+			this(easing, null, url, targetOpacity);
+		}
+		
+		public Builder(long duration, int index, float targetOpacity) {
+			this(new SineInOutEasing.Builder(duration), index, null, targetOpacity);
+		}
+		
+		public Builder(long duration, String url, float targetOpacity) {
+			this(new SineInOutEasing.Builder(duration), null, url, targetOpacity);
+		}
+		
+		@Override
+		public ImageItemFadingAnimation create() {
+			ImageItemFadingAnimation animation = new ImageItemFadingAnimation(easing.create(), index, url, targetOpacity);
+			prepare(animation);
+			return animation;
+		}
+
 	}
 
 }

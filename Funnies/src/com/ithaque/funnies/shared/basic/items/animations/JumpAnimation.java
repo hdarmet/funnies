@@ -1,31 +1,23 @@
 package com.ithaque.funnies.shared.basic.items.animations;
 
 import com.ithaque.funnies.shared.basic.Location;
+import com.ithaque.funnies.shared.basic.items.animations.easing.LinearEasing;
 
-public class ItemJumpAnimation extends ItemMoveAnimation {
+public class JumpAnimation extends MoveAnimation {
 
-	Location baseLocation;
 	float factor;
 	
-	public ItemJumpAnimation(Easing easing, float factor) {
+	public JumpAnimation(Easing easing, float factor) {
 		super(easing);
 		this.factor = factor;
 	}
 
-	public ItemJumpAnimation(long duration, float factor) {
+	public JumpAnimation(long duration, float factor) {
 		this(new LinearEasing(duration), factor);
 	}
 	
 	@Override
-	public void launch() {
-		super.launch();
-		this.baseLocation = getItem().getLocation();
-		System.out.println("start jump !");
-	}
-	
-	@Override
-	protected boolean executeAnimation(long time) {
-		System.out.println("animate jump !");
+	public boolean executeAnimation(long time) {
 		float dx = baseLocation.getX()-getLocation().getX();
 		if (dx==0) {
 			return false;
@@ -40,21 +32,17 @@ public class ItemJumpAnimation extends ItemMoveAnimation {
 
 	@Override
 	public void finish(long time) {
-		System.out.println("finish jump !");
 		if (getLocation()!=null) {
 			getItem().setLocation(getLocation());
 		}
 		super.finish(time);
 	}
 
-	public static class Builder implements ItemMoveAnimation.Builder {
-		Easing.Factory easing;
+	public static class Builder extends MoveAnimation.Builder {
 		float factor;
-		Location location;
 		
 		public Builder(Easing.Factory easing, float factor) {
-			super();
-			this.easing = easing;
+			super(easing);
 			this.factor = factor;
 		}
 
@@ -63,16 +51,11 @@ public class ItemJumpAnimation extends ItemMoveAnimation {
 		}
 		
 		@Override
-		public ItemJumpAnimation create() {
-			ItemJumpAnimation animation =  new ItemJumpAnimation(easing.create(), factor);
-			animation.setLocation(location);
+		public JumpAnimation create() {
+			JumpAnimation animation =  new JumpAnimation(easing.create(), factor);
+			prepare(animation);
 			return animation;
 		}
-
-		@Override
-		public void setLocation(Location location) {
-			this.location = location;
-		}	
 
 	}
 }
