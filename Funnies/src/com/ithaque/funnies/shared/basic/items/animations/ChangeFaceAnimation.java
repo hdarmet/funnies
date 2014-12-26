@@ -1,26 +1,20 @@
 package com.ithaque.funnies.shared.basic.items.animations;
 
-import com.ithaque.funnies.shared.basic.items.ImageItem;
+import com.ithaque.funnies.shared.basic.items.AbstractImageItem;
 import com.ithaque.funnies.shared.basic.items.animations.easing.SineInOutEasing;
 
 public class ChangeFaceAnimation extends SoftenAnimation {
 
 	Integer baseIndex = null;
 	Integer targetIndex = null;
-	String url = null;
 
-	public ChangeFaceAnimation(Easing easing, Integer targetIndex, String url) {
+	public ChangeFaceAnimation(Easing easing, Integer targetIndex) {
 		super(easing);
 		this.targetIndex = targetIndex;
-		this.url = url;
-	}
-	
-	public ChangeFaceAnimation(long duration, String url) {
-		this(new SineInOutEasing(duration), null, url);
 	}
 	
 	public ChangeFaceAnimation(long duration, Integer index) {
-		this(new SineInOutEasing(duration), index, null);
+		this(new SineInOutEasing(duration), index);
 	}
 	
 	@Override
@@ -28,17 +22,14 @@ public class ChangeFaceAnimation extends SoftenAnimation {
 		boolean result = super.start(time);
 		if (result) {
 			baseIndex = getCurrentIndex(getItem());
-			if (targetIndex==null) {
-				targetIndex = getItem().getIndex(url);
-			}
-			if (targetIndex<baseIndex) {
+			if (baseIndex!=null && targetIndex<baseIndex) {
 				getItem().setOpacity(targetIndex, 1.0f);
 			}
 		}
 		return result;
 	}
 	
-	Integer getCurrentIndex(ImageItem item) {
+	Integer getCurrentIndex(AbstractImageItem item) {
 		for (int index=0; index<item.getImageCount(); index++) {
 			if (item.getOpacity(index)==1.0f) {
 				return index;
@@ -49,18 +40,18 @@ public class ChangeFaceAnimation extends SoftenAnimation {
 
 	@Override
 	protected boolean executeAnimation(long time) {
-		if (targetIndex<baseIndex) {
+		if (baseIndex!=null && targetIndex<baseIndex) {
 			setOpacity(baseIndex, getEasing().getValue(1.0f, 0.0f));
 		}
-		else if (targetIndex>baseIndex) {
-			setOpacity(targetIndex, 1.0f-getEasing().getValue(1.0f, 0.0f));
+		else if (baseIndex==null || targetIndex>baseIndex) {
+			setOpacity(targetIndex, getEasing().getValue(0.0f, 1.0f));
 		}
 		return true;
 	}
 
 	@Override
-	public ImageItem getItem() {
-		return (ImageItem)super.getItem();
+	public AbstractImageItem getItem() {
+		return (AbstractImageItem)super.getItem();
 	}
 	
 	@Override
@@ -83,10 +74,9 @@ public class ChangeFaceAnimation extends SoftenAnimation {
 		String url = null;
 		Integer targetIndex = null;
 		
-		public Builder(Easing.Factory easing, String url) {
+		public Builder(Easing.Factory easing) {
 			super();
 			this.easing = easing;
-			this.url = url;
 		}
 
 		public Builder(Easing.Factory easing, Integer targetIndex) {
@@ -95,17 +85,13 @@ public class ChangeFaceAnimation extends SoftenAnimation {
 			this.targetIndex = targetIndex;
 		}
 
-		public Builder(long duration, String url) {
-			this(new SineInOutEasing.Builder(duration), url);
-		}
-		
 		public Builder(long duration, Integer index) {
 			this(new SineInOutEasing.Builder(duration), index);
 		}
 		
 		@Override
 		public ChangeFaceAnimation create() {
-			return new ChangeFaceAnimation(easing.create(), targetIndex, url);
+			return new ChangeFaceAnimation(easing.create(), targetIndex);
 		}	
 
 	}

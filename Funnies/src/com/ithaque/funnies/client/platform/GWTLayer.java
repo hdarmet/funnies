@@ -24,14 +24,6 @@ public class GWTLayer {
 		return canvas;
 	}
 	
-	protected float getCenterX() {
-		return canvas.getCoordinateSpaceWidth()/2.0f;
-	}
-	
-	protected float getCenterY() {
-		return canvas.getCoordinateSpaceHeight()/2.0f;
-	}
-	
 	public float getDisplayWidth() {
 		return canvas.getCoordinateSpaceWidth();
 	}

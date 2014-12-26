@@ -11,6 +11,7 @@ import com.ithaque.funnies.shared.basic.ItemHolder;
 import com.ithaque.funnies.shared.basic.Layer;
 import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.MouseEvent;
+import com.ithaque.funnies.shared.basic.TransformUtil;
 import com.ithaque.funnies.shared.basic.items.animations.ParallelItemAnimation;
 import com.ithaque.funnies.shared.basic.processors.DragProcessor.DragProfile;
 
@@ -74,15 +75,15 @@ public abstract class AbstractDragProfile implements DragProfile {
 		if (dragged.getParent() instanceof Layer) {
 			Layer layer = (Layer)dragged.getParent();
 			Graphics graphics = board.getGraphics();
-			Location[] absShape = graphics.transformShape(dragged, dragged.getShape());
+			Location[] absShape = TransformUtil.transformShape(dragged, dragged.getShape());
 			Location[] area = Geometric.getArea(absShape);
 			Location overhead = GraphicsUtil.inDisplayLimits( 
 				0.0f, 0.0f, graphics.getDisplayWidth(), graphics.getDisplayHeight(),
 				area[0].getX(), area[0].getY(), area[1].getX(), area[1].getY());
 			if (overhead != null) {
-				Location absLocation = board.getGraphics().transformLocation(layer.getParent(), layer.getLocation());
+				Location absLocation = TransformUtil.transformLocation(layer.getParent(), layer.getLocation());
 				Location newLocation = new Location(absLocation.getX()-overhead.getX(), absLocation.getY()-overhead.getY());
-				layer.setLocation(board.getGraphics().invertTransformLocation(layer.getParent(), newLocation));
+				layer.setLocation(TransformUtil.invertTransformLocation(layer.getParent(), newLocation));
 			}
 		}
 		reactToDrag(event, board);

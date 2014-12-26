@@ -10,6 +10,7 @@ import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.MouseEvent;
 import com.ithaque.funnies.shared.basic.Processor;
+import com.ithaque.funnies.shared.basic.TransformUtil;
 
 public class DragProcessor implements Processor {
 
@@ -72,14 +73,14 @@ public class DragProcessor implements Processor {
 	
 	public static Location getAnchor(MouseEvent event, Item dragged) {
 		Location mouseLocation = new Location(event.getX(), event.getY());
-		Location newLocation = dragged.getBoard().getGraphics().invertTransformLocation(dragged.getParent(), mouseLocation);
+		Location newLocation = TransformUtil.invertTransformLocation(dragged.getParent(), mouseLocation);
 		Location startLocation = dragged.getLocation();
 		return new Location(newLocation.getX()-startLocation.getX(), newLocation.getY()-startLocation.getY());
 	}
 
 	public static Location followMouse(MouseEvent event, Item dragged, Location anchor) {
 		Location mouseLocation = new Location(event.getX(), event.getY());
-		Location newLocation = dragged.getBoard().getGraphics().invertTransformLocation(dragged.getParent(), mouseLocation);
+		Location newLocation = TransformUtil.invertTransformLocation(dragged.getParent(), mouseLocation);
 		return new Location(
 			newLocation.getX()-anchor.getX(), 
 			newLocation.getY()-anchor.getY());
@@ -87,8 +88,8 @@ public class DragProcessor implements Processor {
 	
 	public static Location movetoTarget(Item dragged, Item target) {
 		Location targetLocation = target.getLocation();
-		Location absLocation = target.getBoard().getGraphics().transformLocation(target.getParent(), targetLocation);
-		return dragged.getBoard().getGraphics().invertTransformLocation(dragged.getParent(), absLocation);
+		Location absLocation = TransformUtil.transformLocation(target.getParent(), targetLocation);
+		return TransformUtil.invertTransformLocation(dragged.getParent(), absLocation);
 	}
 		
 }

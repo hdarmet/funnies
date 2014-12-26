@@ -1,28 +1,18 @@
 package com.ithaque.funnies.shared.basic;
 
-import com.ithaque.funnies.shared.basic.items.ImageItem;
+import com.ithaque.funnies.shared.basic.items.AbstractImageItem;
 
 public interface Graphics {
 	
 	Token loadImage(String url);
 
-	void drawImage(ImageItem imageItem);
+	void drawImage(AbstractImageItem imageItem);
 
-	boolean isTarget(Item item, Location point, Location[] shape);
-	
 	void clear();
 
-	Location[] getShape(ImageItem imageItem);
+	Float getImageWidth(Token token);
 	
-	Location[] transformShape(Item item, Location[] shape);
-
-	Location invertTransformLocation(Moveable item, Location location);
-
-	Location transformLocation(Moveable item, Location location);
-
-	Location invertTransformLocationToParent(Moveable item, Location location);
-
-	Location transformLocationToParent(Moveable item, Location location);
+	Float getImageHeight(Token token);
 	
 	float getDisplayWidth();
 
@@ -33,5 +23,18 @@ public interface Graphics {
 	void setLayer(Token token);
 
 	void show();
+	
+	public class Singleton {
+		
+		static Graphics instance;
+		
+		static public void setGraphics(Graphics graphics) {
+			instance = graphics;
+		}
+		
+		static public Graphics getGraphics() {
+			return instance;
+		}
+	}
 	
 }

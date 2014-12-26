@@ -5,13 +5,13 @@ import java.util.List;
 
 import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Event;
-import com.ithaque.funnies.shared.basic.Graphics;
-import com.ithaque.funnies.shared.basic.Location;
+import com.ithaque.funnies.shared.basic.Event.Type;
 import com.ithaque.funnies.shared.basic.Item;
+import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.MouseEvent;
 import com.ithaque.funnies.shared.basic.MouseEvent.Button;
 import com.ithaque.funnies.shared.basic.Processor;
-import com.ithaque.funnies.shared.basic.Event.Type;
+import com.ithaque.funnies.shared.basic.TransformUtil;
 
 public class ScalingProcessor implements Processor {
 
@@ -58,14 +58,13 @@ public class ScalingProcessor implements Processor {
 	}
 
 	protected void zoom(Item scaled, int x, int y, float increment) {
-		Graphics graphics = scaled.getBoard().getGraphics();
-		Location oldLocation = graphics.invertTransformLocation(scaled, new Location(x, y));
+		Location oldLocation = TransformUtil.invertTransformLocation(scaled, new Location(x, y));
 		scaled.setScale(limits(scaled, scaled.getScale()*increment));
-		Location delta = graphics.transformLocation(scaled, oldLocation);
+		Location delta = TransformUtil.transformLocation(scaled, oldLocation);
 
-		Location absLocation = graphics.transformLocation(scaled.getParent(), scaled.getLocation());
+		Location absLocation = TransformUtil.transformLocation(scaled.getParent(), scaled.getLocation());
 		Location newLocation = new Location(absLocation.getX()-(delta.getX()-x), absLocation.getY()-(delta.getY()-y));
-		scaled.setLocation(graphics.invertTransformLocation(scaled.getParent(), newLocation));
+		scaled.setLocation(TransformUtil.invertTransformLocation(scaled.getParent(), newLocation));
 	}
 
 	protected void zoomIn(Item scaled, int x, int y) {
@@ -78,7 +77,7 @@ public class ScalingProcessor implements Processor {
 
 	protected float getMinScale(Item scaled) {
 		Board board = scaled.getBoard();
-		Location[] absShape = board.getGraphics().transformShape(scaled, scaled.getShape());
+		Location[] absShape = TransformUtil.transformShape(scaled, scaled.getShape());
 		float minX = absShape[0].getX();
 		float maxX = absShape[0].getX();
 		float minY = absShape[0].getY();

@@ -22,6 +22,7 @@ public class GameBoardRing extends Ring {
 	private static final String HILIGHT_LAYER = "hilight";
 	private static final String TILESET_LAYER = "tileset";
 	private static final String PIECES_LAYER = "pieces";
+	private static final String INFO_LAYER = "info";
 	private static final String DRAG_LAYER = "drag";
 
 	public GameBoardRing(Circus circus, float width, float height) {
@@ -33,6 +34,7 @@ public class GameBoardRing extends Ring {
 	Layer hilightLayer;
 	Layer tilesetLayer;
 	Layer piecesLayer;
+	Layer infoLayer;
 	Layer dragLayer;
 	DragProcessor dragProcessor;
 	CircusDnDProfile dragCounterProfile;
@@ -48,6 +50,7 @@ public class GameBoardRing extends Ring {
 		hilightLayer = baseLayer.addLayer(HILIGHT_LAYER);
 		tilesetLayer = baseLayer.addLayer(TILESET_LAYER);
 		piecesLayer = baseLayer.addLayer(PIECES_LAYER);
+		infoLayer = baseLayer.addLayer(INFO_LAYER);
 		dragLayer = baseLayer.addLayer(DRAG_LAYER);
 		getBoard().addItem(baseLayer);
 

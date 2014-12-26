@@ -36,8 +36,9 @@ public abstract class SoftenAnimation extends Animation {
 		return easing;
 	}
 	
-	public void setItem(Item item) {
+	public SoftenAnimation setItem(Item item) {
 		this.item = item;
+		return this;
 	}
 	
 	public Item getItem() {

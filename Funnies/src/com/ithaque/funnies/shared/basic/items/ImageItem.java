@@ -1,28 +1,22 @@
 package com.ithaque.funnies.shared.basic.items;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import com.ithaque.funnies.shared.basic.Graphics;
-import com.ithaque.funnies.shared.basic.Item;
-import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.Token;
 
-public class ImageItem extends Item {
+public class ImageItem extends AbstractImageItem {
 
-	class Facet {
+	protected static class Facet extends AbstractFacet {
 		public Facet(String url) {
 			this.url = url;
 		}
+		Float width = null;
+		Float height = null;
 		Token token = null;
 		String url = null;
-		float opacity = 1.0f;
 	}
 	
-	List<Facet> facets = new ArrayList<ImageItem.Facet>();
-	Map<Token, Facet> facetsMap = new HashMap<Token, Facet>();
 	Map<String, Facet> urlsMap = new HashMap<String, Facet>();
 	
 	public ImageItem(String ... urls) {
@@ -42,16 +36,6 @@ public class ImageItem extends Item {
 		}
 	}
 	
-	public float getOpacity(int facetIndex) {
-		return facets.get(facetIndex).opacity;
-	}
-	
-	public void setOpacity(int facetIndex, float opacity) {
-		Facet facet = facets.get(facetIndex);
-		facet.opacity = opacity;
-		dirty();
-	}
-	
 	public void setUrls(String ... urls) {
 		facets.clear();
 		for (String url : urls) {
@@ -64,7 +48,8 @@ public class ImageItem extends Item {
 	public String[] getUrls() {
 		String[] urls = new String[facets.size()];
 		int i = 0;
-		for (Facet facet : facets) {
+		for (AbstractFacet abstractFacet : facets) {
+			Facet facet = (Facet)abstractFacet;
 			urls[i++] = facet.url;
 		}
 		return urls;
@@ -73,50 +58,26 @@ public class ImageItem extends Item {
 	public Token[] getTokens() {
 		Token[] tokens = new Token[facets.size()];
 		int i = 0;
-		for (Facet facet : facets) {
-			if (facet.token==null) {
-				facet.token = getBoard().getGraphics().loadImage(facet.url);
-				facetsMap.put(facet.token, facet);
-			}
+		for (AbstractFacet abstractFacet : facets) {
+			Facet facet = (Facet)abstractFacet;
+			initToken(facet);
 			tokens[i++] = facet.token;
 		}
 		return tokens;
 	}
-	
-	public int getImageCount() {
-		return facets.size();
-	}
-	
-	@Override
-	public void render(Graphics graphics) {
-		graphics.drawImage(this);
-		super.render(graphics);
-	}
-	
-	@Override
-	public Location[] getShape() {
-		Location[] shape = super.getShape();
-		return shape!=null ? shape : getBoard().getGraphics().getShape(this);
-	}
 
-	public float getOpacity(Token token) {
-		Facet facet = facetsMap.get(token);
-		return facet!=null ? facet.opacity : 0.0f;
-	}
-	
-	public Integer getIndex(String url) {
-		for (int index=0; index<facets.size(); index++) {
-			if (facets.get(index).url.equals(url)) {
-				return index;
-			}
+	private void initToken(Facet facet) {
+		if (facet.token==null) {
+			facet.token = getBoard().getGraphics().loadImage(facet.url);
+			facetsMap.put(facet.token, facet);
 		}
-		return null;
 	}
 	
 	public String toString() {
 		StringBuffer label = new StringBuffer("ImageItem[");
 		boolean start = true;
-		for (Facet facet : facets) {
+		for (AbstractFacet abstractFacet : facets) {
+			Facet facet = (Facet)abstractFacet;
 			if (start) {
 				start=false;
 			}
@@ -129,4 +90,35 @@ public class ImageItem extends Item {
 		return label.toString();
 	}
 
+	public Float getImageLeft(int index) {
+		return 0.0f;
+	}
+	
+	public Float getImageTop(int index) {
+		return 0.0f;
+	}
+
+	public Float getImageWidth(int index) {
+		Facet facet = (Facet)facets.get(index);
+		if (facet.width==null) {
+			facet.width=getBoard().getGraphics().getImageWidth(facet.token);
+		}
+		return facet.width;
+	}
+
+	public Float getImageHeight(int index) {
+		Facet facet = (Facet)facets.get(index);
+		if (facet.height==null) {
+			facet.height=getBoard().getGraphics().getImageHeight(facet.token);
+		}
+		return facet.height;
+	}
+
+	@Override
+	public Token getToken(int index) {
+		Facet facet = (Facet)facets.get(index);
+		initToken(facet);
+		return facet.token;
+	}
+	
 }

@@ -91,7 +91,7 @@ public class Layer extends GroupItem {
 	private void adjustLocation() {
 		Board board = getBoard();
 		if (board!=null && board.isReady()) {
-			Location[] absShape = board.getGraphics().transformShape(this, getShape());
+			Location[] absShape = TransformUtil.transformShape(this, getShape());
 			float minX = absShape[0].getX();
 			float maxX = absShape[0].getX();
 			float minY = absShape[0].getY();
@@ -114,9 +114,9 @@ public class Layer extends GroupItem {
 				minX, minY, maxX, maxY,
 				0.0f, 0.0f, board.getGraphics().getDisplayWidth(), board.getGraphics().getDisplayHeight());
 			if (overhead != null) {
-				Location absLocation = board.getGraphics().transformLocation(getParent(), getLocation());
+				Location absLocation = TransformUtil.transformLocation(getParent(), getLocation());
 				Location newLocation = new Location(absLocation.getX()+overhead.getX(), absLocation.getY()+overhead.getY());
-				super.setLocation(board.getGraphics().invertTransformLocation(getParent(), newLocation));
+				super.setLocation(TransformUtil.invertTransformLocation(getParent(), newLocation));
 			}
 		}
 	}

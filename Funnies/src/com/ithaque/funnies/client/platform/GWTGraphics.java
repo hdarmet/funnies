@@ -25,19 +25,17 @@ import com.google.gwt.event.dom.client.MouseWheelEvent;
 import com.google.gwt.event.dom.client.MouseWheelHandler;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.ithaque.funnies.shared.Geometric;
 import com.ithaque.funnies.shared.Trace;
 import com.ithaque.funnies.shared.Transform;
-import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Event.Type;
 import com.ithaque.funnies.shared.basic.Graphics;
 import com.ithaque.funnies.shared.basic.Item;
-import com.ithaque.funnies.shared.basic.ItemHolder;
 import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.MouseEvent;
 import com.ithaque.funnies.shared.basic.MouseEvent.Button;
-import com.ithaque.funnies.shared.basic.Moveable;
 import com.ithaque.funnies.shared.basic.Token;
+import com.ithaque.funnies.shared.basic.TransformUtil;
+import com.ithaque.funnies.shared.basic.items.AbstractImageItem;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
 
 public class GWTGraphics implements Graphics {
@@ -53,6 +51,7 @@ public class GWTGraphics implements Graphics {
 	
 	public GWTGraphics(GWTPlatform platform) {
 		this.platform = platform;
+		Graphics.Singleton.setGraphics(this);
 	}
 	
 	ClickHandler clickHandler = new ClickHandler() {
@@ -118,74 +117,32 @@ public class GWTGraphics implements Graphics {
 	
 	class DrawImageRequest {
 		
-		ImageItem imageItem;
+		AbstractImageItem imageItem;
 		
-		public DrawImageRequest(ImageItem imageItem) {
+		public DrawImageRequest(AbstractImageItem imageItem) {
 			this.imageItem = imageItem;
 		}
 		
-		public ImageItem getImageItem() {
+		public AbstractImageItem getImageItem() {
 			return imageItem;
 		}
 		
-		public void draw(Context2d context2d, ImageElement image, float opacity) {
+		public void draw(Context2d context2d, ImageElement image, float opacity, int x, int y, int width, int height) {
 			if (opacity>0.0f) {
-				Transform transform = transform(imageItem);
+				Transform transform = TransformUtil.transform(imageItem);
 				if (transform!=null) {
 					context2d.setTransform(transform.m[0], transform.m[1], transform.m[2], transform.m[3], transform.m[4], transform.m[5]);
 					context2d.setGlobalAlpha(opacity);
-					context2d.translate(-image.getWidth()/2.0f, -image.getHeight()/2.0f);
-					context2d.drawImage(image, 0, 0, image.getWidth(), image.getHeight());
+					context2d.translate(-width/2.0f, -height/2.0f);
+					context2d.drawImage(image, x, y, width, height, 0, 0, width, height);
 				}
 			}
 		}
-	}
-	
-	public Transform transform(Moveable item) {
-		Transform transform = new Transform();
-		transform.translate(currentLayer.getCenterX(), currentLayer.getCenterY());
-		if (!transform(item, transform)) {
-			return null;
-		}
-		return transform;
-	}
-	
-	boolean transform(Moveable moveable, Transform transform) {
-		if (moveable==null) {
-			return false;
-		}
-		else {
-			if (!(moveable instanceof Board)) {
-				if (!transform(((Item)moveable).getParent(), transform)) {
-					return false;
-				}
-			}
-			transformToParent(moveable, transform);
-			return true;
-		}
-	}
-
-	protected void transformToParent(Moveable moveable, Transform transform) {
-		Location translation = moveable.getLocation();
-		if (translation!=null && !translation.equals(Location.ORIGIN)) {
-			transform.translate(translation.getX(), translation.getY());
-		}
-		if (moveable.getScale()!=ItemHolder.STANDARD_SCALE) {
-			transform.scale(moveable.getScale(), moveable.getScale());
-		}
-		if (moveable.getRotation()!=ItemHolder.NO_ROTATION) {
-			transform.rotate(moveable.getRotation());
-		}
-	}
-	
-	public Transform transformToParent(Moveable item) {
-		Transform transform = new Transform();
-		transformToParent(item, transform);
-		return transform;
+		
 	}
 	
 	@Override
-	public void drawImage(ImageItem imageItem) {
+	public void drawImage(AbstractImageItem imageItem) {
 		drawRequest(new DrawImageRequest(imageItem));
 	}
 	
@@ -202,9 +159,12 @@ public class GWTGraphics implements Graphics {
 			ready &= record.ready;
 		}
 		if (ready) {
-			for (Token token : request.getImageItem().getTokens()) {
+			AbstractImageItem item = request.getImageItem();
+			for (int index=0; index<item.getImageCount(); index++) {
+				Token token = item.getToken(index);
 				ImageElementRecord record = imageElements.get(token);
-				request.draw(context2d, record.image, request.getImageItem().getOpacity(token));
+				request.draw(context2d, record.image, request.getImageItem().getOpacity(index), 
+					(int)(float)item.getImageLeft(index), (int)(float)item.getImageTop(index), (int)(float)item.getImageWidth(index), (int)(float)item.getImageHeight(index));
 				if (debug) {
 					drawShape(request.getImageItem(), request.getImageItem().getShape());
 				}
@@ -299,21 +259,8 @@ public class GWTGraphics implements Graphics {
 		}
 	}
 
-	public boolean isTarget(Item item, Location point, Location[] shape) {
-		Transform transform = transform(item).invert();
-		Location trPoint = transform.transformPoint(point);
-		Location[] area = Geometric.getArea(shape);
-		if (trPoint.getX()>=area[0].getX() && trPoint.getX()<=area[1].getX()
-		  && trPoint.getY()>=area[0].getY() && trPoint.getY()<=area[1].getY()) {
-			return Geometric.inside(trPoint, shape);			
-		}
-		else {
-			return false;
-		}
-	}
-
-	public void drawShape(Item item, Location[] shape) {
-		Location[] trShape = transformShape(item, shape);
+	void drawShape(Item item, Location[] shape) {
+		Location[] trShape = TransformUtil.transformShape(item, shape);
 		resetContext2d();
 		context2d.moveTo(trShape[0].getX(), trShape[0].getY());
 		for (int i=1; i<trShape.length; i++) {
@@ -324,60 +271,15 @@ public class GWTGraphics implements Graphics {
 	}
 
 	@Override
-	public Location[] transformShape(Item item, Location[] shape) {
-		Transform transform = transform(item);
-		Location[] trShape = new Location[shape.length];
-		for (int i=0; i<shape.length; i++) {
-			trShape[i] = transform.transformPoint(shape[i]);
-		}
-		return trShape; 
-	}
-	
-	@Override
-	public Location[] getShape(ImageItem imageItem) {
-		float width = 0.0f;
-		float height = 0.0f;
-		for (Token token : imageItem.getTokens()) {
-			ImageElementRecord imageRecord = imageElements.get(token);
-			if (!imageRecord.ready) {
-				return null;
-			}
-			if (imageRecord.image.getWidth()>width) {
-				width = imageRecord.image.getWidth();
-			}
-			if (imageRecord.image.getHeight()>height) {
-				height = imageRecord.image.getHeight();
-			}
-		}
-		Location upperLeft = new Location(-width/2.0f, -height/2.0f);
-		Location upperRight = new Location(width/2.0f, -height/2.0f);
-		Location bottomRight = new Location(width/2.0f, height/2.0f);
-		Location bottomLeft = new Location(-width/2.0f, height/2.0f);
-		return new Location[] {upperLeft, upperRight, bottomRight, bottomLeft};
+	public Float getImageWidth(Token token) {
+		ImageElementRecord imageRecord = imageElements.get(token);
+		return !imageRecord.ready ? null : (float)imageRecord.image.getWidth();
 	}
 
 	@Override
-	public Location invertTransformLocation(Moveable item, Location location) {
-		Transform transform = transform(item).invert();
-		return transform==null ? null : transform.transformPoint(location);
-	}
-
-	@Override
-	public Location transformLocation(Moveable item, Location location) {
-		Transform transform = transform(item);
-		return transform==null ? null : transform.transformPoint(location);
-	}
-
-	@Override
-	public Location invertTransformLocationToParent(Moveable item, Location location) {
-		Transform transform = transformToParent(item).invert();
-		return transform==null ? null : transform.transformPoint(location);
-	}
-
-	@Override
-	public Location transformLocationToParent(Moveable item, Location location) {
-		Transform transform = transformToParent(item);
-		return transform==null ? null : transform.transformPoint(location);
+	public Float getImageHeight(Token token) {
+		ImageElementRecord imageRecord = imageElements.get(token);
+		return !imageRecord.ready ? null : (float)imageRecord.image.getHeight();
 	}
 	
 	GWTLayer currentLayer;
@@ -427,7 +329,7 @@ public class GWTGraphics implements Graphics {
 	}
 
 	@Override
-	public void show() {
+	public void show() { 
 		for (GWTLayer layer : layers.values()) {
 			layer.show();
 		}

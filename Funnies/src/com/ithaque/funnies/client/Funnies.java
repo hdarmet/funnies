@@ -25,7 +25,7 @@ import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.MultiLayered;
 import com.ithaque.funnies.shared.basic.Processor;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
-import com.ithaque.funnies.shared.basic.items.animations.ImageItemFadingAnimation;
+import com.ithaque.funnies.shared.basic.items.animations.FaceFadingAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.MoveAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.RotateAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.ScalingAnimation;
@@ -165,11 +165,11 @@ public class Funnies implements EntryPoint {
 		profile.setBeginDragAnimation(new ScalingAnimation.Builder(500, 0.6f).setItemKey(profile.DRAGGED_ITEM_KEY));
 //		profile.setAdjustLocationAnimation(new ScalingAnimation.Builder(500, 0.5f));
 		profile.setAdjustLocationAnimation(new MoveAnimation.Builder(500).setItemKey(profile.DRAGGED_ITEM_KEY));
-		profile.setEnterTargetAnimation(new ImageItemFadingAnimation.Builder(1000, "hhexagon.png", 1.0f).setItemKey(profile.NEW_TARGET_KEY));
-		profile.setExitTargetAnimation(new ImageItemFadingAnimation.Builder(1000, "hhexagon.png", 0.0f).setItemKey(profile.PREVIOUS_TARGET_KEY));
+		profile.setEnterTargetAnimation(new FaceFadingAnimation.Builder(1000, 0, 1.0f).setItemKey(profile.NEW_TARGET_KEY));
+		profile.setExitTargetAnimation(new FaceFadingAnimation.Builder(1000, 0, 0.0f).setItemKey(profile.PREVIOUS_TARGET_KEY));
 		profile.setDraggedDropAnimation(new MoveAnimation.Builder(new OutBackEasing.Builder(1000)));
-		profile.setShowAllowedTargetAnimation(new ImageItemFadingAnimation.Builder(500, "h2exagon.png", 0.2f).setItemKey(profile.OTHER_TARGET_KEY));
-		profile.setHideAllowedTargetAnimation(new ImageItemFadingAnimation.Builder(500, "h2exagon.png", 0.0f).setItemKey(profile.OTHER_TARGET_KEY));
+		profile.setShowAllowedTargetAnimation(new FaceFadingAnimation.Builder(500, 1, 0.2f).setItemKey(profile.OTHER_TARGET_KEY));
+		profile.setHideAllowedTargetAnimation(new FaceFadingAnimation.Builder(500, 1, 0.0f).setItemKey(profile.OTHER_TARGET_KEY));
 		
 		MatchHandler dMatch = new MatchHandler() {
 			@Override

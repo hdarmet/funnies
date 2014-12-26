@@ -43,8 +43,8 @@ public class Item implements Moveable {
 		if (newParent!=currentParent) {
 			currentParent.removeItem(this);
 			newParent.addItem(this);
-			Location absoluteLocation = getBoard().getGraphics().transformLocation(currentParent, getLocation());
-			Location relativeLocation = getBoard().getGraphics().invertTransformLocation(getParent(), absoluteLocation);
+			Location absoluteLocation = TransformUtil.transformLocation(currentParent, getLocation());
+			Location relativeLocation = TransformUtil.invertTransformLocation(getParent(), absoluteLocation);
 			setLocation(relativeLocation);
 		}
 	}
@@ -159,7 +159,7 @@ public class Item implements Moveable {
 			return false;
 		}
 		else {
-			return getBoard().getGraphics().isTarget(this, new Location(event.getX(), event.getY()), shape);
+			return TransformUtil.isTarget(this, new Location(event.getX(), event.getY()), shape);
 		}
 	}
 	
