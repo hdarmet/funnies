@@ -1,9 +1,8 @@
 package com.ithaque.funnies.shared.basic.items.animations;
 
-import com.ithaque.funnies.shared.basic.AnimationContext;
 import com.ithaque.funnies.shared.basic.AnimationContext.Key;
-import com.ithaque.funnies.shared.basic.items.animations.easing.LinearEasing;
 import com.ithaque.funnies.shared.basic.Location;
+import com.ithaque.funnies.shared.basic.items.animations.easing.LinearEasing;
 
 public class MoveAnimation extends SoftenAnimation {
 
@@ -42,8 +41,8 @@ public class MoveAnimation extends SoftenAnimation {
 	}
 	
 	@Override
-	public boolean start(long time, AnimationContext context) {
-		boolean result = super.start(time, context);
+	public boolean start(long time) {
+		boolean result = super.start(time);
 		if (result) {
 			this.baseLocation = getItem().getLocation();
 		}

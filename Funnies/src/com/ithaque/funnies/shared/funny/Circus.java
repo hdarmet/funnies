@@ -53,8 +53,15 @@ public class Circus {
 
 	public void notify(Notification request) {
 		if (manager!=null) {
-			manager.process(request);
+			Sketch sketch = manager.process(request);
+			if (sketch!=null) {
+				sketch.play(this);
+			}
 		}
+	}
+
+	public Board getBoard() {
+		return board;
 	}
 	
 }

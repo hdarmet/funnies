@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ithaque.funnies.shared.basic.Animation;
-import com.ithaque.funnies.shared.basic.AnimationContext;
 
 public class SequenceItemAnimation extends Animation {
 
@@ -17,13 +16,16 @@ public class SequenceItemAnimation extends Animation {
 	long endTime;
 	
 	@Override
-	public boolean start(long time, AnimationContext context) {
-		boolean result = super.start(time, context);
+	public boolean start(long time) {
+		boolean result = super.start(time);
 		if (result) {
 			if (!animations.isEmpty()) {
 				endTime = time+getDuration();
 				currentChild = animations.remove(0);
-				currentChild.start(time, getContext());
+				if (currentChild.getContext()==null) {
+					currentChild.setContext(getContext());
+				}
+				currentChild.start(time);
 			}
 		}
 		return true;
@@ -52,7 +54,10 @@ public class SequenceItemAnimation extends Animation {
 			}
 			else {
 				currentChild = animations.remove(0);
-				currentChild.start(time, getContext());
+				if (currentChild.getContext()==null) {
+					currentChild.setContext(getContext());
+				}
+				currentChild.start(time);
 			}
 		}
 		return true;

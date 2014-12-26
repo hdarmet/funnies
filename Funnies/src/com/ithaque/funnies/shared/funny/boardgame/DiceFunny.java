@@ -1,12 +1,12 @@
 package com.ithaque.funnies.shared.funny.boardgame;
 
+import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.Event.Type;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
 import com.ithaque.funnies.shared.basic.items.animations.BezierAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.ChangeFaceAnimation;
-import com.ithaque.funnies.shared.basic.items.animations.JumpAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.ParallelItemAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.RotateAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.SequenceItemAnimation;
@@ -124,7 +124,7 @@ public class DiceFunny implements ActivableFunny {
 		return (int) (random*faces.length);
 	}
 	
-	public void rollFor(Integer number) {
+	public Animation rollFor(Integer number) {
 		Location actualLocation = diceItem.getLocation();
 		float actualRotation = diceItem.getRotation();
 		
@@ -140,7 +140,7 @@ public class DiceFunny implements ActivableFunny {
 		float halfOffset = (25f+25f*factor)/2.0f;
 		addJump(actualLocation, (float)(actualRotation+Math.PI*2*factor), animation, 25f+25f*factor, halfOffset, factor*100, randomFace());
 		addJump(actualLocation, (float)(actualRotation), animation, 0.0f, halfOffset, factor*0.85f*100, lastFace);
-		diceItem.getBoard().launchAnimation(animation, null);
+		return animation;
 	}
 
 	private void addJump(

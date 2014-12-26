@@ -298,9 +298,9 @@ public class Funnies implements EntryPoint {
 		scalingAnimation.setItem(iitem2);
 		RotateAnimation rotateAnimation = new RotateAnimation(new OutBackEasing(5000), 2.0f);
 		rotateAnimation.setItem(iitem2);
-		board.launchAnimation(animation, null);
-		board.launchAnimation(scalingAnimation, null);
-		board.launchAnimation(rotateAnimation, null);
+		board.launchAnimation(animation);
+		board.launchAnimation(scalingAnimation);
+		board.launchAnimation(rotateAnimation);
 	}
 	
 	/**

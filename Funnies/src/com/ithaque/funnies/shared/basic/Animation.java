@@ -20,8 +20,7 @@ public abstract class Animation {
 
 	protected abstract boolean executeAnimation(long time);
 
-	public boolean start(long time, AnimationContext context) {
-		this.context = context;
+	public boolean start(long time) {
 		return true;
 	}
 	
@@ -29,6 +28,10 @@ public abstract class Animation {
 		return context;
 	}
 
+	public void setContext(AnimationContext context) {
+		this.context = context;
+	}
+	
 	public void finish(long time) {
 	}
 

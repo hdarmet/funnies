@@ -9,7 +9,6 @@ import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.MouseEvent;
-import com.ithaque.funnies.shared.basic.items.animations.SoftenAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.ParallelItemAnimation;
 
 public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
@@ -54,12 +53,14 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 		if (target!=currentTarget) {
 			if (currentTarget!=null && getExitTargetAnimation(currentTarget)!=null) {
 				Animation animation = getExitTargetAnimation(currentTarget).create();
-				getBoard().launchAnimation(animation, retrieveAnimationContext());
+				animation.setContext(retrieveAnimationContext());
+				getBoard().launchAnimation(animation);
 			}
 			if (target!=null && getEnterTargetAnimation(target)!=null) {
 				Animation animation = getEnterTargetAnimation(target).create();
 				newTarget = target;
-				getBoard().launchAnimation(animation, retrieveAnimationContext());
+				animation.setContext(retrieveAnimationContext());
+				getBoard().launchAnimation(animation);
 			}
 			currentTarget = target;
 		}
@@ -70,11 +71,12 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 		super.launchDragAnimation(dragged);
 		showAllowedTargets(dragged);
 	}
-
+ 
 	protected boolean resolveDrop(MouseEvent event, Board board, ParallelItemAnimation animation) {
 		Item target = getTarget(dragged, event);
 		if (target!=null) {
-			adjustDraggedLocationOnDrop(animation, target.getLocation());
+			putDraggedOnHolder(dragged, target);
+			adjustDraggedLocationOnDrop(animation, getDropLocation(dragged, target));
 			animateTargetOnDrop(dragged, target);
 			executeDrop(dragged, target);
 			currentTarget = null;
@@ -86,9 +88,17 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 			return false;
 		}
 	}
+
+	protected void putDraggedOnHolder(Item dragged, Item target) {
+		returnDraggedToOriginalHolder();		
+	}
+	
+	protected Location getDropLocation(Item dragged, Item target) {
+		return target.getLocation();
+	}
 	
 	protected void animateTargetOnDrop(Item dragged, Item target) {
-		SoftenAnimation.Builder itemAnimation = getTargetDropAnimation(target);
+		Animation.Factory itemAnimation = getTargetDropAnimation(target);
 		if (itemAnimation==null) {
 			itemAnimation = getExitTargetAnimation(target);
 		}
@@ -99,7 +109,8 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 			targetAnimation.addAnimation(animation);
 		}
 		hideAllowedTargets(dragged, target, targetAnimation);
-		getBoard().launchAnimation(targetAnimation, retrieveAnimationContext());
+		targetAnimation.setContext(retrieveAnimationContext());
+		getBoard().launchAnimation(targetAnimation);
 	}
 
 	void hideAllowedTargets(Item dragged, Item target,
@@ -107,7 +118,7 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 	{
 		for (Item aTarget : targets) {
 			if (acceptTarget(dragged, aTarget)) {
-				SoftenAnimation.Builder aTargetAnimation = getHideAllowedTargetAnimation(aTarget);
+				Animation.Factory aTargetAnimation = getHideAllowedTargetAnimation(aTarget);
 				if (aTargetAnimation != null) {
 					if (getHilightItem(aTarget)==target && targetAnimation!=null) {
 						targetAnimation.addAnimation(aTargetAnimation.create());
@@ -115,7 +126,8 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 					else {
 						Animation animation = aTargetAnimation.create();
 						otherTarget = getHilightItem(aTarget);
-						getBoard().launchAnimation(animation, retrieveAnimationContext());
+						animation.setContext(retrieveAnimationContext());
+						getBoard().launchAnimation(animation);
 					}
 				}
 			}
@@ -128,7 +140,8 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 				Animation targetAnimation = getShowAllowedTargetAnimation(target).create();
 				if (targetAnimation != null) {
 					otherTarget = getHilightItem(target);
-					getBoard().launchAnimation(targetAnimation, retrieveAnimationContext());
+					targetAnimation.setContext(retrieveAnimationContext());
+					getBoard().launchAnimation(targetAnimation);
 				}
 			}
 		}
@@ -138,15 +151,15 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 		return target;
 	}
 	
-	protected abstract SoftenAnimation.Builder getTargetDropAnimation(Item target);
+	protected abstract Animation.Factory getTargetDropAnimation(Item target);
 
-	protected abstract SoftenAnimation.Builder getEnterTargetAnimation(Item target);
+	protected abstract Animation.Factory getEnterTargetAnimation(Item target);
 	
-	protected abstract SoftenAnimation.Builder getShowAllowedTargetAnimation(Item target);
+	protected abstract Animation.Factory getShowAllowedTargetAnimation(Item target);
 
-	protected abstract SoftenAnimation.Builder getHideAllowedTargetAnimation(Item target);
+	protected abstract Animation.Factory getHideAllowedTargetAnimation(Item target);
 
-	protected abstract SoftenAnimation.Builder getExitTargetAnimation(Item target);
+	protected abstract Animation.Factory getExitTargetAnimation(Item target);
 	
 	protected void executeDrop(Item dragged, Item target) {
 	}

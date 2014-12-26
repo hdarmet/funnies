@@ -43,14 +43,24 @@ public class Board implements ItemHolder {
 	
 	public void render() {
 		if (dirty) {
-			platform.getGraphics().setLayer(token);
+			int maxLevel=0;
 			for (Item item : items) {
-				item.prepare();
+				int highestLevel = item.prepare();
+				if (maxLevel<highestLevel) {
+					maxLevel = highestLevel;
+				}
 			}
+			platform.getGraphics().setLayer(token);
 			Graphics graphics = platform.getGraphics();
-			graphics.clear(); 
+			graphics.clear();
+			for (int level=0; level <= maxLevel; level++) {
+				for (Item item : items) {
+					item.render(graphics, 0, level);
+				}
+			}
+			graphics.show();
 			for (Item item : items) {
-				item.render(graphics);
+				item.unsetDirty();
 			}
 			dirty = false;
 		}
@@ -126,9 +136,9 @@ public class Board implements ItemHolder {
 		return this;
 	}
 
-	public void launchAnimation(Animation animation, AnimationContext context) {
+	public void launchAnimation(Animation animation) {
 		long time = platform.getTime();
-		if (animation.start(time, context)) {
+		if (animation.start(time)) {
 			animations.add(animation);			
 		}
 		else {

@@ -8,7 +8,6 @@ public class GWTLayer {
 	Canvas canvas;
 	Canvas flipCanvas;
 	Canvas flopCanvas;
-	Context2d context2d;
 	
 	public GWTLayer(GWTGraphics graphics) {
 	    canvas = flipCanvas = createCanvas(graphics, true);
@@ -44,16 +43,29 @@ public class GWTLayer {
 	public Context2d clear() {
 		if (flipCanvas==canvas) {
 			canvas = flopCanvas;
-			flipCanvas.setVisible(false);
-			flopCanvas.setVisible(true);
-		}
-		else {
-			canvas = flipCanvas;
 			flipCanvas.setVisible(true);
 			flopCanvas.setVisible(false);
 		}
-	    context2d = canvas.getContext2d();
-		return context2d;
+		else {
+			canvas = flipCanvas;
+			flipCanvas.setVisible(false);
+			flopCanvas.setVisible(true);
+		}
+	    return canvas.getContext2d();
 	}
 
+	public void show() {
+		if (flipCanvas==canvas) {
+			flipCanvas.setVisible(true);
+			flopCanvas.setVisible(false);
+		}
+		else {
+			flipCanvas.setVisible(false);
+			flopCanvas.setVisible(true);
+		}
+	}
+	
+	public Context2d getContext() {
+	    return canvas.getContext2d();
+	}
 }

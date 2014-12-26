@@ -2,10 +2,9 @@ package com.ithaque.funnies.shared.basic.items.animations;
 
 import com.ithaque.funnies.shared.Trace;
 import com.ithaque.funnies.shared.basic.Animation;
-import com.ithaque.funnies.shared.basic.AnimationContext;
 import com.ithaque.funnies.shared.basic.AnimationContext.Key;
-import com.ithaque.funnies.shared.basic.items.animations.easing.LinearEasing;
 import com.ithaque.funnies.shared.basic.Item;
+import com.ithaque.funnies.shared.basic.items.animations.easing.LinearEasing;
 
 public abstract class SoftenAnimation extends Animation {
 
@@ -24,8 +23,8 @@ public abstract class SoftenAnimation extends Animation {
 	}
 
 	@Override
-	public boolean start(long time, AnimationContext context) {
-		super.start(time, context);
+	public boolean start(long time) {
+		super.start(time);
 		if (Trace.debug) {
 			Trace.debug("Item : "+getItem()+" "+itemKey+" "+item+" "+this);
 		}

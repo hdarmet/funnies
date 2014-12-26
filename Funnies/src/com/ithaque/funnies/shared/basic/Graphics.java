@@ -31,5 +31,7 @@ public interface Graphics {
 	Token createLayer();
 
 	void setLayer(Token token);
+
+	void show();
 	
 }

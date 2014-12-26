@@ -11,7 +11,6 @@ import com.ithaque.funnies.shared.basic.ItemHolder;
 import com.ithaque.funnies.shared.basic.Layer;
 import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.MouseEvent;
-import com.ithaque.funnies.shared.basic.items.animations.SoftenAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.ParallelItemAnimation;
 import com.ithaque.funnies.shared.basic.processors.DragProcessor.DragProfile;
 
@@ -41,13 +40,12 @@ public abstract class AbstractDragProfile implements DragProfile {
 		Item dragged = board.getMouseTarget(event);
 		if (dragged!=null && acceptDraggeable(dragged)) {
 			this.dragged = dragged;
-			startLocation = dragged.getLocation();
 			anchor = DragProcessor.getAnchor(event, dragged);
 			launchDragAnimation(dragged);
+			startLocation = dragged.getLocation();
 			if (dragLayer!=null) {
-				originalHolder = this.dragged.getParent();
-				originalHolder.removeItem(dragged);
-				dragLayer.addItem(dragged);
+				originalHolder = dragged.getParent();
+				this.dragged.changeParent(dragLayer);
 			}
 		}
 		return this.dragged!=null;
@@ -56,7 +54,8 @@ public abstract class AbstractDragProfile implements DragProfile {
 	protected void launchDragAnimation(Item dragged) {
 		Animation animation = getBeginDragAnimation(dragged).create();
 		if (animation!=null) {
-			board.launchAnimation(animation, retrieveAnimationContext());
+			animation.setContext(retrieveAnimationContext());
+			board.launchAnimation(animation);
 		}
 	}
 	
@@ -94,27 +93,31 @@ public abstract class AbstractDragProfile implements DragProfile {
 
 	@Override
 	public void drop(MouseEvent event, Board board) {
-		if (dragLayer!=null) {
-			dragLayer.removeItem(dragged);
-			originalHolder.addItem(dragged);
-		}
 		ParallelItemAnimation animation = new ParallelItemAnimation();
 		if (!resolveDrop(event, board, animation)) {
+			returnDraggedToOriginalHolder();
 			adjustDraggedLocationOnDrop(animation, startLocation);
 		}
 		if (getDraggedDropAnimation(dragged)!=null) {
 			Animation dropAnimation = getDraggedDropAnimation(dragged).create();
 		    animation.addAnimation(dropAnimation);
 		}
-		board.launchAnimation(animation, retrieveAnimationContext());
+		animation.setContext(retrieveAnimationContext());
+		board.launchAnimation(animation);
 		dragged = null;
 	}
 
+	protected void returnDraggedToOriginalHolder() {
+		if (originalHolder!=null) {
+			dragged.changeParent(originalHolder);
+		}
+	}
+	
 	protected void adjustDraggedLocationOnDrop(
 			ParallelItemAnimation animation, Location draggedLocation) {
-		SoftenAnimation.Builder revertToOrigin = getAdjustLocationAnimation(dragged);
+		Animation.Factory revertToOrigin = getAdjustLocationAnimation(dragged);
 		if (revertToOrigin!=null) {
-			SoftenAnimation revertToOriginInstance = revertToOrigin.create();
+			Animation revertToOriginInstance = revertToOrigin.create();
 			dropLocation = draggedLocation;
 			animation.addAnimation(revertToOriginInstance);
 		}
@@ -123,24 +126,24 @@ public abstract class AbstractDragProfile implements DragProfile {
 		}
 	}
 	
-	protected abstract SoftenAnimation.Builder getBeginDragAnimation(Item dragged);
-
-	protected abstract SoftenAnimation.Builder getAdjustLocationAnimation(Item dragged);
-	
-	protected abstract SoftenAnimation.Builder getDraggedDropAnimation(Item dragged);
-
 	protected boolean resolveDrop(MouseEvent event, Board board, ParallelItemAnimation animation) {
+		returnDraggedToOriginalHolder();
 		Location mouseLocation = DragProcessor.followMouse(event, dragged, anchor);
 		dragged.setLocation(mouseLocation);
 		return true;
 	}
 	
+	protected abstract Animation.Factory getBeginDragAnimation(Item dragged);
+
+	protected abstract Animation.Factory getAdjustLocationAnimation(Item dragged);
+	
+	protected abstract Animation.Factory getDraggedDropAnimation(Item dragged);
+
 	public AnimationContext retrieveAnimationContext() {
 		return new DragAnimationContext(dragged, dropLocation);
 	}
 	
 	public static class DragAnimationContext implements AnimationContext {
-	
 		Item dragged;
 		Location dropLocation;
 	

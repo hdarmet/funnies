@@ -1,6 +1,5 @@
 package com.ithaque.funnies.shared.basic.items.animations;
 
-import com.ithaque.funnies.shared.basic.AnimationContext;
 import com.ithaque.funnies.shared.basic.AnimationContext.Key;
 import com.ithaque.funnies.shared.basic.items.animations.easing.SineInOutEasing;
 
@@ -29,8 +28,8 @@ public class RotateAnimation extends SoftenAnimation {
 	}
 	
 	@Override
-	public boolean start(long time, AnimationContext context) {
-		boolean result = super.start(time, context);
+	public boolean start(long time) {
+		boolean result = super.start(time);
 		if (result) {
 			this.baseAngle = getItem().getRotation();
 		}

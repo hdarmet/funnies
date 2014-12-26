@@ -9,6 +9,8 @@ import com.ithaque.funnies.shared.basic.processors.AbstractDragProfile;
 import com.ithaque.funnies.shared.basic.processors.AbstractTargetedDragProfile;
 import com.ithaque.funnies.shared.funny.Circus;
 import com.ithaque.funnies.shared.funny.Funny;
+import com.ithaque.funnies.shared.funny.SimpleSketch;
+import com.ithaque.funnies.shared.funny.Sketch;
 import com.ithaque.funnies.shared.funny.boardgame.CounterFunny;
 import com.ithaque.funnies.shared.funny.boardgame.DiceFunny;
 import com.ithaque.funnies.shared.funny.boardgame.TileFunny;
@@ -26,28 +28,32 @@ public class FunnyManager extends CircusManager {
 	CircusManager.Handler<DropEvent> dropHandler = 
 		new Handler<DropEvent>(DropEvent.class, this) {
 		@Override
-		public void process(DropEvent dropRequest) {
+		public Sketch process(DropEvent dropRequest) {
 			System.out.println("Drop : "+dropRequest.getDropped().getId()+" on : "+dropRequest.getTarget().getId());
 			lastTarget = dropRequest.getTarget();
+			return null;
 		}
 	};
 
 	CircusManager.Handler<ActivateEvent> activateHandler = 
 		new Handler<ActivateEvent>(ActivateEvent.class, this) {
 		@Override
-		public void process(ActivateEvent activateRequest) {
+		public Sketch process(ActivateEvent activateRequest) {
+			SimpleSketch sketch = new SimpleSketch();
 			System.out.println("Activate : "+activateRequest.getActivated().getId());
-			dice.rollFor(1);
+			sketch.addAnimaation(dice.rollFor(1));
+			return sketch;
 		}
 	};
 		
 	CircusManager.Handler<AcceptDropTargetQuestion> acceptDropTargetHandler = 
 		new Handler<AcceptDropTargetQuestion>(AcceptDropTargetQuestion.class, this) {
 		@Override
-		public void process(AcceptDropTargetQuestion adtQuestion) {
+		public Sketch process(AcceptDropTargetQuestion adtQuestion) {
 			 if (lastTarget==null || lastTarget.getId().equals("t1")!=adtQuestion.getTarget().getId().equals("t1")) {
 				 adtQuestion.accept();
 			 }
+			 return null;
 		}
 	};
 

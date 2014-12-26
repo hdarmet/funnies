@@ -1,9 +1,12 @@
 package com.ithaque.funnies.shared.funny.boardgame;
 
+import com.ithaque.funnies.shared.basic.Animation;
+import com.ithaque.funnies.shared.basic.GroupItem;
 import com.ithaque.funnies.shared.basic.Item;
+import com.ithaque.funnies.shared.basic.ItemHolder;
 import com.ithaque.funnies.shared.basic.Location;
+import com.ithaque.funnies.shared.basic.items.BaseItem;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
-import com.ithaque.funnies.shared.basic.items.animations.SoftenAnimation;
 import com.ithaque.funnies.shared.funny.DropTargetFunny;
 import com.ithaque.funnies.shared.funny.IncompatibleRingException;
 import com.ithaque.funnies.shared.funny.Ring;
@@ -11,24 +14,27 @@ import com.ithaque.funnies.shared.funny.Ring;
 public class TileFunny implements DropTargetFunny {
 
 	String id;
+	GameBoardRing gbRing;
 	
 	Item tileItem;
 	Item hilightItem;
 	Item activableItem;
+	GroupItem holderItem;
 	
-	SoftenAnimation.Builder targetDropAnimation;
-	SoftenAnimation.Builder enterTargetAnimation;
-	SoftenAnimation.Builder showAllowedTargetAnimation;
-	SoftenAnimation.Builder hideAllowedTargetAnimation;
-	SoftenAnimation.Builder exitTargetAnimation;
+	Animation.Factory targetDropAnimation;
+	Animation.Factory enterTargetAnimation;
+	Animation.Factory showAllowedTargetAnimation;
+	Animation.Factory hideAllowedTargetAnimation;
+	Animation.Factory exitTargetAnimation;
 	
 	public TileFunny(String id, Item tileItem, Item hilightItem, Item activableItem) {
 		this.id = id;
 		this.tileItem = tileItem;
 		this.hilightItem = hilightItem;
 		this.activableItem = activableItem;
+		this.holderItem = createHolderItem();
 	}
-	
+
 	public TileFunny(String id, String tileImageUrl, String activableImageUrl, String targetImageUrl, Location[] shape) {
 		this(id,
 			new ImageItem(tileImageUrl),
@@ -40,6 +46,10 @@ public class TileFunny implements DropTargetFunny {
 		((ImageItem)hilightItem).setOpacity(0, 0.0f);
 	}
 	
+	protected GroupItem createHolderItem() {
+		return new BaseItem();
+	}
+
 	@Override
 	public String getId() {
 		return id;
@@ -55,6 +65,7 @@ public class TileFunny implements DropTargetFunny {
 		if (activableItem != null) {
 			activableItem.setLocation(location);
 		}
+		holderItem.setLocation(location);
 	}
 	
 	public void setRotation(float rotation) {
@@ -67,6 +78,7 @@ public class TileFunny implements DropTargetFunny {
 		if (activableItem != null) {
 			activableItem.setRotation(rotation);
 		}
+		holderItem.setRotation(rotation);
 	}
 	
 	public void setScale(float scale) {
@@ -79,6 +91,7 @@ public class TileFunny implements DropTargetFunny {
 		if (activableItem != null) {
 			activableItem.setScale(scale);
 		}
+		holderItem.setScale(scale);
 	}
 
 	@Override
@@ -92,49 +105,49 @@ public class TileFunny implements DropTargetFunny {
 	}
 
 	@Override
-	public SoftenAnimation.Builder getTargetDropAnimation() {
+	public Animation.Factory getTargetDropAnimation() {
 		return targetDropAnimation;
 	}
 
 	@Override
-	public SoftenAnimation.Builder getEnterTargetAnimation() {
+	public Animation.Factory getEnterTargetAnimation() {
 		return enterTargetAnimation;
 	}
 
 	@Override
-	public SoftenAnimation.Builder getExitTargetAnimation() {
+	public Animation.Factory getExitTargetAnimation() {
 		return exitTargetAnimation;
 	}
 
-	public void setTargetDropAnimation(SoftenAnimation.Builder targetDropAnimation) {
+	public void setTargetDropAnimation(Animation.Factory targetDropAnimation) {
 		this.targetDropAnimation = targetDropAnimation;
 	}
 
-	public void setEnterTargetAnimation(SoftenAnimation.Builder enterTargetAnimation) {
+	public void setEnterTargetAnimation(Animation.Factory enterTargetAnimation) {
 		this.enterTargetAnimation = enterTargetAnimation;
 	}
 
-	public void setExitTargetAnimation(SoftenAnimation.Builder exitTargetAnimation) {
+	public void setExitTargetAnimation(Animation.Factory exitTargetAnimation) {
 		this.exitTargetAnimation = exitTargetAnimation;
 	}
 
 	@Override
-	public SoftenAnimation.Builder getShowAllowedTargetAnimation() {
+	public Animation.Factory getShowAllowedTargetAnimation() {
 		return showAllowedTargetAnimation;
 	}
 
 	@Override
-	public SoftenAnimation.Builder getHideAllowedTargetAnimation() {
+	public Animation.Factory getHideAllowedTargetAnimation() {
 		return hideAllowedTargetAnimation;
 	}
 	
 	public void setShowAllowedTargetAnimation(
-			SoftenAnimation.Builder showAllowedTargetAnimation) {
+			Animation.Factory showAllowedTargetAnimation) {
 		this.showAllowedTargetAnimation = showAllowedTargetAnimation;
 	}
 
 	public void setHideAllowedTargetAnimation(
-			SoftenAnimation.Builder hideAllowedTargetAnimation) {
+			Animation.Factory hideAllowedTargetAnimation) {
 		this.hideAllowedTargetAnimation = hideAllowedTargetAnimation;
 	}
 
@@ -146,7 +159,7 @@ public class TileFunny implements DropTargetFunny {
 	@Override
 	public void enterRing(Ring ring) {
 		if (ring instanceof GameBoardRing) {
-			GameBoardRing gbRing = (GameBoardRing)ring;
+			gbRing = (GameBoardRing)ring;
 			if (tileItem!=null) {
 				gbRing.boardLayer.addItem(tileItem);
 			}
@@ -156,12 +169,23 @@ public class TileFunny implements DropTargetFunny {
 			if (activableItem!=null) {
 				gbRing.tilesetLayer.addItem(activableItem);
 			}
+			gbRing.piecesLayer.addItem(holderItem);
 		}
 		else {
 			throw new IncompatibleRingException();
 		}
 	}
 
+	@Override
+	public Location getDropLocation(Item dragged, Item target) {
+		return ((BaseItem)holderItem).getTargetLocation(dragged);
+	}
+
+	@Override
+	public ItemHolder getDropHolder(Item dragged, Item target) {
+		return holderItem;
+	}
+	
 	public static class HHexFunny extends TileFunny {
 
 		public HHexFunny(

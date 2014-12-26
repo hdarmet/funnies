@@ -3,7 +3,7 @@ package com.ithaque.funnies.shared.basic;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.ithaque.funnies.shared.Trace;
+import com.ithaque.funnies.shared.IllegalInvokeException;
 
 public class Item implements Moveable {
 
@@ -16,29 +16,47 @@ public class Item implements Moveable {
 	Set<Event.Type> eventTypes = new HashSet<Event.Type>();
 	Location[] shape = null;
 	
-	public void setParent(ItemHolder parent) {
+	public void removeFromParent() {
+		if (getParent()==null) {
+			throw new IllegalInvokeException();
+		}
 		Board oldBoard = getBoard();
+		this.parent = null;
+		unregisterOnBoard(oldBoard);
+		dirty();		
+	}
+	
+	public void setParent(ItemHolder parent) {
+		if (getParent()!=null) {
+			throw new IllegalInvokeException();
+		}
 		this.parent = parent;
 		Board newBoard = getBoard();
-		registerOnBoard(oldBoard, newBoard);
+		if (newBoard!=null) {
+			registerOnBoard(newBoard);
+		}
 		dirty();
 	}
-
-	protected void registerOnBoard(Board oldBoard, Board newBoard) {
-		if (Trace.debug) {
-			Trace.debug("Register item on board : "+this+" "+oldBoard+" => "+newBoard+".\n");
-		}
-		if (oldBoard == newBoard) {
-			return;
-		}
-		if (oldBoard != null) {
-			oldBoard.unregister(this);
-		}
-		if (newBoard != null) {
-			newBoard.register(this);
+	
+	public void changeParent(ItemHolder newParent) {
+		ItemHolder currentParent = getParent();
+		if (newParent!=currentParent) {
+			currentParent.removeItem(this);
+			newParent.addItem(this);
+			Location absoluteLocation = getBoard().getGraphics().transformLocation(currentParent, getLocation());
+			Location relativeLocation = getBoard().getGraphics().invertTransformLocation(getParent(), absoluteLocation);
+			setLocation(relativeLocation);
 		}
 	}
-
+	
+	protected void registerOnBoard(Board newBoard) {
+		newBoard.register(this);
+	}
+	
+	protected void unregisterOnBoard(Board oldBoard) {
+		oldBoard.register(this);
+	}
+	
 	public Set<Event.Type> getEventTypes() {
 		return eventTypes;
 	}
@@ -63,6 +81,7 @@ public class Item implements Moveable {
 		}
 	}
 
+	@Override
 	public Location getLocation() {
 		return location;
 	}
@@ -77,6 +96,7 @@ public class Item implements Moveable {
 		dirty();
 	}
 	
+	@Override
 	public float getScale() {
 		return scale;
 	}
@@ -86,6 +106,7 @@ public class Item implements Moveable {
 		dirty();
 	}
 
+	@Override
 	public float getRotation() {
 		return rotation;
 	}
@@ -112,7 +133,8 @@ public class Item implements Moveable {
 		return parent;
 	}
 
-	public void prepare() {	
+	public int prepare() {
+		return 1;
 	}
 	
 	public void render(Graphics graphics) {
@@ -126,6 +148,9 @@ public class Item implements Moveable {
 		if (parent!=null) {
 			parent.dirty();
 		}
+	}
+	
+	public void unsetDirty() {	
 	}
 	
 	public boolean acceptEvent(MouseEvent event) {		
@@ -142,6 +167,10 @@ public class Item implements Moveable {
 		return shape;
 	}
 	
+	public Location[] getArea() {
+		return getShape();
+	}
+	
 	public void setShape(Location ... shape) {
 		this.shape = shape;
 	}
@@ -152,6 +181,12 @@ public class Item implements Moveable {
 			shape[i] = new Location(coords[i*2], coords[i*2+1]);
 		}
 		setShape(shape);
+	}
+
+	public void render(Graphics graphics, int currentLevel, int level) {
+		if (currentLevel == level) {
+			render(graphics);
+		}
 	}
 
 }

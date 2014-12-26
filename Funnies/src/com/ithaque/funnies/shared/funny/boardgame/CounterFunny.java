@@ -4,6 +4,7 @@ import com.ithaque.funnies.shared.basic.Event.Type;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
+import com.ithaque.funnies.shared.basic.items.StackItem;
 import com.ithaque.funnies.shared.basic.items.animations.SoftenAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.MoveAnimation;
 import com.ithaque.funnies.shared.funny.DraggableFunny;
@@ -13,14 +14,14 @@ import com.ithaque.funnies.shared.funny.Ring;
 public class CounterFunny implements DraggableFunny {
 
 	String id;
-	Item counterItem;
+	StackItem counterItem;
 	SoftenAnimation.Builder beginDragAnimation;
 	MoveAnimation.Builder adjustLocationAnimation;
 	SoftenAnimation.Builder draggedDropAnimation;
 	
 	public CounterFunny(String id, Item counterItem) {
 		this.id = id;
-		this.counterItem = counterItem;
+		this.counterItem = new StackItem(counterItem);
 	}
 	
 	public CounterFunny(String id, String counterImageUrl) {
@@ -28,7 +29,7 @@ public class CounterFunny implements DraggableFunny {
 			new ImageItem(counterImageUrl)
 		);
 		if (counterItem!=null) {
-			((ImageItem)counterItem).addEventType(Type.MOUSE_DOWN);
+			counterItem.addEventType(Type.MOUSE_DOWN);
 		}
 	}
 	

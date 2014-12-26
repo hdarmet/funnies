@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ithaque.funnies.shared.basic.Animation;
-import com.ithaque.funnies.shared.basic.AnimationContext;
 
 public class ParallelItemAnimation extends Animation {
 
@@ -18,12 +17,15 @@ public class ParallelItemAnimation extends Animation {
 	List<Animation> animations = new ArrayList<Animation>();
 	
 	@Override
-	public boolean start(long time, AnimationContext context) {
-		boolean result = super.start(time, context);
+	public boolean start(long time) {
+		boolean result = super.start(time);
 		if (result) {
 			if (!animations.isEmpty()) {
 				for (Animation child : animations) {
-					child.start(time, getContext());
+					if (child.getContext()==null) {
+						child.setContext(getContext());
+					}
+					child.start(time);
 				}
 				endTime = time+getDuration();
 			}

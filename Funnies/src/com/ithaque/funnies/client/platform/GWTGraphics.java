@@ -423,8 +423,16 @@ public class GWTGraphics implements Graphics {
 	@Override
 	public void setLayer(Token token) {
 		currentLayer = layers.get(token);
+		context2d = currentLayer.getContext();
 	}
 
+	@Override
+	public void show() {
+		for (GWTLayer layer : layers.values()) {
+			layer.show();
+		}
+	}
+	
 	public void resetContext2d() {
 		context2d.beginPath();
 		context2d.setTransform(1, 0, 0, 1, 0, 0);

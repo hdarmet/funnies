@@ -31,11 +31,17 @@ public class Layer extends GroupItem {
 	}
 
 	@Override
-	public void prepare() {
-		super.prepare();
-		if (!adjusted) {
-			adjustLocation();
-			adjusted = true;
+	public int prepare() {
+		if (dirty) {
+			int maxLevel = super.prepare();
+			if (!adjusted) {
+				adjustLocation();
+				adjusted = true;
+			}
+			return maxLevel;
+		}
+		else {
+			return 0;
 		}
 	}
 	
@@ -45,21 +51,41 @@ public class Layer extends GroupItem {
 		super.dirty();
 	}
 	
+	public void render(Graphics graphics, int currentLevel, int level) {
+		if (dirty && currentLevel <= level) {
+			setLayout(graphics);
+			long time = getBoard().getTime();
+			super.render(graphics, currentLevel, level);
+			if (Trace.debug) {
+				Trace.debug("Render layer content : "+this+". "+getItemCount()+" items rendered in "+(getBoard().getTime()-time)+" ms.\n");
+			}
+		}
+	}
+	
 	@Override
 	public void render(Graphics graphics) {
 		if (dirty) {
-			if (token==null) {
-				token = graphics.createLayer();
-			}
-			dirty = false;
-			graphics.setLayer(token);
+			setLayout(graphics);
 			graphics.clear();
 			long time = getBoard().getTime();
 			super.render(graphics);
 			if (Trace.debug) {
-				Trace.debug("Render : "+this+". "+getItemCount()+" items rendered in "+(getBoard().getTime()-time)+" ms.\n");
+				Trace.debug("Render layer : "+this+" in "+(getBoard().getTime()-time)+" ms.\n");
 			}
 		}
+	}
+
+	private void setLayout(Graphics graphics) {
+		if (token==null) {
+			token = graphics.createLayer();
+		}
+		graphics.setLayer(token);
+	}
+	
+	@Override
+	public void unsetDirty() {
+		dirty = false;
+		super.unsetDirty();
 	}
 	
 	private void adjustLocation() {

@@ -1,17 +1,16 @@
 package com.ithaque.funnies.shared.funny;
 
+import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.Item;
-import com.ithaque.funnies.shared.basic.items.animations.SoftenAnimation;
-import com.ithaque.funnies.shared.basic.items.animations.MoveAnimation;
 
 public interface DraggableFunny extends Funny {
 
 	Item[] getDraggableItems();
 
-	SoftenAnimation.Builder getBeginDragAnimation();
+	Animation.Factory getBeginDragAnimation();
 
-	MoveAnimation.Builder getAdjustLocationAnimation();
+	Animation.Factory getAdjustLocationAnimation();
 
-	SoftenAnimation.Builder getDraggedDropAnimation();
+	Animation.Factory getDraggedDropAnimation();
 
 }

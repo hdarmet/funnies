@@ -7,22 +7,37 @@ public class GroupItem extends Item implements ItemHolder {
 
 	List<Item> items = new ArrayList<Item>();
 	
-	public void prepare() {
+	@Override
+	public int prepare() {
+		int maxLevel=0;
 		for (Item item : items) {
-			item.prepare();
+			int highestLevel = item.prepare();
+			if (highestLevel>maxLevel) {
+				maxLevel = highestLevel;
+			}
 		}
 		super.prepare();
+		return maxLevel+1;
 	}
 	
-	public void render(Graphics graphics) {
-		for (Item item : items) {
-			renderItem(graphics, item);
+	public void render(Graphics graphics, int currentLevel, int level) {
+		if (currentLevel<=level) {
+			super.render(graphics, currentLevel, level);
+			for (Item item : items) {
+				renderItem(graphics, item, currentLevel, level);
+			}
 		}
-		super.render(graphics);
 	}
 
-	protected void renderItem(Graphics graphics, Item item) {
-		item.render(graphics);
+	public void unsetDirty() {
+		super.unsetDirty();
+		for (Item item : items) {
+			item.unsetDirty();
+		}
+	}
+
+	protected void renderItem(Graphics graphics, Item item, int currentLevel, int level) {
+		item.render(graphics, currentLevel+1, level);
 	}
 	
 	@Override
@@ -49,7 +64,7 @@ public class GroupItem extends Item implements ItemHolder {
 	public void removeItem(Item item) {
 		if (item.getParent()==this) {
 			items.remove(item);
-			item.setParent(null);
+			item.removeFromParent();
 			dirty();
 		}
 	}
@@ -68,12 +83,20 @@ public class GroupItem extends Item implements ItemHolder {
 	public int getItemCount() {
 		return items.size();
 	}
-	
+
 	@Override
-	protected void registerOnBoard(Board oldBoard, Board newBoard) {
-		super.registerOnBoard(oldBoard, newBoard);
+	protected void registerOnBoard(Board newBoard) {
+		super.registerOnBoard(newBoard);
 		for (Item item : items) {
-			item.registerOnBoard(oldBoard, newBoard);
+			item.registerOnBoard(newBoard);
+		}
+	}
+
+	@Override
+	protected void unregisterOnBoard(Board oldBoard) {
+		super.registerOnBoard(oldBoard);
+		for (Item item : items) {
+			item.registerOnBoard(oldBoard);
 		}
 	}
 	
