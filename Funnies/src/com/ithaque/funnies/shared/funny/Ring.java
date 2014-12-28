@@ -38,6 +38,11 @@ public class Ring {
 		return true;
 	}
 
+	protected boolean exitRing(Funny funny) {
+		funny.exitRing(this);
+		return true;
+	}
+	
 	public void notify(Notification fact) {
 		circus.notify(fact);
 	}

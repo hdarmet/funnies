@@ -63,15 +63,37 @@ public class TransformUtil {
 		}
 	}
 
-	static public Location[] transformShape(Item item, Location[] shape) {
+	static public Location[] transformShape(Moveable item, Location[] shape) {
 		Transform transform = transform(item);
+		Location[] trShape = transformShape(shape, transform);
+		return trShape; 
+	}
+
+	static public Location[] invertTransformShape(Moveable item, Location[] shape) {
+		Transform transform = transform(item).invert();
+		Location[] trShape = transformShape(shape, transform);
+		return trShape; 
+	}
+
+	static Location[] transformShape(Location[] shape,
+			Transform transform) {
 		Location[] trShape = new Location[shape.length];
 		for (int i=0; i<shape.length; i++) {
 			trShape[i] = transform.transformPoint(shape[i]);
 		}
-		return trShape; 
+		return trShape;
 	}
-	
+
+	static public Location transformLocation(Moveable sourceItem, Moveable destItem, Location location) {
+		Location result = transformLocation(sourceItem, location);
+		return invertTransformLocation(destItem, result);
+	}
+
+	static public Location[] transformShape(Moveable sourceItem, Moveable destItem, Location[] shape) {
+		Location[] result = transformShape(sourceItem, shape);
+		return invertTransformShape(destItem, result);
+	}
+
 	static public Location invertTransformLocation(Moveable item, Location location) {
 		Transform transform = transform(item).invert();
 		return transform==null ? null : transform.transformPoint(location);

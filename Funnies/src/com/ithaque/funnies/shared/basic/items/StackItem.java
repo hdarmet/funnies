@@ -1,6 +1,7 @@
 package com.ithaque.funnies.shared.basic.items;
 
 import com.ithaque.funnies.shared.IllegalInvokeException;
+import com.ithaque.funnies.shared.basic.Graphics;
 import com.ithaque.funnies.shared.basic.GroupItem;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.Location;
@@ -14,6 +15,18 @@ public class StackItem extends GroupItem {
 	public StackItem(Item baseItem) {
 		this.baseItem = baseItem;
 		super.addItem(baseItem);
+	}
+
+	@Override
+	public int prepare() {
+		return super.prepare() + (stack==null?0:1);
+	}
+	
+	protected void renderItem(Graphics graphics, Item item, int currentLevel, int level) {
+		baseItem.render(graphics, currentLevel, level);
+		if (stack!=null) {
+			stack.render(graphics, currentLevel+1, level);
+		}
 	}
 
 	public void addItem(Item item) {

@@ -29,6 +29,13 @@ public class CircusDnDProfile extends AbstractTargetedDragProfile {
 		}
 	}
 	
+	public void unregisterDraggableFunny(DraggableFunny funny) {
+		for (Item item : funny.getDraggableItems()) {
+			draggableFunnies.remove(item);
+			removeDraggeable(item);
+		}
+	}
+	
 	protected DraggableFunny getDraggableFunny(Item item) {
 		return draggableFunnies.get(item);
 	}
@@ -37,6 +44,13 @@ public class CircusDnDProfile extends AbstractTargetedDragProfile {
 		for (Item item : funny.getDropTargetItems()) {
 			targetFunnies.put(item, funny);
 			addTarget(item);
+		}
+	}
+	
+	public void unregisterDroppableFunny(DropTargetFunny funny) {
+		for (Item item : funny.getDropTargetItems()) {
+			targetFunnies.remove(item);
+			removeTarget(item);
 		}
 	}
 	
@@ -126,5 +140,6 @@ public class CircusDnDProfile extends AbstractTargetedDragProfile {
 		ItemHolder holder = targetFunny.getDropHolder(dragged, target);
 		dragged.changeParent(holder);
 	}
+
 
 }

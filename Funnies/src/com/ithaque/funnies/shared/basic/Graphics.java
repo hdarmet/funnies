@@ -8,6 +8,8 @@ public interface Graphics {
 
 	void drawImage(AbstractImageItem imageItem);
 
+	void drawPolygon(Item item, Color fillColor, Color lineColor, float lineWidth, float opacity);
+
 	void clear();
 
 	Float getImageWidth(Token token);
@@ -36,5 +38,6 @@ public interface Graphics {
 			return instance;
 		}
 	}
+
 	
 }

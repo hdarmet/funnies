@@ -1,8 +1,10 @@
 package com.ithaque.funnies.shared.funny;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
+import com.ithaque.funnies.shared.IllegalInvokeException;
+import com.ithaque.funnies.shared.Trace;
 import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Platform;
 import com.ithaque.funnies.shared.funny.manager.CircusManager;
@@ -17,8 +19,8 @@ public class Circus {
 	float height;
 	CircusManager manager;
 	
-	Set<Funny> funnies = new HashSet<Funny>();
-	
+	Map<String, Funny> funnies = new HashMap<String, Funny>();
+		
 	public Circus(Platform platform, float width, float height) {
 		this.platform = platform;
 		this.width = width;
@@ -42,15 +44,15 @@ public class Circus {
 	}
 	
 	public boolean enterRing(Funny funny) {
-		if (!funnies.contains(funny)) {
-			if (ring.enterRing(funny)) {
-				funnies.add(funny);
-				return true;
-			}
-		}
-		return false;
+		register(funny);
+		return ring.enterRing(funny);
 	}
 
+	public boolean exitRing(Funny funny) {
+		unregister(funny);
+		return ring.exitRing(funny);
+	}
+	
 	public void notify(Notification request) {
 		if (manager!=null) {
 			Sketch sketch = manager.process(request);
@@ -63,5 +65,20 @@ public class Circus {
 	public Board getBoard() {
 		return board;
 	}
+
+	void unregister(Funny funny) {
+		if (funnies.get(funny.getId())==null || funnies.get(funny.getId())!=funny) {
+			throw new IllegalInvokeException();
+		}
+		funnies.remove(funny.getId());
+	}
 	
+	void register(Funny funny) {
+		Trace.debug("Register funny : "+funny.getId()+"\n");
+		if (funnies.get(funny.getId())!=null) {
+			throw new IllegalInvokeException();
+		}
+		funnies.put(funny.getId(), funny);
+	}
+
 }

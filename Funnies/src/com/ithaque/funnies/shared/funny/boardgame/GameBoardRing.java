@@ -85,4 +85,19 @@ public class GameBoardRing extends Ring {
 		return result;
 	}
 
+	@Override
+	protected boolean exitRing(Funny funny) {
+		boolean result = super.exitRing(funny);
+		if (funny instanceof DraggableFunny) {
+			dragCounterProfile.unregisterDraggableFunny((DraggableFunny)funny);
+		}
+		if (funny instanceof DropTargetFunny) {
+			dragCounterProfile.unregisterDroppableFunny((DropTargetFunny)funny);
+		}
+		if (funny instanceof ActivableFunny) {
+			activationProcessor.unregisterActivableFunny((ActivableFunny)funny);
+		}
+		return result;
+	}
+	
 }

@@ -7,6 +7,9 @@ import java.util.Map;
 
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.canvas.dom.client.Context2d.LineJoin;
+import com.google.gwt.canvas.dom.client.CssColor;
+import com.google.gwt.canvas.dom.client.FillStrokeStyle;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -27,6 +30,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.ithaque.funnies.shared.Trace;
 import com.ithaque.funnies.shared.Transform;
+import com.ithaque.funnies.shared.basic.Color;
 import com.ithaque.funnies.shared.basic.Event.Type;
 import com.ithaque.funnies.shared.basic.Graphics;
 import com.ithaque.funnies.shared.basic.Item;
@@ -36,7 +40,6 @@ import com.ithaque.funnies.shared.basic.MouseEvent.Button;
 import com.ithaque.funnies.shared.basic.Token;
 import com.ithaque.funnies.shared.basic.TransformUtil;
 import com.ithaque.funnies.shared.basic.items.AbstractImageItem;
-import com.ithaque.funnies.shared.basic.items.ImageItem;
 
 public class GWTGraphics implements Graphics {
 
@@ -129,11 +132,14 @@ public class GWTGraphics implements Graphics {
 		
 		public void draw(Context2d context2d, ImageElement image, float opacity, int x, int y, int width, int height) {
 			if (opacity>0.0f) {
+				//drawShape(imageItem, imageItem.getShape());
+
 				Transform transform = TransformUtil.transform(imageItem);
 				if (transform!=null) {
 					context2d.setTransform(transform.m[0], transform.m[1], transform.m[2], transform.m[3], transform.m[4], transform.m[5]);
 					context2d.setGlobalAlpha(opacity);
 					context2d.translate(-width/2.0f, -height/2.0f);
+										
 					context2d.drawImage(image, x, y, width, height, 0, 0, width, height);
 				}
 			}
@@ -259,9 +265,41 @@ public class GWTGraphics implements Graphics {
 		}
 	}
 
+	@Override
+	public void drawPolygon(Item item, Color fillColor, Color lineColor, float lineWidth, float opacity) {
+		Location[] trShape = TransformUtil.transformShape(item, item.getShape());
+		resetContext2d();
+		context2d.setGlobalAlpha(opacity);
+		context2d.setLineWidth(lineWidth);
+		context2d.setLineJoin(LineJoin.ROUND);
+		context2d.setStrokeStyle(getColor(lineColor));
+		context2d.setFillStyle(getColor(fillColor));
+		
+		context2d.moveTo(trShape[0].getX(), trShape[0].getY());
+		for (int i=1; i<trShape.length; i++) {
+			context2d.lineTo(trShape[i].getX(), trShape[i].getY());
+		}		
+		context2d.lineTo(trShape[0].getX(), trShape[0].getY());
+		context2d.fill();
+		context2d.stroke();
+	}
+	
+	FillStrokeStyle getColor(Color color) {
+		return CssColor.make(color.getRed(), color.getGreen(), color.getBlue());
+	}
+
 	void drawShape(Item item, Location[] shape) {
 		Location[] trShape = TransformUtil.transformShape(item, shape);
 		resetContext2d();
+		
+		context2d.setLineWidth(0.0f);
+		context2d.setLineJoin(LineJoin.ROUND);
+		
+		context2d.setShadowBlur(8);
+		context2d.setShadowColor("#000000");
+		context2d.setShadowOffsetX(8);
+		context2d.setShadowOffsetY(8);
+		
 		context2d.moveTo(trShape[0].getX(), trShape[0].getY());
 		for (int i=1; i<trShape.length; i++) {
 			context2d.lineTo(trShape[i].getX(), trShape[i].getY());
@@ -339,6 +377,7 @@ public class GWTGraphics implements Graphics {
 		context2d.beginPath();
 		context2d.setTransform(1, 0, 0, 1, 0, 0);
 		context2d.setGlobalAlpha(1.0);
+		//context2d.setShadowColor("#00000000");
 	}
 	
 	Canvas createMouseCanvas() {
@@ -356,4 +395,5 @@ public class GWTGraphics implements Graphics {
 	    RootPanel.get("board").add(canvas);
 		return canvas;
 	}
+
 }

@@ -1,5 +1,6 @@
 package com.ithaque.funnies.shared.funny.boardgame;
 
+import com.ithaque.funnies.shared.IllegalInvokeException;
 import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.items.AbstractImageItem;
@@ -8,16 +9,17 @@ import com.ithaque.funnies.shared.basic.items.SpriteImageItem;
 import com.ithaque.funnies.shared.basic.items.animations.ChangeFaceAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.FaceFadingAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.SequenceItemAnimation;
+import com.ithaque.funnies.shared.funny.AbstractFunny;
 import com.ithaque.funnies.shared.funny.Funny;
 import com.ithaque.funnies.shared.funny.IncompatibleRingException;
 import com.ithaque.funnies.shared.funny.Ring;
 
-public class EphemeralFunny implements Funny {
+public class EphemeralFunny extends AbstractFunny implements Funny {
 
-	String id;
 	AbstractImageItem item;
 	
 	public EphemeralFunny(String id, AbstractImageItem item) {
+		super(id);
 		this.item = item;
 		for (int index=0; index<this.item.getImageCount(); index++) {
 			this.item.setOpacity(index, 0.0f);
@@ -33,21 +35,34 @@ public class EphemeralFunny implements Funny {
 	}
 	
 	@Override
-	public String getId() {
-		return id;
+	public GameBoardRing getRing() {
+		return (GameBoardRing) super.getRing();
 	}
 
 	@Override
 	public void enterRing(Ring ring) {
-		if (ring instanceof GameBoardRing) {
-			GameBoardRing gbRing = (GameBoardRing)ring;
-			gbRing.infoLayer.addItem(item);
-		}
-		else {
+		if (!(ring instanceof GameBoardRing)) {
 			throw new IncompatibleRingException();
+		}
+		super.enterRing(ring);
+		GameBoardRing gbRing = (GameBoardRing)ring;
+		if (item!=null) {
+			gbRing.infoLayer.addItem(item);
 		}
 	}
 
+	@Override
+	public void exitRing(Ring ring) {
+		if (ring != getRing()) {
+			throw new IllegalInvokeException();
+		}
+		GameBoardRing gbRing = (GameBoardRing)ring;
+		if (item!=null) {
+			gbRing.infoLayer.removeItem(item);
+		}
+		super.exitRing(ring);
+	}
+	
 	public Animation play(float x, float y, long duration) {
 		item.setLocation(new Location(x, y));
 		SequenceItemAnimation animation = new SequenceItemAnimation();

@@ -3,6 +3,8 @@ package com.ithaque.funnies.shared.basic;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ithaque.funnies.shared.basic.ItemObserver.ChangeType;
+
 public class GroupItem extends Item implements ItemHolder {
 
 	List<Item> items = new ArrayList<Item>();
@@ -17,7 +19,7 @@ public class GroupItem extends Item implements ItemHolder {
 			}
 		}
 		super.prepare();
-		return maxLevel+1;
+		return maxLevel;
 	}
 	
 	public void render(Graphics graphics, int currentLevel, int level) {
@@ -37,7 +39,15 @@ public class GroupItem extends Item implements ItemHolder {
 	}
 
 	protected void renderItem(Graphics graphics, Item item, int currentLevel, int level) {
-		item.render(graphics, currentLevel+1, level);
+		item.render(graphics, currentLevel, level);
+	}
+	
+	public void fire(ChangeType changeType) {
+		super.fire(changeType);
+		if (changeType==ChangeType.PARENT || changeType==ChangeType.ANCESTOR)
+		for (Item item : new ArrayList<Item>(items)) {
+			item.fire(ChangeType.ANCESTOR);
+		}
 	}
 	
 	@Override

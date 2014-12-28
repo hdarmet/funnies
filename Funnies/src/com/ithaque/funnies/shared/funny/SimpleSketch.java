@@ -7,7 +7,7 @@ public class SimpleSketch implements Sketch {
 
 	SequenceItemAnimation baseAnimation = new SequenceItemAnimation();
 	
-	public void addAnimaation(Animation animation) {
+	public void addAnimation(Animation animation) {
 		baseAnimation.addAnimation(animation);
 	}
 	

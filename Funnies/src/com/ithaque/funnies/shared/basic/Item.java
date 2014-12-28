@@ -1,9 +1,12 @@
 package com.ithaque.funnies.shared.basic;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.ithaque.funnies.shared.IllegalInvokeException;
+import com.ithaque.funnies.shared.basic.ItemObserver.ChangeType;
 
 public class Item implements Moveable {
 
@@ -16,6 +19,8 @@ public class Item implements Moveable {
 	Set<Event.Type> eventTypes = new HashSet<Event.Type>();
 	Location[] shape = null;
 	
+	List<ItemObserver> observers = null;
+	
 	public void removeFromParent() {
 		if (getParent()==null) {
 			throw new IllegalInvokeException();
@@ -23,6 +28,7 @@ public class Item implements Moveable {
 		Board oldBoard = getBoard();
 		this.parent = null;
 		unregisterOnBoard(oldBoard);
+		fire(ChangeType.PARENT);
 		dirty();		
 	}
 	
@@ -35,6 +41,7 @@ public class Item implements Moveable {
 		if (newBoard!=null) {
 			registerOnBoard(newBoard);
 		}
+		fire(ChangeType.PARENT);
 		dirty();
 	}
 	
@@ -93,6 +100,7 @@ public class Item implements Moveable {
 	
 	public void setLocation(Location location) {
 		this.location = location;
+		fire(ChangeType.LOCATION);
 		dirty();
 	}
 	
@@ -103,6 +111,7 @@ public class Item implements Moveable {
 
 	public void setScale(float scale) {
 		this.scale = scale;
+		fire(ChangeType.SCALE);
 		dirty();
 	}
 
@@ -119,12 +128,38 @@ public class Item implements Moveable {
 			rotation-=TWO_PI;
 		}
 		this.rotation = rotation;
+		fire(ChangeType.ROTATION);
 		dirty();
+	}
+	
+	public void fire(ChangeType changeType) {
+		if (observers!=null) {
+			for (ItemObserver observer : new ArrayList<ItemObserver>(observers)) {
+				observer.change(changeType, this);
+			}
+		}
+	}
+
+	public void addObserver(ItemObserver observer) {
+		if (observers==null) {
+			observers = new ArrayList<ItemObserver>();
+		}
+		if (!observers.contains(observer)) {
+			observers.add(observer);
+		}
+	}
+	
+	public void removeObserver(ItemObserver observer) {
+		if (observers.contains(observer)) {
+			observers.remove(observer);
+			if (observers.isEmpty()) {
+				observers=null;
+			}
+		}
 	}
 	
 	public void free() {
 		if (parent!=null) {
-			dirty();
 			parent.removeItem(this);
 		}
 	}
@@ -173,14 +208,20 @@ public class Item implements Moveable {
 	
 	public void setShape(Location ... shape) {
 		this.shape = shape;
+		fire(ChangeType.SHAPE);
+		dirty();
 	}
 	
 	public void setShape(float ... coords) {
+		setShape(buildShape(coords));
+	}
+
+	public static Location[] buildShape(float... coords) {
 		Location[] shape = new Location[coords.length/2];
 		for (int i=0; i<shape.length; i++) {
 			shape[i] = new Location(coords[i*2], coords[i*2+1]);
 		}
-		setShape(shape);
+		return shape;
 	}
 
 	public void render(Graphics graphics, int currentLevel, int level) {

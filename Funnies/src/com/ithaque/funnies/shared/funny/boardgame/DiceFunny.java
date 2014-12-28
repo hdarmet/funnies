@@ -1,5 +1,6 @@
 package com.ithaque.funnies.shared.funny.boardgame;
 
+import com.ithaque.funnies.shared.IllegalInvokeException;
 import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.Event.Type;
 import com.ithaque.funnies.shared.basic.Item;
@@ -10,13 +11,13 @@ import com.ithaque.funnies.shared.basic.items.animations.ChangeFaceAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.ParallelItemAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.RotateAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.SequenceItemAnimation;
+import com.ithaque.funnies.shared.funny.AbstractFunny;
 import com.ithaque.funnies.shared.funny.ActivableFunny;
 import com.ithaque.funnies.shared.funny.IncompatibleRingException;
 import com.ithaque.funnies.shared.funny.Ring;
 
-public class DiceFunny implements ActivableFunny {
+public class DiceFunny extends AbstractFunny implements ActivableFunny {
 
-	String id;
 	ImageItem diceItem;
 	DiceFace[] faces;
 	Location location;
@@ -36,26 +37,39 @@ public class DiceFunny implements ActivableFunny {
 	}
 
 	public DiceFunny(String id, Location location, DiceFace ... faces) {
-		this.id = id;
+		super(id);
 		this.faces = faces;
 		this.location = location;
+		diceItem = buildDiceItem();
 	}
 	
 	@Override
-	public String getId() {
-		return id;
+	public GameBoardRing getRing() {
+		return (GameBoardRing) super.getRing();
+	}
+	
+	@Override
+	public void enterRing(Ring ring) {
+		if (!(ring instanceof GameBoardRing)) {
+			throw new IncompatibleRingException();
+		}
+		super.enterRing(ring);
+		GameBoardRing gbRing = (GameBoardRing)ring;
+		if (diceItem!=null) {
+			gbRing.piecesLayer.addItem(diceItem);
+		}
 	}
 
 	@Override
-	public void enterRing(Ring ring) {
-		diceItem = buildDiceItem();
-		if (ring instanceof GameBoardRing) {
-			GameBoardRing gbRing = (GameBoardRing)ring;
-			gbRing.piecesLayer.addItem(diceItem);
+	public void exitRing(Ring ring) {
+		if (ring != getRing()) {
+			throw new IllegalInvokeException();
 		}
-		else {
-			throw new IncompatibleRingException();
+		GameBoardRing gbRing = (GameBoardRing)ring;
+		if (diceItem!=null) {
+			gbRing.piecesLayer.removeItem(diceItem);
 		}
+		super.exitRing(ring);
 	}
 
 	ImageItem buildDiceItem() {

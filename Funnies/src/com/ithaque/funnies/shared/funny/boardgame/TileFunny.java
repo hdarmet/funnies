@@ -1,21 +1,22 @@
 package com.ithaque.funnies.shared.funny.boardgame;
 
+import com.ithaque.funnies.shared.IllegalInvokeException;
 import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.GroupItem;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.ItemHolder;
 import com.ithaque.funnies.shared.basic.Location;
+import com.ithaque.funnies.shared.basic.TransformUtil;
 import com.ithaque.funnies.shared.basic.items.BaseItem;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
+import com.ithaque.funnies.shared.funny.AbstractFunny;
 import com.ithaque.funnies.shared.funny.DropTargetFunny;
 import com.ithaque.funnies.shared.funny.IncompatibleRingException;
 import com.ithaque.funnies.shared.funny.Ring;
+import com.ithaque.funnies.shared.funny.TrackableFunny;
 
-public class TileFunny implements DropTargetFunny {
+public class TileFunny extends AbstractFunny implements DropTargetFunny, TrackableFunny {
 
-	String id;
-	GameBoardRing gbRing;
-	
 	Item tileItem;
 	Item hilightItem;
 	Item activableItem;
@@ -28,7 +29,7 @@ public class TileFunny implements DropTargetFunny {
 	Animation.Factory exitTargetAnimation;
 	
 	public TileFunny(String id, Item tileItem, Item hilightItem, Item activableItem) {
-		this.id = id;
+		super(id);
 		this.tileItem = tileItem;
 		this.hilightItem = hilightItem;
 		this.activableItem = activableItem;
@@ -50,11 +51,6 @@ public class TileFunny implements DropTargetFunny {
 		return new BaseItem();
 	}
 
-	@Override
-	public String getId() {
-		return id;
-	}
-	
 	public void setLocation(Location location) {
 		if (tileItem!=null) {
 			tileItem.setLocation(location);
@@ -158,22 +154,40 @@ public class TileFunny implements DropTargetFunny {
 	
 	@Override
 	public void enterRing(Ring ring) {
-		if (ring instanceof GameBoardRing) {
-			gbRing = (GameBoardRing)ring;
-			if (tileItem!=null) {
-				gbRing.boardLayer.addItem(tileItem);
-			}
-			if (hilightItem!=null) {
-				gbRing.hilightLayer.addItem(hilightItem);
-			}
-			if (activableItem!=null) {
-				gbRing.tilesetLayer.addItem(activableItem);
-			}
-			gbRing.piecesLayer.addItem(holderItem);
-		}
-		else {
+		if (!(ring instanceof GameBoardRing)) {
 			throw new IncompatibleRingException();
 		}
+		super.enterRing(ring);
+		GameBoardRing gbRing = (GameBoardRing)ring;
+		if (tileItem!=null) {
+			gbRing.boardLayer.addItem(tileItem);
+		}
+		if (hilightItem!=null) {
+			gbRing.hilightLayer.addItem(hilightItem);
+		}
+		if (activableItem!=null) {
+			gbRing.tilesetLayer.addItem(activableItem);
+		}
+		gbRing.piecesLayer.addItem(holderItem);
+	}
+
+	@Override
+	public void exitRing(Ring ring) {
+		if (ring != getRing()) {
+			throw new IllegalInvokeException();
+		}
+		GameBoardRing gbRing = (GameBoardRing)ring;
+		if (tileItem!=null) {
+			gbRing.boardLayer.removeItem(tileItem);
+		}
+		if (hilightItem!=null) {
+			gbRing.hilightLayer.removeItem(hilightItem);
+		}
+		if (activableItem!=null) {
+			gbRing.tilesetLayer.removeItem(activableItem);
+		}
+		gbRing.piecesLayer.removeItem(holderItem);
+		super.exitRing(ring);
 	}
 
 	@Override
@@ -244,6 +258,16 @@ public class TileFunny implements DropTargetFunny {
 			};
 		}
 
+	}
+	
+	@Override
+	public GameBoardRing getRing() {
+		return (GameBoardRing) super.getRing();
+	}
+
+	@Override
+	public Location getLocation() {
+		return TransformUtil.transformLocation(tileItem.getParent(), tileItem.getLocation());
 	}
 
 }

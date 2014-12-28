@@ -25,9 +25,9 @@ public abstract class SoftenAnimation extends Animation {
 	@Override
 	public boolean start(long time) {
 		super.start(time);
-		if (Trace.debug) {
+//		if (Trace.debug) {
 			Trace.debug("Item : "+getItem()+" "+itemKey+" "+item+" "+this);
-		}
+//		}
 		this.easing.launch(getItem().getBoard());
 		return true;
 	}

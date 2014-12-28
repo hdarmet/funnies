@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.ithaque.funnies.client.platform.GWTPlatform;
 import com.ithaque.funnies.shared.FieldVerifier;
 import com.ithaque.funnies.shared.basic.Board;
+import com.ithaque.funnies.shared.basic.Color;
 import com.ithaque.funnies.shared.basic.Event;
 import com.ithaque.funnies.shared.basic.Event.Type;
 import com.ithaque.funnies.shared.basic.Layer;
@@ -25,11 +26,13 @@ import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.MultiLayered;
 import com.ithaque.funnies.shared.basic.Processor;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
+import com.ithaque.funnies.shared.basic.items.PolygonItem;
 import com.ithaque.funnies.shared.basic.items.animations.FaceFadingAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.MoveAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.RotateAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.ScalingAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.easing.OutBackEasing;
+import com.ithaque.funnies.shared.basic.processors.AbstractDragProfile;
 import com.ithaque.funnies.shared.basic.processors.DragProcessor;
 import com.ithaque.funnies.shared.basic.processors.GestureEvent;
 import com.ithaque.funnies.shared.basic.processors.GestureProfile;
@@ -67,7 +70,7 @@ public class Funnies implements EntryPoint {
 	
 	Board board;
 	
-	public void onvModuleLoad() {
+	public void onxModuleLoad() {
 		board = new Board(new GWTPlatform());
 		board.start();
 		
@@ -92,7 +95,7 @@ public class Funnies implements EntryPoint {
 		board.addProcessor(dragProcessor);
 	}
 	
-	public void onjModuleLoad() {
+	public void onvModuleLoad() {
 		board = new Board(new GWTPlatform());
 		board.start();
 
@@ -134,6 +137,10 @@ public class Funnies implements EntryPoint {
 		iitem2.addEventType(Type.MOUSE_CLICK);
 		iitem2.addEventType(Type.MOUSE_DOWN);
 
+		PolygonItem pitem = new PolygonItem(new Color(255, 0, 0), new Color(0, 255, 0), 4.0f, 0.5f, 0, 0, 25, -50, 25, 50);
+		pitem.setRotation(((float)(Math.PI/6.0)));
+		pitem.setScale(0.5f);
+		
 		MultiLayered layered = new MultiLayered(-500, -300, 500, 300);
 		Layer layerZero = layered.addLayer("back");
 		Layer gestureLayer = layered.addLayer("gesture");
@@ -148,6 +155,7 @@ public class Funnies implements EntryPoint {
 		layerOne.addItem(titem2);
 		layerTwo.addItem(iitem);
 		layerTwo.addItem(iitem2);
+		layerTwo.addItem(pitem);
 		layerOne.addEventType(Type.MOUSE_DOWN);
 		layerOne.addEventType(Type.MOUSE_WHEEL);
 		gestureLayer.addEventType(Type.MOUSE_DOWN);
@@ -164,10 +172,10 @@ public class Funnies implements EntryPoint {
 		profile.addTarget(titem2);
 		profile.setBeginDragAnimation(new ScalingAnimation.Builder(500, 0.6f).setItemKey(profile.DRAGGED_ITEM_KEY));
 //		profile.setAdjustLocationAnimation(new ScalingAnimation.Builder(500, 0.5f));
-		profile.setAdjustLocationAnimation(new MoveAnimation.Builder(500).setItemKey(profile.DRAGGED_ITEM_KEY));
+		profile.setAdjustLocationAnimation(new MoveAnimation.Builder(500).setItemKey(profile.DRAGGED_ITEM_KEY).setLocationKey(AbstractDragProfile.DROP_LOCATION_KEY));
 		profile.setEnterTargetAnimation(new FaceFadingAnimation.Builder(1000, 0, 1.0f).setItemKey(profile.NEW_TARGET_KEY));
 		profile.setExitTargetAnimation(new FaceFadingAnimation.Builder(1000, 0, 0.0f).setItemKey(profile.PREVIOUS_TARGET_KEY));
-		profile.setDraggedDropAnimation(new MoveAnimation.Builder(new OutBackEasing.Builder(1000)));
+		profile.setDraggedDropAnimation(new ScalingAnimation.Builder(500, 0.5f).setItemKey(AbstractDragProfile.DRAGGED_ITEM_KEY));
 		profile.setShowAllowedTargetAnimation(new FaceFadingAnimation.Builder(500, 1, 0.2f).setItemKey(profile.OTHER_TARGET_KEY));
 		profile.setHideAllowedTargetAnimation(new FaceFadingAnimation.Builder(500, 1, 0.0f).setItemKey(profile.OTHER_TARGET_KEY));
 		

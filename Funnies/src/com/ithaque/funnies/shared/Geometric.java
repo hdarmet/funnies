@@ -100,4 +100,16 @@ public class Geometric {
 	    }                
 	    return new Location(x, y);
 	}
+	
+	public static float computeDistance(Location p1, Location p2) {
+		float deltaX = p2.getX() - p1.getX();
+		float deltaY = p2.getY() - p1.getY();
+		return (float)Math.sqrt(deltaX*deltaX+deltaY*deltaY);
+	}
+	
+	public static float computeAngle(Location p1, Location p2) {
+		float deltaX = p2.getX() - p1.getX();
+		float deltaY = p2.getY() - p1.getY();
+		return (float)Math.atan2(deltaX, -deltaY);
+	}
 }
