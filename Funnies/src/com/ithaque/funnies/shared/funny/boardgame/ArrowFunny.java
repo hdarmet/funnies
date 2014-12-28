@@ -23,11 +23,11 @@ public class ArrowFunny extends AbstractFunny {
 	float headHeight = 24.0f;
 	float headWidth = 18.0f; 
 	float queueWidth = 6.0f;
+	float margin = 20.0f;
 	Color lineColor = Color.BLACK;
 	Color fillColor = Color.RED;
 	float lineWidth = 1.0f;
 	float opacity = 1.0f;
-	float margin = 20.0f;
 	
 	public ArrowFunny(String id, TrackableFunny source, TrackableFunny destination) {
 		super(id);
@@ -46,6 +46,28 @@ public class ArrowFunny extends AbstractFunny {
 			}
 		});
 
+	}
+
+	public ArrowFunny setArrowMetrics(float headHeight,	float headWidth, float queueWidth, float margin) {
+		this.headHeight = headHeight;
+		this.headWidth = headWidth; 
+		this.queueWidth = queueWidth;
+		this.margin = margin;
+		if (arrowItem != null) {
+			reshape(arrowItem);
+		}
+		return this;
+	}
+	
+	public ArrowFunny setArrowStyle(Color lineColor, Color fillColor, float lineWidth, float opacity) {
+		this.lineColor = lineColor;
+		this.fillColor = fillColor;
+		this.lineWidth = lineWidth;
+		this.opacity = opacity;
+		if (arrowItem != null) {
+			arrowItem.setStyle(lineColor, fillColor, lineWidth, opacity);
+		}
+		return this;
 	}
 	
 	PolygonItem buildArrowItem() {

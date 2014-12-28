@@ -14,10 +14,15 @@ public class PolygonItem extends Item {
 
 	public PolygonItem(Color fillColor, Color lineColor, float lineWidth, float opacity, Location[] shape) {
 		setShape(shape);
+		setStyle(fillColor, lineColor, lineWidth, opacity);
+	}
+	
+	public void setStyle(Color fillColor, Color lineColor, float lineWidth, float opacity) {
 		this.fillColor = fillColor;
 		this.lineColor = lineColor;
 		this.lineWidth = lineWidth;
 		this.opacity = opacity;
+		dirty();
 	}
 	
 	public PolygonItem(Color fillColor, Color lineColor, float lineWidth, float opacity, float ... shape) {

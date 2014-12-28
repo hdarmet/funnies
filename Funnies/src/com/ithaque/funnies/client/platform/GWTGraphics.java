@@ -49,6 +49,8 @@ public class GWTGraphics implements Graphics {
 	Context2d context2d;
 	Map<String, Token> imageTokens = new HashMap<String, Token>();
 	Map<Token, ImageElementRecord> imageElements = new HashMap<Token, ImageElementRecord>();
+	GWTLayer currentLayer;
+	
 	boolean drag = false;
 	boolean debug = false;
 	
@@ -320,8 +322,6 @@ public class GWTGraphics implements Graphics {
 		return !imageRecord.ready ? null : (float)imageRecord.image.getHeight();
 	}
 	
-	GWTLayer currentLayer;
-	
 	@Override
 	public void clear() {
 		context2d = currentLayer.clear();
@@ -357,6 +357,9 @@ public class GWTGraphics implements Graphics {
 		Token token = new Token(layerTokenGenerator++);
 		GWTLayer layer = new GWTLayer(this);
 		layers.put(token, layer);
+		if (currentLayer==null) {
+			currentLayer = layer;
+		}
 		return token;
 	}
 

@@ -49,7 +49,6 @@ public class FunnyManager extends AbstracCircusManager {
 			System.out.println("Activate : "+activateRequest.getActivated().getId());
 			sketch.addAnimation(dice.rollFor(1));
 			sketch.addAnimation(boom.play(0.0f, 0.0f, 1000L));
-			circus.enterRing(createArrow());
 			return sketch;
 		}
 	};
@@ -123,7 +122,7 @@ public class FunnyManager extends AbstracCircusManager {
 		circus.enterRing(dice=createDiceFunny());
 		circus.enterRing(boom=createExplosion());
 		
-
+		circus.enterRing(createArrow());
 	}
 
 
