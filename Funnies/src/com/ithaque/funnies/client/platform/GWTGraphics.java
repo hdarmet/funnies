@@ -50,6 +50,8 @@ public class GWTGraphics implements Graphics {
 	Map<String, Token> imageTokens = new HashMap<String, Token>();
 	Map<Token, ImageElementRecord> imageElements = new HashMap<Token, ImageElementRecord>();
 	GWTLayer currentLayer;
+	Map<Token, GWTLayer> layerMap = new HashMap<Token, GWTLayer>();
+	int layerTokenGenerator = 0;
 	
 	boolean drag = false;
 	boolean debug = false;
@@ -349,14 +351,11 @@ public class GWTGraphics implements Graphics {
 		return currentLayer != null;
 	}
 
-	Map<Token, GWTLayer> layers = new HashMap<Token, GWTLayer>();
-	int layerTokenGenerator = 0;
-	
 	@Override
 	public Token createLayer() {
 		Token token = new Token(layerTokenGenerator++);
 		GWTLayer layer = new GWTLayer(this);
-		layers.put(token, layer);
+		layerMap.put(token, layer);
 		if (currentLayer==null) {
 			currentLayer = layer;
 		}
@@ -365,13 +364,19 @@ public class GWTGraphics implements Graphics {
 
 	@Override
 	public void setLayer(Token token) {
-		currentLayer = layers.get(token);
+		currentLayer = layerMap.get(token);
 		context2d = currentLayer.getContext();
 	}
+	
+	@Override
+	public int compareLayers(Token layer1, Token layer2) {
+		return layer1.value() - layer2.value();
+	}
+
 
 	@Override
 	public void show() { 
-		for (GWTLayer layer : layers.values()) {
+		for (GWTLayer layer : layerMap.values()) {
 			layer.show();
 		}
 	}

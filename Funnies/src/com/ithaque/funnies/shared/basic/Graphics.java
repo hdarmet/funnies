@@ -23,6 +23,8 @@ public interface Graphics {
 	Token createLayer();
 
 	void setLayer(Token token);
+	
+	int compareLayers(Token layer1, Token layer2);
 
 	void show();
 	

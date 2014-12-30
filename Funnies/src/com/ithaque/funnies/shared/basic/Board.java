@@ -1,19 +1,15 @@
 package com.ithaque.funnies.shared.basic;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import com.ithaque.funnies.shared.Trace;
 
-public class Board implements ItemHolder {
+public class Board implements BaseDevice, LayoutDevice {
 
 	List<Item> items = new ArrayList<Item>();
 	List<Animation> animations = new ArrayList<Animation>();
@@ -224,23 +220,21 @@ public class Board implements ItemHolder {
 	}
 	
 	public Item getMouseTarget(MouseEvent event) {
-		SortedMap<List<Integer>, Item> sortedItems = new TreeMap<List<Integer>, Item>(comparator);
+		ItemComparator itemComparator = new ItemComparator();
+		Item target = null;
 		for (Item item : getEventRegistery(event.getType())) {
 			if (item.acceptEvent(event)) {
-				List<Integer> itemRanges = new ArrayList<Integer>();
-				getItemRanges(item, itemRanges);
-				sortedItems.put(itemRanges, item);
+				if (target==null) {
+					target=item;
+				}
+				else {
+					if (itemComparator.compare(target, item)<0) {
+						target=item;
+					}
+				}
 			}
 		}
-		Iterator<Item> iterator = sortedItems.values().iterator();
-		return iterator.hasNext() ? iterator.next() : null;
-	}
-	
-	void getItemRanges(Item item, List<Integer> itemRanges) {
-		if (item.getParent()!=null && item.getParent() instanceof Item) {
-			getItemRanges((Item)item.getParent(), itemRanges);
-		}
-		itemRanges.add(item.getParent().indexOfItem(item));
+		return target;
 	}
 		
 	@Override
@@ -266,34 +260,9 @@ public class Board implements ItemHolder {
 		return platform.isReady();
 	}
 
-	Comparator<List<Integer>> comparator = new Comparator<List<Integer>>() {
-
-		@Override
-		public int compare(List<Integer> left, List<Integer> right) {
-			if (left==null || right==null) {
-				if (left!=null) {
-					return 1;
-				}
-				if (right!=null) {
-					return -1;
-				}
-				return 0;
-			}
-			int length = left.size() > right.size() ? right.size() : left.size();
-			for (int index=0; index<length; index++) {
-				int result = right.get(index).compareTo(left.get(index));
-				if (result!=0) {
-					return result;
-				}
-			}
-			if (left.size()>length) {
-				return -1;
-			}
-			if (right.size()>length) {
-				return 1;
-			}
-			return 0;
-		}
-	};
+	@Override
+	public Token getLayerToken() {
+		return token;
+	}
 
 }

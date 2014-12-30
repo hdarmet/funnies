@@ -28,24 +28,18 @@ public class ArrowFunny extends AbstractFunny {
 	Color fillColor = Color.RED;
 	float lineWidth = 1.0f;
 	float opacity = 1.0f;
+	FunnyObserver observer;
 	
 	public ArrowFunny(String id, TrackableFunny source, TrackableFunny destination) {
 		super(id);
+		this.observer = new FunnyObserver() {			
+			@Override
+			public void change(FunnyObserver.ChangeType type, Funny funny) {
+				reshape(arrowItem);
+			}
+		};
 		this.source = source;
-		this.source.addObserver(new FunnyObserver() {			
-			@Override
-			public void change(FunnyObserver.ChangeType type, Funny funny) {
-				reshape(arrowItem);
-			}
-		});
 		this.destination = destination;
-		this.destination.addObserver(new FunnyObserver() {			
-			@Override
-			public void change(FunnyObserver.ChangeType type, Funny funny) {
-				reshape(arrowItem);
-			}
-		});
-
 	}
 
 	public ArrowFunny setArrowMetrics(float headHeight,	float headWidth, float queueWidth, float margin) {
@@ -133,6 +127,8 @@ public class ArrowFunny extends AbstractFunny {
 		super.enterRing(ring);
 		arrowItem = buildArrowItem();
 		getArrowSupport().addItem(arrowItem);
+		this.source.addObserver(observer);
+		this.destination.addObserver(observer);
 	}
 
 	@Override
@@ -141,6 +137,8 @@ public class ArrowFunny extends AbstractFunny {
 			throw new IllegalInvokeException();
 		}
 		getArrowSupport().removeItem(arrowItem);
+		this.source.removeObserver(observer);
+		this.destination.removeObserver(observer);
 		super.exitRing(ring);
 	}
 

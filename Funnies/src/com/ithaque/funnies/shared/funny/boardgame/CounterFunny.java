@@ -23,18 +23,19 @@ public class CounterFunny extends AbstractFunny implements DraggableFunny, Track
 	SoftenAnimation.Builder beginDragAnimation;
 	MoveAnimation.Builder adjustLocationAnimation;
 	SoftenAnimation.Builder draggedDropAnimation;
+	ItemObserver observer;
 	
 	public CounterFunny(String id, Item counterItem) {
 		super(id);
 		this.counterItem = new StackItem(counterItem);
-		this.counterItem.addObserver(new ItemObserver() {			
+		this.observer = new ItemObserver() {			
 			@Override
 			public void change(ItemObserver.ChangeType type, Item item) {
 				if (type==ItemObserver.ChangeType.LOCATION || type==ItemObserver.ChangeType.PARENT || type==ItemObserver.ChangeType.ANCESTOR) {
 					fire(FunnyObserver.ChangeType.LOCATION);
 				}
 			}
-		});
+		};
 	}
 	
 	public CounterFunny(String id, String counterImageUrl) {
@@ -68,6 +69,7 @@ public class CounterFunny extends AbstractFunny implements DraggableFunny, Track
 		if (counterItem!=null) {
 			gbRing.piecesLayer.addItem(counterItem);
 		}
+		this.counterItem.addObserver(observer);
 	}
 
 	@Override
@@ -79,6 +81,7 @@ public class CounterFunny extends AbstractFunny implements DraggableFunny, Track
 		if (counterItem!=null) {
 			gbRing.piecesLayer.removeItem(counterItem);
 		}
+		this.counterItem.removeObserver(observer);
 		super.exitRing(ring);
 	}
 	

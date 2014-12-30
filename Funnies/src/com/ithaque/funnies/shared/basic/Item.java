@@ -18,6 +18,7 @@ public class Item implements Moveable {
 	float rotation = ItemHolder.NO_ROTATION;
 	Set<Event.Type> eventTypes = new HashSet<Event.Type>();
 	Location[] shape = null;
+	int level;
 	
 	List<ItemObserver> observers = null;
 	
@@ -226,6 +227,7 @@ public class Item implements Moveable {
 
 	public void render(Graphics graphics, int currentLevel, int level) {
 		if (currentLevel == level) {
+			this.level = currentLevel;
 			render(graphics);
 		}
 	}

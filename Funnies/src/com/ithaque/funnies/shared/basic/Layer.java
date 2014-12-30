@@ -1,9 +1,10 @@
 package com.ithaque.funnies.shared.basic;
 
+import com.ithaque.funnies.shared.IllegalInvokeException;
 import com.ithaque.funnies.shared.Trace;
 
 
-public class Layer extends GroupItem {
+public class Layer extends GroupItem implements LayoutDevice {
 			
 	String id;
 	boolean adjusted = false;
@@ -25,9 +26,22 @@ public class Layer extends GroupItem {
 	}
 	
 	@Override
+	public void setParent(ItemHolder itemHolder) {
+		if (!(itemHolder instanceof BaseDevice)) {
+			throw new IllegalInvokeException();
+		}
+		super.setParent(itemHolder);
+	}
+	
+	@Override
 	public void setLocation(Location location) {
 		super.setLocation(location);
 		adjusted = false;
+	}
+	
+	@Override
+	public Token getLayerToken() {
+		return token;
 	}
 
 	@Override

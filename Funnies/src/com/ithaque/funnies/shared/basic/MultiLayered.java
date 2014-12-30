@@ -1,7 +1,9 @@
 package com.ithaque.funnies.shared.basic;
 
+import com.ithaque.funnies.shared.IllegalInvokeException;
 
-public class MultiLayered extends GroupItem {
+
+public class MultiLayered extends GroupItem implements BaseDevice {
 
 	float minX;
 	float maxX;
@@ -43,6 +45,14 @@ public class MultiLayered extends GroupItem {
 				MultiLayer layer = (MultiLayer)MultiLayered.this.getItem(i);
 				layer.doSetLocation(location);
 			}
+		}
+		
+		@Override
+		public void setParent(ItemHolder itemHolder) {
+			if (!(itemHolder instanceof BaseDevice)) {
+				throw new IllegalInvokeException();
+			}
+			super.setParent(itemHolder);
 		}
 		
 		void doSetScale(float scale) {
