@@ -8,9 +8,9 @@ import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
 import com.ithaque.funnies.shared.basic.items.animations.BezierAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.ChangeFaceAnimation;
-import com.ithaque.funnies.shared.basic.items.animations.ParallelItemAnimation;
+import com.ithaque.funnies.shared.basic.items.animations.ParallelAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.RotateAnimation;
-import com.ithaque.funnies.shared.basic.items.animations.SequenceItemAnimation;
+import com.ithaque.funnies.shared.basic.items.animations.SequenceAnimation;
 import com.ithaque.funnies.shared.funny.AbstractFunny;
 import com.ithaque.funnies.shared.funny.ActivableFunny;
 import com.ithaque.funnies.shared.funny.IncompatibleRingException;
@@ -143,7 +143,7 @@ public class DiceFunny extends AbstractFunny implements ActivableFunny {
 		float actualRotation = diceItem.getRotation();
 		
 		int lastFace = getFaceIndex(number);
-		SequenceItemAnimation animation = new SequenceItemAnimation();
+		SequenceAnimation animation = new SequenceAnimation();
 		float factor = 1.0f;
 		while (factor>0.6f) {
 			float halfOffset = (25f+25f*factor)/2.0f;
@@ -160,13 +160,13 @@ public class DiceFunny extends AbstractFunny implements ActivableFunny {
 	private void addJump(
 			Location actualLocation, 
 			float actualRotation,
-			SequenceItemAnimation animation,
+			SequenceAnimation animation,
 			float xOffset,
 			float xHalfOffset,
 			float yOffset,
 			int secondIndex) 
 	{
-		ParallelItemAnimation aggregate = new ParallelItemAnimation();
+		ParallelAnimation aggregate = new ParallelAnimation();
 		RotateAnimation turn = new RotateAnimation(500, actualRotation);
 		turn.setItem(diceItem);
 		aggregate.addAnimation(turn);

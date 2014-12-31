@@ -256,6 +256,16 @@ public class Board implements BaseDevice, LayoutDevice {
 		return Location.ORIGIN;
 	}
 
+	@Override
+	public float getOpacity() {
+		return FULL_OPACITY;
+	}
+	
+	@Override
+	public float getDisplayOpacity() {
+		return FULL_OPACITY;
+	}
+	
 	public boolean isReady() {
 		return platform.isReady();
 	}

@@ -8,6 +8,7 @@ import java.util.Map;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.Context2d.LineJoin;
+import com.google.gwt.canvas.dom.client.Context2d.TextBaseline;
 import com.google.gwt.canvas.dom.client.CssColor;
 import com.google.gwt.canvas.dom.client.FillStrokeStyle;
 import com.google.gwt.dom.client.ImageElement;
@@ -32,6 +33,7 @@ import com.ithaque.funnies.shared.Trace;
 import com.ithaque.funnies.shared.Transform;
 import com.ithaque.funnies.shared.basic.Color;
 import com.ithaque.funnies.shared.basic.Event.Type;
+import com.ithaque.funnies.shared.basic.Font;
 import com.ithaque.funnies.shared.basic.Graphics;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.Location;
@@ -173,7 +175,7 @@ public class GWTGraphics implements Graphics {
 			for (int index=0; index<item.getImageCount(); index++) {
 				Token token = item.getToken(index);
 				ImageElementRecord record = imageElements.get(token);
-				request.draw(context2d, record.image, request.getImageItem().getOpacity(index), 
+				request.draw(context2d, record.image, request.getImageItem().getDisplayOpacity(index), 
 					(int)(float)item.getImageLeft(index), (int)(float)item.getImageTop(index), (int)(float)item.getImageWidth(index), (int)(float)item.getImageHeight(index));
 				if (debug) {
 					drawShape(request.getImageItem(), request.getImageItem().getShape());
@@ -288,6 +290,47 @@ public class GWTGraphics implements Graphics {
 		context2d.stroke();
 	}
 	
+	@Override
+	public void drawText(Item item, String text, Color color, Font font, float opacity) {
+		System.out.println(context2d.getFont());
+		//drawShape(item, item.getShape());
+		context2d.setFont(font.getSize()+"pt "+font.getFontName());
+		context2d.setTextBaseline(TextBaseline.TOP);
+		context2d.setFillStyle(getColor(color));
+		float width = getTextWidth(font, text);
+		float height = getTextHeight(font, text);
+		Transform transform = TransformUtil.transform(item);
+		if (transform!=null) {
+			context2d.setTransform(transform.m[0], transform.m[1], transform.m[2], transform.m[3], transform.m[4], transform.m[5]);
+			context2d.setGlobalAlpha(opacity);
+			float margin = 0f;
+			for (String line : text.split("\n")) {
+				context2d.fillText(line, -width/2.0f, -height/2.0f+margin);
+				margin+=font.getSize()+font.getMargin();
+			}
+		}
+	}
+	
+	@Override
+	public float getTextWidth(Font font, String text) {
+		context2d.setFont(font.getSize()+"pt "+font.getFontName());
+		double width=0;
+		for (String line : text.split("\n")) {
+			double lineWidth = context2d.measureText(line).getWidth();
+			if (lineWidth>width) {
+				width = lineWidth;
+			}
+		}
+		return (float)width;
+	}
+	
+	@Override
+	public float getTextHeight(Font font, String text) {
+		context2d.setFont(font.getSize()+"pt "+font.getFontName());
+		int rowCount = text.split("\n").length;
+		return rowCount*font.getSize()+font.getMargin();
+	}
+	
 	FillStrokeStyle getColor(Color color) {
 		return CssColor.make(color.getRed(), color.getGreen(), color.getBlue());
 	}
@@ -299,10 +342,10 @@ public class GWTGraphics implements Graphics {
 		context2d.setLineWidth(0.0f);
 		context2d.setLineJoin(LineJoin.ROUND);
 		
-		context2d.setShadowBlur(8);
-		context2d.setShadowColor("#000000");
-		context2d.setShadowOffsetX(8);
-		context2d.setShadowOffsetY(8);
+//		context2d.setShadowBlur(8);
+//		context2d.setShadowColor("#000000");
+//		context2d.setShadowOffsetX(8);
+//		context2d.setShadowOffsetY(8);
 		
 		context2d.moveTo(trShape[0].getX(), trShape[0].getY());
 		for (int i=1; i<trShape.length; i++) {

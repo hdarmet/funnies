@@ -16,6 +16,7 @@ public class Item implements Moveable {
 	Location location = Location.ORIGIN;
 	float scale = ItemHolder.STANDARD_SCALE;
 	float rotation = ItemHolder.NO_ROTATION;
+	float opacity = 1.0f;
 	Set<Event.Type> eventTypes = new HashSet<Event.Type>();
 	Location[] shape = null;
 	int level;
@@ -87,6 +88,26 @@ public class Item implements Moveable {
 				board.unregisterEvent(this, eventType);
 			}
 		}
+	}
+
+	@Override
+	public float getOpacity() {
+		return opacity;
+	}
+	
+	@Override
+	public float getDisplayOpacity() {
+		if (getParent()!=null) {
+			return opacity*getParent().getDisplayOpacity();
+		}
+		else {
+			return 0.0f;
+		}
+	}
+	
+	public void setOpacity(float opacity) {
+		this.opacity = opacity;
+		dirty();
 	}
 
 	@Override

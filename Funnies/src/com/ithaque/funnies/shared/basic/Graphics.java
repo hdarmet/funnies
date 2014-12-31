@@ -10,8 +10,14 @@ public interface Graphics {
 
 	void drawPolygon(Item item, Color fillColor, Color lineColor, float lineWidth, float opacity);
 
+	void drawText(Item item, String text, Color color, Font font, float opacity);
+	
 	void clear();
 
+	float getTextWidth(Font font, String text);
+	
+	float getTextHeight(Font font, String text);
+	
 	Float getImageWidth(Token token);
 	
 	Float getImageHeight(Token token);
@@ -41,5 +47,4 @@ public interface Graphics {
 		}
 	}
 
-	
 }

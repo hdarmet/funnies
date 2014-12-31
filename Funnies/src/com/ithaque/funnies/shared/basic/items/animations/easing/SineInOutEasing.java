@@ -2,7 +2,6 @@ package com.ithaque.funnies.shared.basic.items.animations.easing;
 
 import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.items.animations.Easing;
-import com.ithaque.funnies.shared.basic.items.animations.Easing.Factory;
 
 public class SineInOutEasing implements Easing {
 

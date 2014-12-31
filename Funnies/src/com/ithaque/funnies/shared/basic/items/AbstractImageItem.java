@@ -81,5 +81,9 @@ public abstract class AbstractImageItem extends Item {
 	public abstract Float getImageHeight(int index);
 
 	public abstract Token getToken(int index);
+
+	public float getDisplayOpacity(int index) {
+		return getDisplayOpacity()*getOpacity(index);
+	}
 	
 }

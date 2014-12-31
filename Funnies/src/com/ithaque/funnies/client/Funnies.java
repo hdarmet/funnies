@@ -21,11 +21,13 @@ import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Color;
 import com.ithaque.funnies.shared.basic.Event;
 import com.ithaque.funnies.shared.basic.Event.Type;
+import com.ithaque.funnies.shared.basic.Font;
 import com.ithaque.funnies.shared.basic.Layer;
 import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.MultiLayered;
 import com.ithaque.funnies.shared.basic.Processor;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
+import com.ithaque.funnies.shared.basic.items.TextItem;
 import com.ithaque.funnies.shared.basic.items.PolygonItem;
 import com.ithaque.funnies.shared.basic.items.animations.FaceFadingAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.MoveAnimation;
@@ -141,6 +143,10 @@ public class Funnies implements EntryPoint {
 		pitem.setRotation(((float)(Math.PI/6.0)));
 		pitem.setScale(0.5f);
 		
+		TextItem mitem = new TextItem("Hello\nWorld !", new Color(0, 255, 255), new Font("arial", 14, 6));
+		mitem.setRotation(((float)(Math.PI/6.0)));
+		mitem.setLocation(50, 50);
+		
 		MultiLayered layered = new MultiLayered(-500, -300, 500, 300);
 		Layer layerZero = layered.addLayer("back");
 		Layer gestureLayer = layered.addLayer("gesture");
@@ -156,6 +162,7 @@ public class Funnies implements EntryPoint {
 		layerTwo.addItem(iitem);
 		layerTwo.addItem(iitem2);
 		layerTwo.addItem(pitem);
+		layerTwo.addItem(mitem);
 		layerOne.addEventType(Type.MOUSE_DOWN);
 		layerOne.addEventType(Type.MOUSE_WHEEL);
 		gestureLayer.addEventType(Type.MOUSE_DOWN);

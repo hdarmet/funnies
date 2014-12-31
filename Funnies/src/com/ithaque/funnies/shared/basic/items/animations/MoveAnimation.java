@@ -14,13 +14,13 @@ public class MoveAnimation extends SoftenAnimation {
 		super(easing);
 	}
 	
-	public void setLocationKey(Key locationKey) {
-		this.locationKey = locationKey;
-	}
-
-	protected MoveAnimation(Easing easing, Location location) {
+	public MoveAnimation(Easing easing, Location location) {
 		super(easing);
 		this.location = location;
+	}
+
+	public void setLocationKey(Key locationKey) {
+		this.locationKey = locationKey;
 	}
 
 	@Override

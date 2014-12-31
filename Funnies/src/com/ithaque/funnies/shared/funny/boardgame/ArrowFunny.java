@@ -97,7 +97,7 @@ public class ArrowFunny extends AbstractFunny {
 	}
 	
 	protected Layer getArrowSupport() {
-		return getRing().infoLayer;
+		return getRing().animationLayer;
 	}
 
 	protected static Location[] computeArrowShape(float arrowHeight, float headHeight, float headWidth, float queueWidth) {

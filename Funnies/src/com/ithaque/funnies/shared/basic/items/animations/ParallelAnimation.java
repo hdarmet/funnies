@@ -3,14 +3,15 @@ package com.ithaque.funnies.shared.basic.items.animations;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ithaque.funnies.shared.basic.AbstractAnimation;
 import com.ithaque.funnies.shared.basic.Animation;
 
-public class ParallelItemAnimation extends Animation {
+public class ParallelAnimation extends AbstractAnimation implements CompositeAnimation {
 
 	Long duration = null;
 	long endTime = 0;
 	
-	public ParallelItemAnimation() {
+	public ParallelAnimation() {
 		super();
 	}
 
@@ -70,8 +71,8 @@ public class ParallelItemAnimation extends Animation {
 		super.finish(time);
 	}
 	
+	@Override
 	public void addAnimation(Animation animation) {
-//		animation.manage();
 		animations.add(animation);
 	}
 	
@@ -88,8 +89,8 @@ public class ParallelItemAnimation extends Animation {
 		}
 		
 		@Override
-		public ParallelItemAnimation create() {
-			ParallelItemAnimation animation = new ParallelItemAnimation();
+		public ParallelAnimation create() {
+			ParallelAnimation animation = new ParallelAnimation();
 			for (Animation.Factory child : animations) {
 				Animation childAnimation = child.create();
 				animation.addAnimation(childAnimation);

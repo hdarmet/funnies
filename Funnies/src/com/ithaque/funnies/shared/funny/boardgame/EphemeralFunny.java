@@ -8,7 +8,7 @@ import com.ithaque.funnies.shared.basic.items.ImageItem;
 import com.ithaque.funnies.shared.basic.items.SpriteImageItem;
 import com.ithaque.funnies.shared.basic.items.animations.ChangeFaceAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.FaceFadingAnimation;
-import com.ithaque.funnies.shared.basic.items.animations.SequenceItemAnimation;
+import com.ithaque.funnies.shared.basic.items.animations.SequenceAnimation;
 import com.ithaque.funnies.shared.funny.AbstractFunny;
 import com.ithaque.funnies.shared.funny.Funny;
 import com.ithaque.funnies.shared.funny.IncompatibleRingException;
@@ -65,7 +65,7 @@ public class EphemeralFunny extends AbstractFunny implements Funny {
 	
 	public Animation play(float x, float y, long duration) {
 		item.setLocation(new Location(x, y));
-		SequenceItemAnimation animation = new SequenceItemAnimation();
+		SequenceAnimation animation = new SequenceAnimation();
 		long stepDuration = duration/(item.getImageCount()+1);
 		for (int index=0; index<item.getImageCount(); index++) {
 			animation.addAnimation(new ChangeFaceAnimation(stepDuration, index).setItem(item));

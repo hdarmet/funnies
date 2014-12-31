@@ -65,7 +65,7 @@ public class Geometric {
 		}
 		return new Location[] {new Location(minX, minY), new Location(maxX, maxY)};
 	}
-	
+
 	public static float pow (float t, int i) {
 		if (i==0) {
 			return 1;

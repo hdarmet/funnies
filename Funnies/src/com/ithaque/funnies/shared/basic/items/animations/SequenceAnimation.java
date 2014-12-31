@@ -3,11 +3,12 @@ package com.ithaque.funnies.shared.basic.items.animations;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ithaque.funnies.shared.basic.AbstractAnimation;
 import com.ithaque.funnies.shared.basic.Animation;
 
-public class SequenceItemAnimation extends Animation {
+public class SequenceAnimation extends AbstractAnimation implements CompositeAnimation {
 
-	public SequenceItemAnimation() {
+	public SequenceAnimation() {
 	}
 
 	List<Animation> animations = new ArrayList<Animation>();
@@ -79,6 +80,7 @@ public class SequenceItemAnimation extends Animation {
 		return endTime;
 	}
 
+	@Override
 	public void addAnimation(Animation animation) {
 		animations.add(animation);
 	}
@@ -96,8 +98,8 @@ public class SequenceItemAnimation extends Animation {
 		}
 		
 		@Override
-		public SequenceItemAnimation create() {
-			SequenceItemAnimation animation = new SequenceItemAnimation();
+		public SequenceAnimation create() {
+			SequenceAnimation animation = new SequenceAnimation();
 			for (Animation.Factory child : animations) {
 				Animation childAnimation = child.create();
 				animation.addAnimation(childAnimation);

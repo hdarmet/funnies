@@ -1,5 +1,7 @@
 package com.ithaque.funnies.client;
 
+import com.ithaque.funnies.shared.basic.Color;
+import com.ithaque.funnies.shared.basic.Font;
 import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.items.animations.FaceFadingAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.MoveAnimation;
@@ -15,6 +17,7 @@ import com.ithaque.funnies.shared.funny.boardgame.ArrowFunny;
 import com.ithaque.funnies.shared.funny.boardgame.CounterFunny;
 import com.ithaque.funnies.shared.funny.boardgame.DiceFunny;
 import com.ithaque.funnies.shared.funny.boardgame.EphemeralFunny;
+import com.ithaque.funnies.shared.funny.boardgame.MessageFunny;
 import com.ithaque.funnies.shared.funny.boardgame.TileFunny;
 import com.ithaque.funnies.shared.funny.manager.AbstracCircusManager;
 import com.ithaque.funnies.shared.funny.notifications.AcceptDropTargetQuestion;
@@ -27,6 +30,7 @@ public class FunnyManager extends AbstracCircusManager {
 	Circus circus;
 	DiceFunny dice;
 	EphemeralFunny boom;
+	MessageFunny message;
 	TileFunny tile;
 	CounterFunny counter1;
 	CounterFunny counter2;
@@ -48,7 +52,11 @@ public class FunnyManager extends AbstracCircusManager {
 			SimpleSketch sketch = new SimpleSketch();
 			System.out.println("Activate : "+activateRequest.getActivated().getId());
 			sketch.addAnimation(dice.rollFor(1));
+			sketch.inParallel();
 			sketch.addAnimation(boom.play(0.0f, 0.0f, 1000L));
+			sketch.addAnimation(message.play(counter1, 200, 3000L));
+			sketch.close();
+			sketch.addAnimation(dice.rollFor(2));
 			return sketch;
 		}
 	};
@@ -104,6 +112,11 @@ public class FunnyManager extends AbstracCircusManager {
 		return arrow;
 	}
 	
+	MessageFunny createMessage() {
+		MessageFunny message = new MessageFunny("message", "Hello\nWorld", new Color(255,0,0), new Font("arial", 14, 4));
+		return message;
+	}
+
 	public void init() {
 		for (int col=-6; col<=6; col++) {
 			int inc = (col%2)==0?1:0;
@@ -123,6 +136,7 @@ public class FunnyManager extends AbstracCircusManager {
 		circus.enterRing(boom=createExplosion());
 		
 		circus.enterRing(createArrow());
+		circus.enterRing(message=createMessage());
 	}
 
 

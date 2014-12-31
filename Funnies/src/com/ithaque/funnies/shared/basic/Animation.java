@@ -1,45 +1,23 @@
 package com.ithaque.funnies.shared.basic;
 
-public abstract class Animation {
+public interface Animation {
 
 	public static final long INTERVAL = 40;
-	
-	AnimationContext context;
-	
-	public Animation() {
-	}
-	
-	public boolean animate(long time) {
-		if (time+Animation.INTERVAL>=getEndTime()) {
-			return false;
-		}
-		else {
-			return executeAnimation(time);
-		}
-	}
 
-	protected abstract boolean executeAnimation(long time);
+	boolean animate(long time);
 
-	public boolean start(long time) {
-		return true;
-	}
-	
-	public AnimationContext getContext() {
-		return context;
-	}
+	void finish(long time);
 
-	public void setContext(AnimationContext context) {
-		this.context = context;
-	}
-	
-	public void finish(long time) {
-	}
+	boolean start(long time);
 
-	public abstract long getDuration();
-	
-	public abstract long getEndTime();
-	
+	AnimationContext getContext();
+
+	void setContext(AnimationContext context);
+
+	long getDuration();
+
 	public interface Factory {
 		Animation create();
 	}
+
 }
