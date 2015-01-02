@@ -5,13 +5,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.ithaque.funnies.shared.Geometric;
 import com.ithaque.funnies.shared.IllegalInvokeException;
 import com.ithaque.funnies.shared.basic.ItemObserver.ChangeType;
 
 public class Item implements Moveable {
 
-	public static final float TWO_PI = (float)(Math.PI*2);
-	
 	ItemHolder parent = null;
 	Location location = Location.ORIGIN;
 	float scale = ItemHolder.STANDARD_SCALE;
@@ -143,13 +142,7 @@ public class Item implements Moveable {
 	}
 
 	public void setRotation(float rotation) {
-		while (rotation<0) {
-			rotation+=TWO_PI;
-		}
-		while (rotation>TWO_PI) {
-			rotation-=TWO_PI;
-		}
-		this.rotation = rotation;
+		this.rotation = Geometric.adjustAngle(rotation);
 		fire(ChangeType.ROTATION);
 		dirty();
 	}

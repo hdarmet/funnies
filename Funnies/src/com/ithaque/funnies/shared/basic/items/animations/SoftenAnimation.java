@@ -13,7 +13,7 @@ public abstract class SoftenAnimation extends AbstractAnimation {
 	
 	Item item;
 	Easing easing;
-	Key itemKey;
+	Key itemKey = null;
 
 	public SoftenAnimation(Easing easing) {
 		this.easing = easing;
@@ -26,9 +26,9 @@ public abstract class SoftenAnimation extends AbstractAnimation {
 	@Override
 	public boolean start(long time) {
 		super.start(time);
-//		if (Trace.debug) {
+		if (Trace.debug) {
 			Trace.debug("Item : "+getItem()+" "+itemKey+" "+item+" "+this);
-//		}
+		}
 		this.easing.launch(getItem().getBoard());
 		return true;
 	}
@@ -67,7 +67,7 @@ public abstract class SoftenAnimation extends AbstractAnimation {
 			this.itemKey = itemKey;
 			return this;
 		}
-		
+
 		public Builder(long duration) {
 			this(new LinearEasing.Builder(duration));
 		}

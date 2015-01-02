@@ -2,6 +2,7 @@ package com.ithaque.funnies.shared.funny.boardgame;
 
 import com.ithaque.funnies.shared.IllegalInvokeException;
 import com.ithaque.funnies.shared.basic.Animation;
+import com.ithaque.funnies.shared.basic.LayoutDevice;
 import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.items.AbstractImageItem;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
@@ -45,9 +46,8 @@ public class EphemeralFunny extends AbstractFunny implements Funny {
 			throw new IncompatibleRingException();
 		}
 		super.enterRing(ring);
-		GameBoardRing gbRing = (GameBoardRing)ring;
 		if (item!=null) {
-			gbRing.infoLayer.addItem(item);
+			getEphemeralSupport().addItem(item);
 		}
 	}
 
@@ -56,9 +56,8 @@ public class EphemeralFunny extends AbstractFunny implements Funny {
 		if (ring != getRing()) {
 			throw new IllegalInvokeException();
 		}
-		GameBoardRing gbRing = (GameBoardRing)ring;
 		if (item!=null) {
-			gbRing.infoLayer.removeItem(item);
+			getEphemeralSupport().removeItem(item);
 		}
 		super.exitRing(ring);
 	}
@@ -72,5 +71,9 @@ public class EphemeralFunny extends AbstractFunny implements Funny {
 		}
 		animation.addAnimation(new FaceFadingAnimation(stepDuration, 0.0f).setItem(item));
 		return animation;
+	}
+	
+	protected LayoutDevice getEphemeralSupport() {
+		return getRing().infoLayer;
 	}
 }

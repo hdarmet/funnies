@@ -3,7 +3,8 @@ package com.ithaque.funnies.shared;
 import com.ithaque.funnies.shared.basic.Location;
 
 public class Geometric {
-
+	public static final float TWO_PI = (float)(Math.PI*2);
+	
 	static float ccw(Location a, Location b, Location c)
 	{ 
 		return (b.getX()-a.getX())*(c.getY()-a.getY()) - (b.getY()-a.getY())*(c.getX()-a.getX()); 
@@ -111,5 +112,15 @@ public class Geometric {
 		float deltaX = p2.getX() - p1.getX();
 		float deltaY = p2.getY() - p1.getY();
 		return (float)Math.atan2(deltaX, -deltaY);
+	}
+
+	public static float adjustAngle(float angle) {
+		while (angle<0) {
+			angle+=TWO_PI;
+		}
+		while (angle>TWO_PI) {
+			angle-=TWO_PI;
+		}
+		return angle;
 	}
 }

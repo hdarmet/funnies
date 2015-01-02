@@ -5,7 +5,7 @@ import com.ithaque.funnies.shared.IllegalInvokeException;
 import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.Color;
 import com.ithaque.funnies.shared.basic.Font;
-import com.ithaque.funnies.shared.basic.Graphics;
+import com.ithaque.funnies.shared.basic.LayoutDevice;
 import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.TransformUtil;
 import com.ithaque.funnies.shared.basic.items.TextItem;
@@ -38,16 +38,23 @@ public class MessageFunny extends AbstractFunny implements Funny {
 	public GameBoardRing getRing() {
 		return (GameBoardRing) super.getRing();
 	}
+	
+	public void setMessage(String message) {
+		item.setText(message);
+	}
 
+	public void setStyle(Color color, Font font) {
+		item.setTextStyle(color, font);
+	}
+	
 	@Override
 	public void enterRing(Ring ring) {
 		if (!(ring instanceof GameBoardRing)) {
 			throw new IncompatibleRingException();
 		}
 		super.enterRing(ring);
-		GameBoardRing gbRing = (GameBoardRing)ring;
 		if (item!=null) {
-			gbRing.infoLayer.addItem(item);
+			getMessageSupport().addItem(item);
 		}
 	}
 
@@ -56,9 +63,8 @@ public class MessageFunny extends AbstractFunny implements Funny {
 		if (ring != getRing()) {
 			throw new IllegalInvokeException();
 		}
-		GameBoardRing gbRing = (GameBoardRing)ring;
 		if (item!=null) {
-			gbRing.infoLayer.removeItem(item);
+			getMessageSupport().removeItem(item);
 		}
 		super.exitRing(ring);
 	}
@@ -75,11 +81,14 @@ public class MessageFunny extends AbstractFunny implements Funny {
 	}
 
 	public Animation play(TrackableFunny target, float displacement, long duration) {
-		GameBoardRing gbRing = (GameBoardRing)getRing();
 		Location[] area = Geometric.getArea(
-				TransformUtil.invertTransformShape(gbRing.infoLayer, item.getShape()));
+				TransformUtil.invertTransformShape(getMessageSupport(), item.getShape()));
 		Location targetLocation = TransformUtil.invertTransformLocation(
-				gbRing.infoLayer, target.getLocation());
+				getMessageSupport(), target.getLocation());
 		return play(targetLocation.getX(), targetLocation.getY()-(area[1].getY()-area[0].getY())/2.0f, displacement, duration);
+	}
+	
+	protected LayoutDevice getMessageSupport() {
+		return getRing().infoLayer;
 	}
 }

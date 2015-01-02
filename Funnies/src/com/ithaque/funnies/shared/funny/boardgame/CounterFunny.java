@@ -1,6 +1,8 @@
 package com.ithaque.funnies.shared.funny.boardgame;
 
 import com.ithaque.funnies.shared.IllegalInvokeException;
+import com.ithaque.funnies.shared.basic.Animation;
+import com.ithaque.funnies.shared.basic.Animation.Factory;
 import com.ithaque.funnies.shared.basic.Event.Type;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.ItemObserver;
@@ -15,15 +17,18 @@ import com.ithaque.funnies.shared.funny.DraggableFunny;
 import com.ithaque.funnies.shared.funny.FunnyObserver;
 import com.ithaque.funnies.shared.funny.IncompatibleRingException;
 import com.ithaque.funnies.shared.funny.Ring;
+import com.ithaque.funnies.shared.funny.RotatableFunny;
 import com.ithaque.funnies.shared.funny.TrackableFunny;
 
-public class CounterFunny extends AbstractFunny implements DraggableFunny, TrackableFunny {
+public class CounterFunny extends AbstractFunny implements DraggableFunny, RotatableFunny, TrackableFunny {
 
 	StackItem counterItem;
-	SoftenAnimation.Builder beginDragAnimation;
-	MoveAnimation.Builder adjustLocationAnimation;
-	SoftenAnimation.Builder draggedDropAnimation;
+	SoftenAnimation.Builder beginDragAnimation=null;
+	MoveAnimation.Builder adjustLocationAnimation=null;
+	SoftenAnimation.Builder draggedDropAnimation=null;
+	Animation.Factory finishRotateAnimation=null;
 	ItemObserver observer;
+	float[] allowedAngles = null;
 	
 	public CounterFunny(String id, Item counterItem) {
 		super(id);
@@ -95,6 +100,35 @@ public class CounterFunny extends AbstractFunny implements DraggableFunny, Track
 		}
 	}
 
+	@Override
+	public Item[] getRotatableItems() {
+		if (allowedAngles!=null) {
+			if (counterItem!=null) {
+				return new Item[] {counterItem};
+			}
+		}
+		return new Item[0];
+	}
+
+	@Override
+	public Factory getFinishRotateAnimation() {
+		return finishRotateAnimation;
+	}
+
+	public void setFinishRotateAnimation(Factory finishRotateAnimation) {
+		this.finishRotateAnimation = finishRotateAnimation;
+	}
+
+	@Override
+	public float[] getAllowedAngles() {
+		return allowedAngles;
+	}
+	
+	public CounterFunny setAllowedAngles(float[] allowedAngles) {
+		this.allowedAngles = allowedAngles;
+		return this;
+	}
+	
 	@Override
 	public SoftenAnimation.Builder getBeginDragAnimation() {
 		return beginDragAnimation;

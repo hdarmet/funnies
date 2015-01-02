@@ -5,10 +5,12 @@ import com.ithaque.funnies.shared.basic.Font;
 import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.items.animations.FaceFadingAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.MoveAnimation;
+import com.ithaque.funnies.shared.basic.items.animations.RotateAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.ScalingAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.easing.OutBackEasing;
 import com.ithaque.funnies.shared.basic.processors.AbstractDragProfile;
 import com.ithaque.funnies.shared.basic.processors.AbstractTargetedDragProfile;
+import com.ithaque.funnies.shared.basic.processors.DiscreteRotateProfile;
 import com.ithaque.funnies.shared.funny.Circus;
 import com.ithaque.funnies.shared.funny.Funny;
 import com.ithaque.funnies.shared.funny.SimpleSketch;
@@ -21,6 +23,8 @@ import com.ithaque.funnies.shared.funny.boardgame.MessageFunny;
 import com.ithaque.funnies.shared.funny.boardgame.TileFunny;
 import com.ithaque.funnies.shared.funny.manager.AbstracCircusManager;
 import com.ithaque.funnies.shared.funny.notifications.AcceptDropTargetQuestion;
+import com.ithaque.funnies.shared.funny.notifications.AcceptRotatableQuestion;
+import com.ithaque.funnies.shared.funny.notifications.AcceptRotationQuestion;
 import com.ithaque.funnies.shared.funny.notifications.ActivateEvent;
 import com.ithaque.funnies.shared.funny.notifications.DropEvent;
 
@@ -45,6 +49,8 @@ public class FunnyManager extends AbstracCircusManager {
 		}
 	};
 
+	int tryCount = 0;
+	
 	AbstracCircusManager.Handler<ActivateEvent> activateHandler = 
 		new Handler<ActivateEvent>(ActivateEvent.class, this) {
 		@Override
@@ -72,6 +78,24 @@ public class FunnyManager extends AbstracCircusManager {
 		}
 	};
 
+	AbstracCircusManager.Handler<AcceptRotatableQuestion> acceptRotatableHandler = 
+		new Handler<AcceptRotatableQuestion>(AcceptRotatableQuestion.class, this) {
+		@Override
+		public Sketch process(AcceptRotatableQuestion arQuestion) {
+			 arQuestion.accept();
+			 return null;
+		}
+	};
+
+	AbstracCircusManager.Handler<AcceptRotationQuestion> acceptRotationHandler = 
+		new Handler<AcceptRotationQuestion>(AcceptRotationQuestion.class, this) {
+		@Override
+		public Sketch process(AcceptRotationQuestion arQuestion) {
+			 arQuestion.accept();
+			 return null;
+		}
+	};
+		
 	public FunnyManager(Circus circus) {
 		this.circus = circus;
 	}
@@ -94,6 +118,17 @@ public class FunnyManager extends AbstracCircusManager {
 		counter.setAdjustLocationAnimation(new MoveAnimation.Builder(new OutBackEasing.Builder(1000)).
 				setItemKey(AbstractDragProfile.DRAGGED_ITEM_KEY).setLocationKey(AbstractDragProfile.DROP_LOCATION_KEY));
 		counter.setDraggedDropAnimation(new ScalingAnimation.Builder(500, 1.0f).setItemKey(AbstractDragProfile.DRAGGED_ITEM_KEY));
+		counter.setFinishRotateAnimation(new RotateAnimation.Builder(1000)
+			.setItemKey(DiscreteRotateProfile.ROTATABLE_ITEM_KEY)
+			.setRotationKey(DiscreteRotateProfile.ROTATION_KEY));
+		counter.setAllowedAngles(new float[] {
+				(float)(Math.PI/3.0f),
+				(float)(Math.PI/3.0f*2.0f),
+				(float)(Math.PI),
+				(float)(Math.PI/3.0f*4.0f),
+				(float)(Math.PI/3.0f*5.0f),
+				(float)(Math.PI/3.0f)
+			});
 		return counter;
 	}
 	

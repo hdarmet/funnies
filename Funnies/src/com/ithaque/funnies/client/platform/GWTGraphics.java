@@ -139,7 +139,6 @@ public class GWTGraphics implements Graphics {
 		public void draw(Context2d context2d, ImageElement image, float opacity, int x, int y, int width, int height) {
 			if (opacity>0.0f) {
 				//drawShape(imageItem, imageItem.getShape());
-
 				Transform transform = TransformUtil.transform(imageItem);
 				if (transform!=null) {
 					context2d.setTransform(transform.m[0], transform.m[1], transform.m[2], transform.m[3], transform.m[4], transform.m[5]);
@@ -292,7 +291,6 @@ public class GWTGraphics implements Graphics {
 	
 	@Override
 	public void drawText(Item item, String text, Color color, Font font, float opacity) {
-		System.out.println(context2d.getFont());
 		//drawShape(item, item.getShape());
 		context2d.setFont(font.getSize()+"pt "+font.getFontName());
 		context2d.setTextBaseline(TextBaseline.TOP);

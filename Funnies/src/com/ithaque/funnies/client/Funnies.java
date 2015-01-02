@@ -35,11 +35,13 @@ import com.ithaque.funnies.shared.basic.items.animations.RotateAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.ScalingAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.easing.OutBackEasing;
 import com.ithaque.funnies.shared.basic.processors.AbstractDragProfile;
+import com.ithaque.funnies.shared.basic.processors.DiscreteRotateProfile;
 import com.ithaque.funnies.shared.basic.processors.DragProcessor;
 import com.ithaque.funnies.shared.basic.processors.GestureEvent;
 import com.ithaque.funnies.shared.basic.processors.GestureProfile;
 import com.ithaque.funnies.shared.basic.processors.GestureRecognition.Gesture;
 import com.ithaque.funnies.shared.basic.processors.GestureRecognition.MatchHandler;
+import com.ithaque.funnies.shared.basic.processors.RotateProfile;
 import com.ithaque.funnies.shared.basic.processors.ScalingProcessor;
 import com.ithaque.funnies.shared.basic.processors.ScrollProfile;
 import com.ithaque.funnies.shared.basic.processors.SimpleTargetedDragProfile;
@@ -136,6 +138,7 @@ public class Funnies implements EntryPoint {
 		ImageItem iitem2 = new ImageItem("hexagon.png");
 		iitem2.setRotation(0.0f);
 		iitem2.setScale(0.5f);
+		iitem2.setShape(-25, 0, -12, -22, 12, -22, 25, 0, 12, 22, -12, 22);
 		iitem2.addEventType(Type.MOUSE_CLICK);
 		iitem2.addEventType(Type.MOUSE_DOWN);
 
@@ -185,6 +188,12 @@ public class Funnies implements EntryPoint {
 		profile.setDraggedDropAnimation(new ScalingAnimation.Builder(500, 0.5f).setItemKey(AbstractDragProfile.DRAGGED_ITEM_KEY));
 		profile.setShowAllowedTargetAnimation(new FaceFadingAnimation.Builder(500, 1, 0.2f).setItemKey(profile.OTHER_TARGET_KEY));
 		profile.setHideAllowedTargetAnimation(new FaceFadingAnimation.Builder(500, 1, 0.0f).setItemKey(profile.OTHER_TARGET_KEY));
+		
+		DiscreteRotateProfile rotateProfile = new DiscreteRotateProfile();
+		rotateProfile.setFinishRotationAnimation(new RotateAnimation.Builder(1000)
+			.setItemKey(DiscreteRotateProfile.ROTATABLE_ITEM_KEY)
+			.setRotationKey(DiscreteRotateProfile.ROTATION_KEY));
+		rotateProfile.addRotatable(iitem2);
 		
 		MatchHandler dMatch = new MatchHandler() {
 			@Override
@@ -278,6 +287,7 @@ public class Funnies implements EntryPoint {
 
 		//dragProcessor.addDragProfile(gestureProfile);
 		dragProcessor.addDragProfile(profile);
+		dragProcessor.addDragProfile(rotateProfile);
 		
 		ScrollProfile scroll = new ScrollProfile(layerOne); 
 		dragProcessor.addDragProfile(scroll);
@@ -287,6 +297,8 @@ public class Funnies implements EntryPoint {
 		
 		board.addProcessor(dragProcessor);
 		board.addProcessor(scalingProcessor);
+
+		
 //		board.addProcessor(new Processor() {
 //			public boolean process(Event event, Board board) {
 //				System.out.println("I:"+board.getTarget(event));

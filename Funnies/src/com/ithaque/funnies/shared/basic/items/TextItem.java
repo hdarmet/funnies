@@ -9,27 +9,38 @@ import com.ithaque.funnies.shared.basic.Location;
 
 public class TextItem extends Item {
 
-	String message;
+	String text;
 	Color color; 
 	Font font;
 
-	public TextItem(String message, Color color, Font font) {
-		this.message = message;
+	public TextItem(String text, Color color, Font font) {
+		this.text = text;
 		this.color = color;
 		this.font = font;
-		fire(ChangeType.SHAPE);
 		dirty();
 	}
 	
+	public void setText(String text) {
+		this.text = text;
+		fire(ChangeType.SHAPE);
+		dirty();
+	}
+
+	public void setTextStyle(Color color, Font font) {
+		this.color = color;
+		this.font = font;
+		dirty();
+	}
+
 	@Override
 	public void render(Graphics graphics) {
-		graphics.drawText(this, message, color, font, getDisplayOpacity());
+		graphics.drawText(this, text, color, font, getDisplayOpacity());
 	}
 	
 	@Override
 	public Location[] getShape() {
-		float width = Graphics.Singleton.getGraphics().getTextWidth(font, message);
-		float height = Graphics.Singleton.getGraphics().getTextHeight(font, message);
+		float width = Graphics.Singleton.getGraphics().getTextWidth(font, text);
+		float height = Graphics.Singleton.getGraphics().getTextHeight(font, text);
 		return new Location[] {
 			new Location(-width/2.0f, -height/2.0f), 
 			new Location(width/2.0f, -height/2.0f),

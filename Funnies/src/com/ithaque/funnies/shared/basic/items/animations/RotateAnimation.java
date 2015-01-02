@@ -46,13 +46,14 @@ public class RotateAnimation extends SoftenAnimation {
 	
 	@Override
 	public boolean executeAnimation(long time) {
+		System.out.println("animate : "+baseAngle+" "+getRotation());
 		getItem().setRotation(easing.getValue(baseAngle, getRotation()));
 		return true;
 	}
 
 	@Override
 	public void finish(long time) {
-		getItem().setRotation(newAngle);
+		getItem().setRotation(getRotation());
 		super.finish(time);
 	}
 
@@ -69,8 +70,22 @@ public class RotateAnimation extends SoftenAnimation {
 			this(new SineInOutEasing.Builder(duration), newAngle);
 		}
 		
-		public void setRotationKey(Key rotationKey) {
+		public Builder(Easing.Factory easing) {
+			this(easing, null);
+		}
+
+		public Builder(long duration) {
+			this(duration, null);
+		}
+
+		public Builder setItemKey(Key itemKey) {
+			super.setItemKey(itemKey);
+			return this;
+		}
+
+		public Builder setRotationKey(Key rotationKey) {
 			this.rotationKey = rotationKey;
+			return this;
 		}
 		
 		@Override

@@ -10,10 +10,12 @@ import com.ithaque.funnies.shared.funny.ActivableFunny;
 import com.ithaque.funnies.shared.funny.ActivationProcessor;
 import com.ithaque.funnies.shared.funny.Circus;
 import com.ithaque.funnies.shared.funny.CircusDnDProfile;
+import com.ithaque.funnies.shared.funny.CircusRotateProfile;
 import com.ithaque.funnies.shared.funny.DraggableFunny;
 import com.ithaque.funnies.shared.funny.DropTargetFunny;
 import com.ithaque.funnies.shared.funny.Funny;
 import com.ithaque.funnies.shared.funny.Ring;
+import com.ithaque.funnies.shared.funny.RotatableFunny;
 
 public class GameBoardRing extends Ring {
 
@@ -39,6 +41,7 @@ public class GameBoardRing extends Ring {
 	Layer animationLayer;
 	Layer dragLayer;
 	DragProcessor dragProcessor;
+	CircusRotateProfile rotateCounterProfile;
 	CircusDnDProfile dragCounterProfile;
 	ScrollProfile scrollProfile;
 	ScalingProcessor scalingProcessor;
@@ -58,6 +61,8 @@ public class GameBoardRing extends Ring {
 		getBoard().addItem(baseLayer);
 
 		dragProcessor = new DragProcessor();
+		rotateCounterProfile = new CircusRotateProfile(this);
+		dragProcessor.addDragProfile(rotateCounterProfile);
 		dragCounterProfile = new CircusDnDProfile(this);
 		dragCounterProfile.setDragLayer(dragLayer);
 		dragProcessor.addDragProfile(dragCounterProfile);
@@ -79,6 +84,9 @@ public class GameBoardRing extends Ring {
 		if (funny instanceof DraggableFunny) {
 			dragCounterProfile.registerDraggableFunny((DraggableFunny)funny);
 		}
+		if (funny instanceof RotatableFunny) {
+			rotateCounterProfile.registerRotatableFunny((RotatableFunny)funny);
+		}
 		if (funny instanceof DropTargetFunny) {
 			dragCounterProfile.registerDroppableFunny((DropTargetFunny)funny);
 		}
@@ -93,6 +101,9 @@ public class GameBoardRing extends Ring {
 		boolean result = super.exitRing(funny);
 		if (funny instanceof DraggableFunny) {
 			dragCounterProfile.unregisterDraggableFunny((DraggableFunny)funny);
+		}
+		if (funny instanceof RotatableFunny) {
+			rotateCounterProfile.unregisterRotatableFunny((RotatableFunny)funny);
 		}
 		if (funny instanceof DropTargetFunny) {
 			dragCounterProfile.unregisterDroppableFunny((DropTargetFunny)funny);
