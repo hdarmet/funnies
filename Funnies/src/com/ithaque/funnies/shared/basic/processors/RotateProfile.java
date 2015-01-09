@@ -23,13 +23,19 @@ public class RotateProfile implements DragProfile {
 	@Override
 	public boolean beginDrag(MouseEvent event, Board board) {
 		Item rotatable = board.getMouseTarget(event);
-		Location anchor = DragProcessor.getAnchor(event, rotatable);
-		if (rotatable!=null && acceptRotatable(rotatable, new Location(event.getX(), event.getY()))) {
-			this.rotatable = rotatable;
-			this.rotatableAngle = this.rotatable.getRotation();
-			this.anchorAngle = Geometric.computeAngle(Location.ORIGIN, anchor);
+		if (rotatable==null) {
+			return false;
 		}
-		return this.rotatable!=null;
+		else {
+			Location anchor = DragProcessor.getAnchor(event, rotatable);
+			if (rotatable!=null && acceptRotatable(rotatable, new Location(event.getX(), event.getY()))) {
+				this.rotatable = rotatable;
+				this.rotatableAngle = this.rotatable.getRotation();
+				this.anchorAngle = Geometric.computeAngle(Location.ORIGIN, anchor);
+			}
+			return this.rotatable!=null;
+		}
+		
 	}
 	
 	protected boolean acceptRotatable(Item rotatable, Location mouseLocation) {
@@ -102,7 +108,8 @@ public class RotateProfile implements DragProfile {
 			if (itemKey==ROTATABLE_ITEM_KEY) {
 				return rotatable;
 			}
-			return null;		}
+			return null;
+		}
 		
 		public Float getFactor(Key itemKey) {
 			if (itemKey==ROTATION_KEY) {

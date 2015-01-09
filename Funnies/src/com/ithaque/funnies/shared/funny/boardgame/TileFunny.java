@@ -9,6 +9,8 @@ import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.TransformUtil;
 import com.ithaque.funnies.shared.basic.items.BaseItem;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
+import com.ithaque.funnies.shared.basic.items.animations.FaceFadingAnimation;
+import com.ithaque.funnies.shared.basic.processors.AbstractTargetedDragProfile;
 import com.ithaque.funnies.shared.funny.AbstractFunny;
 import com.ithaque.funnies.shared.funny.DropTargetFunny;
 import com.ithaque.funnies.shared.funny.IncompatibleRingException;
@@ -17,16 +19,29 @@ import com.ithaque.funnies.shared.funny.TrackableFunny;
 
 public class TileFunny extends AbstractFunny implements DropTargetFunny, TrackableFunny {
 
+	public static final Animation.Factory DEFAULT_ENTER_TARGET_ANIMATION = 
+		new FaceFadingAnimation.Builder(100, 1.0f)
+			.setItemKey(AbstractTargetedDragProfile.NEW_TARGET_KEY);
+	public static final Animation.Factory DEFAULT_EXIT_TARGET_ANIMATION = 
+		new FaceFadingAnimation.Builder(100, 0.0f)
+			.setItemKey(AbstractTargetedDragProfile.PREVIOUS_TARGET_KEY);
+	public static final Animation.Factory DEFAULT_SHOW_ALLOWED_TARGET_ANIMATION = 
+		new FaceFadingAnimation.Builder(100, 0.2f)
+			.setItemKey(AbstractTargetedDragProfile.OTHER_TARGET_KEY);
+	public static final Animation.Factory DEFAULT_HIDE_ALLOWED_TARGET_ANIMATION =
+		new FaceFadingAnimation.Builder(100, 0.0f)
+			.setItemKey(AbstractTargetedDragProfile.OTHER_TARGET_KEY);
+
 	Item tileItem;
 	Item hilightItem;
 	Item activableItem;
 	GroupItem holderItem;
 	
-	Animation.Factory targetDropAnimation;
-	Animation.Factory enterTargetAnimation;
-	Animation.Factory showAllowedTargetAnimation;
-	Animation.Factory hideAllowedTargetAnimation;
-	Animation.Factory exitTargetAnimation;
+	Animation.Factory targetDropAnimation = null;
+	Animation.Factory enterTargetAnimation = DEFAULT_ENTER_TARGET_ANIMATION;
+	Animation.Factory showAllowedTargetAnimation = DEFAULT_SHOW_ALLOWED_TARGET_ANIMATION;
+	Animation.Factory hideAllowedTargetAnimation = DEFAULT_HIDE_ALLOWED_TARGET_ANIMATION;
+	Animation.Factory exitTargetAnimation = DEFAULT_EXIT_TARGET_ANIMATION;
 	
 	public TileFunny(String id, Item tileItem, Item hilightItem, Item activableItem) {
 		super(id);
@@ -197,7 +212,7 @@ public class TileFunny extends AbstractFunny implements DropTargetFunny, Trackab
 
 	@Override
 	public ItemHolder getDropHolder(Item dragged, Item target) {
-		return holderItem;
+		return ((BaseItem)holderItem).getStackTop();
 	}
 	
 	public static class HHexFunny extends TileFunny {

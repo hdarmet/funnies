@@ -58,7 +58,6 @@ public class GameBoardRing extends Ring {
 		infoLayer = baseLayer.addLayer(INFO_LAYER);
 		animationLayer = baseLayer.addLayer(ANIMATION_LAYER);
 		dragLayer = baseLayer.addLayer(DRAG_LAYER);
-		getBoard().addItem(baseLayer);
 
 		dragProcessor = new DragProcessor();
 		rotateCounterProfile = new CircusRotateProfile(this);

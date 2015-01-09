@@ -113,5 +113,13 @@ public class TransformUtil {
 		Transform transform = transformToParent(item);
 		return transform==null ? null : transform.transformPoint(location);
 	}
-	
+
+	public static Float transformRotation(ItemHolder source, ItemHolder destination, Float rotation) {
+		System.out.println("Rotation : "+source.getAbsoluteRotation()+" "+destination.getAbsoluteRotation()+" "+rotation);
+		return source.getAbsoluteRotation()-destination.getAbsoluteRotation()+rotation;
+	}
+
+	public static Float transformScale(ItemHolder source, ItemHolder destination, Float scale) {
+		return source.getAbsoluteScale()/destination.getAbsoluteScale()*scale;
+	}
 }

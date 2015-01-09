@@ -6,11 +6,11 @@ import java.util.Map;
 import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.Location;
-import com.ithaque.funnies.shared.basic.processors.DiscreteRotateProfile;
+import com.ithaque.funnies.shared.basic.processors.TargetedRotateProfile;
 import com.ithaque.funnies.shared.funny.notifications.AcceptRotatableQuestion;
 import com.ithaque.funnies.shared.funny.notifications.AcceptRotationQuestion;
 
-public class CircusRotateProfile extends DiscreteRotateProfile {
+public class CircusRotateProfile extends TargetedRotateProfile {
 	Map<Item, RotatableFunny> rotatableFunnies = new HashMap<Item, RotatableFunny>();
 
 	Ring ring;
@@ -58,9 +58,9 @@ public class CircusRotateProfile extends DiscreteRotateProfile {
 	}
 
 	@Override
-	protected float[] getAllowedAngles(Item rotatable) {
+	protected Float resolveRotation(Item rotatable, float angle) {
 		RotatableFunny rotatableFunny = getRotatableFunny(rotatable);
-		return rotatableFunny.getAllowedAngles();
+		return rotatableFunny.adjustRotation(angle);
 	}
 	
 	@Override

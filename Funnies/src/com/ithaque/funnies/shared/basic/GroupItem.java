@@ -52,31 +52,43 @@ public class GroupItem extends Item implements ItemHolder {
 	
 	@Override
 	public void addItem(Item item) {
-		if (items.isEmpty() || items.get(items.size()-1)!=item) {
-			item.free();
-			item.setParent(this);
-			items.add(item);
-			dirty();
+		if (item.getParent()!=null) {
+			throw new AlreadyAttachedItemException();
 		}
+		items.add(item);
+		item.setParent(this);
+		dirty();
 	}
 	
 	@Override
 	public void setItem(int index, Item item) {
-		if (items.isEmpty() || items.get(index)!=item) {
-			item.free();
-			item.setParent(this);
-			items.set(index, item);
-			dirty();
+		if (item.getParent()!=null) {
+			throw new AlreadyAttachedItemException();
 		}
+		items.get(index).free();
+		items.add(index, item);
+		item.setParent(this);
+		dirty();
 	}
 
 	@Override
-	public void removeItem(Item item) {
-		if (item.getParent()==this) {
-			items.remove(item);
-			item.removeFromParent();
-			dirty();
+	public void addItem(int index, Item item) {
+		if (item.getParent()!=null) {
+			throw new AlreadyAttachedItemException();
 		}
+		items.add(index, item);
+		item.setParent(this);
+		dirty();
+	}
+	
+	@Override
+	public void removeItem(Item item) {
+		if (item.getParent()!=this) {
+			throw new ItemNotAttachedException();
+		}
+		items.remove(item);
+		item.removeFromParent();
+		dirty();
 	}
 
 	@Override
@@ -114,5 +126,5 @@ public class GroupItem extends Item implements ItemHolder {
 	public int indexOfItem(Item item) {
 		return items.indexOf(item);
 	}
-	
+
 }

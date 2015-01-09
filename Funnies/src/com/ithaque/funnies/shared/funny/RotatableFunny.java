@@ -9,6 +9,6 @@ public interface RotatableFunny extends Funny {
 
 	Animation.Factory getFinishRotateAnimation();
 
-	float[] getAllowedAngles();
+	Float adjustRotation(float angle);
 
 }

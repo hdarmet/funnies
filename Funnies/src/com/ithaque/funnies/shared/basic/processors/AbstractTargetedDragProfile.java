@@ -7,8 +7,10 @@ import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.AnimationContext;
 import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Item;
+import com.ithaque.funnies.shared.basic.ItemHolder;
 import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.MouseEvent;
+import com.ithaque.funnies.shared.basic.Moveable;
 import com.ithaque.funnies.shared.basic.items.animations.ParallelAnimation;
 
 public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
@@ -75,8 +77,11 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 	protected boolean resolveDrop(MouseEvent event, Board board, ParallelAnimation animation) {
 		Item target = getTarget(dragged, event);
 		if (target!=null) {
-			putDraggedOnHolder(dragged, target);
-			adjustDraggedLocationOnDrop(animation, getDropLocation(dragged, target));
+			adjustDraggedOnDrop(animation, 
+				getDropItemHolder(dragged, target), 
+				getDropLocation(dragged, target),
+				getDropRotation(dragged, target),
+				getDropScale(dragged, target));
 			animateTargetOnDrop(dragged, target);
 			executeDrop(dragged, target);
 			currentTarget = null;
@@ -88,15 +93,23 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 			return false;
 		}
 	}
-
-	protected void putDraggedOnHolder(Item dragged, Item target) {
-		returnDraggedToOriginalHolder();		
+	
+	protected ItemHolder getDropItemHolder(Item dragged, Item target) {
+		return initialHolder;
 	}
 	
 	protected Location getDropLocation(Item dragged, Item target) {
 		return target.getLocation();
 	}
-	
+
+	protected Float getDropRotation(Item dragged, Item target) {
+		return adjustDraggedRotation(dragged, getDropItemHolder(dragged, target));
+	}
+
+	protected Float getDropScale(Item dragged, Item target) {
+		return adjustDraggedScale(dragged, getDropItemHolder(dragged, target));
+	}
+
 	protected void animateTargetOnDrop(Item dragged, Item target) {
 		Animation.Factory itemAnimation = getTargetDropAnimation(target);
 		if (itemAnimation==null) {
@@ -179,7 +192,7 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 
 	@Override
 	public AnimationContext retrieveAnimationContext() {
-		return new DragDropAnimationContext(dragged, dropLocation, currentTarget, newTarget, otherTarget);
+		return new DragDropAnimationContext(dragged, dropLocation, dropHolder, dropRotation, dropScale, currentTarget, newTarget, otherTarget);
 	}
 	
 	public static class DragDropAnimationContext extends DragAnimationContext {
@@ -188,15 +201,15 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 		Item newTarget = null;
 		Item otherTarget = null;
 
-		public DragDropAnimationContext(Item dragged, Location dragLocation, Item previousTarget, Item newTarget, Item otherTarget) {
-			super(dragged, dragLocation);
+		public DragDropAnimationContext(Item dragged, Location dragLocation, ItemHolder dropHolder, Float dropRotation, Float dropScale, Item previousTarget, Item newTarget, Item otherTarget) {
+			super(dragged, dragLocation, dropHolder, dropRotation, dropScale);
 			this.previousTarget = previousTarget;
 			this.newTarget = newTarget;
 			this.otherTarget = otherTarget;
 		}
 		
-		public Item getItem(Key itemKey) {
-			Item item = super.getItem(itemKey);
+		public Moveable getItem(Key itemKey) {
+			Moveable item = super.getItem(itemKey);
 			if (item==null) {
 				if (itemKey==PREVIOUS_TARGET_KEY) {
 					return previousTarget;

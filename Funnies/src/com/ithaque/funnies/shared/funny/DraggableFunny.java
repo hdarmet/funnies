@@ -13,4 +13,8 @@ public interface DraggableFunny extends Funny {
 
 	Animation.Factory getDraggedDropAnimation();
 
+	Float adjustRotation(float angle);
+
+	Float adjustScale(float scale);
+
 }

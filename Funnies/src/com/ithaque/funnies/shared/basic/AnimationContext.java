@@ -20,7 +20,7 @@ public interface AnimationContext {
 
 	Location getLocation(Key locationKey);
 	
-	Item getItem(Key itemKey);
+	Moveable getItem(Key itemKey);
 	
 	Float getFactor(Key factorKey);
 }

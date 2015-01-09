@@ -9,11 +9,14 @@ public interface ItemHolder extends Moveable {
 	
 	void dirty();
 	void addItem(Item item);
+	void addItem(int index, Item item);
 	void setItem(int index, Item item);
 	Item getItem(int index);
 	int getItemCount();
 	void removeItem(Item item);
 	boolean contains(Item item);
 	int indexOfItem(Item item);
+	float getAbsoluteRotation();
+	float getAbsoluteScale();
 
 }

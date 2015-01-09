@@ -9,17 +9,16 @@ import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.TransformUtil;
 
-public class DiscreteRotateProfile extends RotateProfile {
+public class TargetedRotateProfile extends RotateProfile {
 
 	private static final float DEFAULT_ANCHOR_DISTANCE = 10.0f;
-	private static final float BIG_FLOAT = 10000f;
 
 	Animation.Factory finishRotationAnimation = null;
 
 	List<Item> rotatables = new ArrayList<Item>();
 	float distance = DEFAULT_ANCHOR_DISTANCE;
 	
-	public DiscreteRotateProfile() {
+	public TargetedRotateProfile() {
 	}
 	
 	public void setAnchorDistance(float distance) {
@@ -55,39 +54,6 @@ public class DiscreteRotateProfile extends RotateProfile {
 			}
 		}
 		return false;
-	}
-
-	@Override
-	protected Float resolveRotation(Item rotatable, float angle) {
-		angle = Geometric.adjustAngle(angle);
-		Float bestAngle = null;
-		float diff = BIG_FLOAT;
-		for (Float aAngle : getAllowedAngles(rotatable)) {
-			float aDiff = aAngle-angle;
-			if (aDiff<0) {
-				aDiff=-aDiff;
-			}
-			if (aDiff>Math.PI) {
-				aDiff=(float)(2.0f*Math.PI-aDiff);
-				aAngle = (float)(2.0f*Math.PI)-aAngle;
-			}
-			if (aDiff<diff) {
-				bestAngle = aAngle;
-				diff = aDiff;
-			}
-		}
-		return bestAngle;
-	}
-
-	protected float[] getAllowedAngles(Item rotatable) {
-		return new float[] {
-			(float)(Math.PI/3.0f),
-			(float)(Math.PI/3.0f*2.0f),
-			(float)(Math.PI),
-			(float)(Math.PI/3.0f*4.0f),
-			(float)(Math.PI/3.0f*5.0f),
-			(float)(Math.PI/3.0f)
-		};
 	}
 	
 }

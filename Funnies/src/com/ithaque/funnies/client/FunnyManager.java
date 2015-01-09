@@ -10,7 +10,7 @@ import com.ithaque.funnies.shared.basic.items.animations.ScalingAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.easing.OutBackEasing;
 import com.ithaque.funnies.shared.basic.processors.AbstractDragProfile;
 import com.ithaque.funnies.shared.basic.processors.AbstractTargetedDragProfile;
-import com.ithaque.funnies.shared.basic.processors.DiscreteRotateProfile;
+import com.ithaque.funnies.shared.basic.processors.TargetedRotateProfile;
 import com.ithaque.funnies.shared.funny.Circus;
 import com.ithaque.funnies.shared.funny.Funny;
 import com.ithaque.funnies.shared.funny.SimpleSketch;
@@ -104,30 +104,19 @@ public class FunnyManager extends AbstracCircusManager {
 		float dx = 13.0f;
 		float dy = (float)(13.0f*Math.sqrt(3.0));
 		TileFunny.HHexFunny tile = new TileFunny.HHexFunny("t"+id, "hexagon.png", "hhexagon.png", "rhexagon.png", 26.0f, x*dx, y*dy);
-		tile.setEnterTargetAnimation(new FaceFadingAnimation.Builder(100, 1.0f).setItemKey(AbstractTargetedDragProfile.NEW_TARGET_KEY));
-		tile.setExitTargetAnimation(new FaceFadingAnimation.Builder(100, 0.0f).setItemKey(AbstractTargetedDragProfile.PREVIOUS_TARGET_KEY));
-		tile.setShowAllowedTargetAnimation(new FaceFadingAnimation.Builder(100, 0.2f).setItemKey(AbstractTargetedDragProfile.OTHER_TARGET_KEY));
-		tile.setHideAllowedTargetAnimation(new FaceFadingAnimation.Builder(100, 0.0f).setItemKey(AbstractTargetedDragProfile.OTHER_TARGET_KEY));
 		return tile;
 	}
 	
 	CounterFunny createCounter(int id, String url, float x, float y) {
 		CounterFunny counter = new CounterFunny("c"+id, url+".png");
 		counter.setLocation(new Location(x, y));
-		counter.setBeginDragAnimation(new ScalingAnimation.Builder(500, 1.1f).setItemKey(AbstractDragProfile.DRAGGED_ITEM_KEY));
-		counter.setAdjustLocationAnimation(new MoveAnimation.Builder(new OutBackEasing.Builder(1000)).
-				setItemKey(AbstractDragProfile.DRAGGED_ITEM_KEY).setLocationKey(AbstractDragProfile.DROP_LOCATION_KEY));
-		counter.setDraggedDropAnimation(new ScalingAnimation.Builder(500, 1.0f).setItemKey(AbstractDragProfile.DRAGGED_ITEM_KEY));
-		counter.setFinishRotateAnimation(new RotateAnimation.Builder(1000)
-			.setItemKey(DiscreteRotateProfile.ROTATABLE_ITEM_KEY)
-			.setRotationKey(DiscreteRotateProfile.ROTATION_KEY));
 		counter.setAllowedAngles(new float[] {
+				0.0f,
 				(float)(Math.PI/3.0f),
 				(float)(Math.PI/3.0f*2.0f),
 				(float)(Math.PI),
 				(float)(Math.PI/3.0f*4.0f),
-				(float)(Math.PI/3.0f*5.0f),
-				(float)(Math.PI/3.0f)
+				(float)(Math.PI/3.0f*5.0f)
 			});
 		return counter;
 	}

@@ -6,27 +6,54 @@ import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.TransformUtil;
 import com.ithaque.funnies.shared.basic.items.animations.easing.LinearEasing;
 
-public class MoveAnimation extends SoftenAnimation {
+public class ChangeAnimation extends SoftenAnimation {
 
-	Location location;
-	Location destLocation;
-	Location baseLocation;
 	ItemHolder destinationHolder;
-	Key locationKey;
-	Key destinationHolderKey;
+	Location location;
+	Float rotation;
+	Float scale;
+
+	Location baseLocation;
+	Float baseRotation;
+	Float baseScale;
 	
-	public MoveAnimation(Easing easing) {
+	Location targetLocation;
+	Float targetRotation;
+	Float targetScale;
+	
+	Key destinationHolderKey;
+	Key locationKey;
+	Key rotationKey;
+	Key scaleKey;
+	
+	public ChangeAnimation(Easing easing) {
 		super(easing);
 	}
 	
-	public MoveAnimation(Easing easing, ItemHolder destinationHolder, Location location) {
+	public ChangeAnimation(
+		Easing easing, 
+		ItemHolder destinationHolder, 
+		Location location,
+		Float rotation,
+		Float scale) 
+	{
 		super(easing);
 		this.destinationHolder = destinationHolder;
 		this.location = location;
+		this.rotation = rotation;
+		this.scale = scale;
 	}
 
 	public void setLocationKey(Key locationKey) {
 		this.locationKey = locationKey;
+	}
+
+	public void setRotationKey(Key rotationKey) {
+		this.rotationKey = rotationKey;
+	}
+
+	public void setScaleKey(Key scaleKey) {
+		this.scaleKey = scaleKey;
 	}
 
 	public void setDestinationHolderKey(Key destinationHolderKey) {
@@ -35,11 +62,16 @@ public class MoveAnimation extends SoftenAnimation {
 
 	@Override
 	public boolean executeAnimation(long time) {
-		Location location = getItem().getLocation();
-		if (location!=null && getLocation()!=null) {
+		if (getLocation()!=null) {
 			getItem().setLocation(
-				getEasing().getValue(baseLocation.getX(), destLocation.getX()),
-				getEasing().getValue(baseLocation.getY(), destLocation.getY()));
+				getEasing().getValue(baseLocation.getX(), targetLocation.getX()),
+				getEasing().getValue(baseLocation.getY(), targetLocation.getY()));
+		}
+		if (getRotation()!=null) {
+			getItem().setRotation(getEasing().getValue(baseRotation, targetRotation));
+		}
+		if (getScale()!=null) {
+			getItem().setScale(getEasing().getValue(baseScale, targetScale));
 		}
 		return true;
 	}
@@ -47,13 +79,17 @@ public class MoveAnimation extends SoftenAnimation {
 	@Override
 	public void finish(long time) {
 		if (getDestinationHolder() != null && getDestinationHolder()!=getItem().getParent()) {
-			float rotation = TransformUtil.transformRotation(getItem().getParent(), getDestinationHolder(), getItem().getRotation());
-			getItem().setRotation(rotation);
-			float scale = TransformUtil.transformScale(getItem().getParent(), getDestinationHolder(), getItem().getScale());
-			getItem().setScale(scale);
 			getItem().changeParent(getDestinationHolder());
 		}
-		getItem().setLocation(getLocation());
+		if (getLocation()!=null) {
+			getItem().setLocation(getLocation());
+		}
+		if (getRotation()!=null) {
+			getItem().setRotation(getRotation());
+		}
+		if (getScale()!=null) {
+			getItem().setScale(getScale());
+		}
 		super.finish(time);
 	}
 	
@@ -63,10 +99,14 @@ public class MoveAnimation extends SoftenAnimation {
 		if (result) {
 			this.baseLocation = getItem().getLocation();
 			if (getDestinationHolder()!=null && getDestinationHolder() != getItem().getParent()) {
-				destLocation = TransformUtil.transformLocation(getDestinationHolder(), getItem().getParent(), getLocation());
+				targetLocation = TransformUtil.transformLocation(getDestinationHolder(), getItem().getParent(), getLocation());
+				targetRotation = TransformUtil.transformRotation(getDestinationHolder(), getItem().getParent(), getRotation());
+				targetScale = TransformUtil.transformScale(getDestinationHolder(), getItem().getParent(), getScale());
 			}
 			else {
-				destLocation = getLocation();
+				targetLocation = getLocation();
+				targetRotation = getRotation();
+				targetScale = getScale();
 			}
 		}
 		return result;
@@ -98,9 +138,29 @@ public class MoveAnimation extends SoftenAnimation {
 		this.destinationHolder = destinationHolder;
 	}
 
+	public Float getRotation() {
+		return rotation==null ? getContext().getFactor(rotationKey) : rotation;
+	}
+
+	public void setRotation(Float rotation) {
+		this.rotation = rotation;
+	}
+	
+	public Float getScale() {
+		return scale==null ? getContext().getFactor(scaleKey) : scale;
+	}
+
+	public void setScale(Float scale) {
+		this.scale = scale;
+	}
+	
 	public static class Builder extends SoftenAnimation.Builder {
 		Location location;
 		Key locationKey;
+		Float rotation;
+		Key rotationKey;
+		Float scale;
+		Key scaleKey;
 		ItemHolder destinationHolder;
 		Key destinationHolderKey;
 
@@ -113,8 +173,8 @@ public class MoveAnimation extends SoftenAnimation {
 		}
 		
 		@Override
-		public MoveAnimation create() {
-			MoveAnimation animation =  new MoveAnimation(getEasing().create());
+		public ChangeAnimation create() {
+			ChangeAnimation animation =  new ChangeAnimation(getEasing().create());
 			prepare(animation); 
 			return animation;
 		}
@@ -130,6 +190,16 @@ public class MoveAnimation extends SoftenAnimation {
 			return this;
 		}
 		
+		public Builder setRotationKey(Key rotationKey) {
+			this.rotationKey = rotationKey;
+			return this;
+		}
+
+		public Builder setScaleKey(Key scaleKey) {
+			this.scaleKey = scaleKey;
+			return this;
+		}
+
 		public Builder setDestinationHolderKey(Key destinationHolderKey) {
 			this.destinationHolderKey = destinationHolderKey;
 			return this;
@@ -138,17 +208,33 @@ public class MoveAnimation extends SoftenAnimation {
 		@Override
 		protected void prepare(SoftenAnimation animation) {
 			super.prepare(animation);
+			ChangeAnimation changeAnim = (ChangeAnimation)animation;
 			if (location!=null) {
-				((MoveAnimation)animation).setLocation(location);
+				changeAnim.setLocation(location);
 			}
 			else if (locationKey!=null) {
-				((MoveAnimation)animation).setLocationKey(locationKey);
+				changeAnim.setLocationKey(locationKey);
 			}
+
+			if (rotation!=null) {
+				changeAnim.setRotation(rotation);
+			}
+			else if (rotationKey!=null) {
+				changeAnim.setRotationKey(rotationKey);
+			}
+			
+			if (scale!=null) {
+				changeAnim.setScale(scale);
+			}
+			else if (scaleKey!=null) {
+				changeAnim.setScaleKey(scaleKey);
+			}
+
 			if (destinationHolder!=null) {
-				((MoveAnimation)animation).setDestinationHolder(destinationHolder);
+				changeAnim.setDestinationHolder(destinationHolder);
 			}
 			else if (destinationHolderKey!=null) {
-				((MoveAnimation)animation).setDestinationHolderKey(destinationHolderKey);
+				changeAnim.setDestinationHolderKey(destinationHolderKey);
 			}
 		}
 
@@ -157,6 +243,16 @@ public class MoveAnimation extends SoftenAnimation {
 			return this;
 		}	
 
+		public Builder setRotation(Float rotation) {
+			this.rotation = rotation;
+			return this;
+		}
+		
+		public Builder setScale(Float scale) {
+			this.scale = scale;
+			return this;
+		}
+		
 		public Builder setDestinationHolder(ItemHolder destinationHolder) {
 			this.destinationHolder = destinationHolder;
 			return this;

@@ -90,20 +90,43 @@ public class Board implements BaseDevice, LayoutDevice {
 	
 	@Override
 	public void addItem(Item item) {
-		if (items.isEmpty() || items.get(items.size()-1)!=item) {
-			item.free();
-			item.setParent(this);
-			items.add(item);
+		if (item.getParent()!=null) {
+			throw new AlreadyAttachedItemException();
 		}
+		items.add(item);
+		item.setParent(this);
+		dirty();
 	}
 	
 	@Override
 	public void setItem(int index, Item item) {
-		if (items.isEmpty() || items.get(index)!=item) {
-			item.free();
-			item.setParent(this);
-			items.set(index, item);
+		if (item.getParent()!=null) {
+			throw new AlreadyAttachedItemException();
 		}
+		items.get(index).free();
+		items.add(index, item);
+		item.setParent(this);
+		dirty();
+	}
+
+	@Override
+	public void addItem(int index, Item item) {
+		if (item.getParent()!=null) {
+			throw new AlreadyAttachedItemException();
+		}
+		items.add(index, item);
+		item.setParent(this);
+		dirty();
+	}
+	
+	@Override
+	public void removeItem(Item item) {
+		if (item.getParent()!=this) {
+			throw new ItemNotAttachedException();
+		}
+		items.remove(item);
+		item.setParent(this);
+		dirty();
 	}
 
 	@Override
@@ -114,14 +137,6 @@ public class Board implements BaseDevice, LayoutDevice {
 	@Override
 	public int getItemCount() {
 		return items.size();
-	}
-	
-	@Override
-	public void removeItem(Item item) {
-		if (item.getParent()==this) {
-			items.remove(item);
-			item.setParent(this);
-		}
 	}
 	
 	@Override
@@ -251,6 +266,16 @@ public class Board implements BaseDevice, LayoutDevice {
 		return NO_ROTATION;
 	}
 
+	@Override
+	public float getAbsoluteRotation() {
+		return getRotation();
+	}
+	
+	@Override
+	public float getAbsoluteScale() {
+		return getScale();
+	}
+	
 	@Override
 	public Location getLocation() {
 		return Location.ORIGIN;

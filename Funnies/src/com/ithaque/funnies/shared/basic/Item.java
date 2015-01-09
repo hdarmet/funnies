@@ -34,7 +34,7 @@ public class Item implements Moveable {
 	}
 	
 	public void setParent(ItemHolder parent) {
-		if (getParent()!=null) {
+		if (parent==null || getParent()!=null) {
 			throw new IllegalInvokeException();
 		}
 		this.parent = parent;
@@ -246,4 +246,23 @@ public class Item implements Moveable {
 		}
 	}
 
+	public float getAbsoluteRotation() {
+		ItemHolder parent = this.getParent();
+		float angle = getRotation();
+		while (parent!=null && (parent instanceof Item)) {
+			angle = Geometric.adjustAngle(angle+parent.getRotation());
+			parent = ((Item)parent).getParent();
+		}
+		return angle;
+	}
+	
+	public float getAbsoluteScale() {
+		ItemHolder parent = this.getParent();
+		float scale = getScale();
+		while (parent!=null && (parent instanceof Item)) {
+			scale = scale*parent.getScale();
+			parent = ((Item)parent).getParent();
+		}
+		return scale;
+	}
 }

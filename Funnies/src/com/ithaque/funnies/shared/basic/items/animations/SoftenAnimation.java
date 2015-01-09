@@ -43,7 +43,7 @@ public abstract class SoftenAnimation extends AbstractAnimation {
 	}
 	
 	public Item getItem() {
-		return item==null ? getContext().getItem(itemKey) : item;
+		return item==null ? (Item)getContext().getItem(itemKey) : item;
 	}
 
 	public long getDuration() {

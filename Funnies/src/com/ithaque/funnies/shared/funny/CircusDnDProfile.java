@@ -133,13 +133,25 @@ public class CircusDnDProfile extends AbstractTargetedDragProfile {
 		DropTargetFunny targetFunny = getDropTargetFunny(target);
 		return targetFunny.getDropLocation(dragged, target);
 	}
-	
+
 	@Override
-	protected void putDraggedOnHolder(Item dragged, Item target) {
-		DropTargetFunny targetFunny = getDropTargetFunny(target);
-		ItemHolder holder = targetFunny.getDropHolder(dragged, target);
-		dragged.changeParent(holder);
+	protected Float getDropRotation(Item dragged, Item target) {
+		Float angle = super.getDropRotation(dragged, target);
+		DraggableFunny draggableFunny = getDraggableFunny(dragged);
+		return draggableFunny.adjustRotation(angle);
 	}
 
+	@Override
+	protected Float getDropScale(Item dragged, Item target) {
+		Float scale = super.getDropScale(dragged, target);
+		DraggableFunny draggableFunny = getDraggableFunny(dragged);
+		return draggableFunny.adjustScale(scale);
+	}
 
+	@Override
+	protected ItemHolder getDropItemHolder(Item dragged, Item target) {
+		DropTargetFunny targetFunny = getDropTargetFunny(target);
+		return targetFunny.getDropHolder(dragged, target);
+	}
+	
 }

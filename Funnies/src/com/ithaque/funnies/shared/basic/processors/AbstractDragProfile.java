@@ -11,6 +11,7 @@ import com.ithaque.funnies.shared.basic.ItemHolder;
 import com.ithaque.funnies.shared.basic.Layer;
 import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.MouseEvent;
+import com.ithaque.funnies.shared.basic.Moveable;
 import com.ithaque.funnies.shared.basic.TransformUtil;
 import com.ithaque.funnies.shared.basic.items.animations.ParallelAnimation;
 import com.ithaque.funnies.shared.basic.processors.DragProcessor.DragProfile;
@@ -18,13 +19,23 @@ import com.ithaque.funnies.shared.basic.processors.DragProcessor.DragProfile;
 public abstract class AbstractDragProfile implements DragProfile {
 
 	public static final AnimationContext.Key DROP_LOCATION_KEY = new AnimationContext.Key("DROP_LOCATION_KEY");
+	public static final AnimationContext.Key DROP_HOLDER_KEY = new AnimationContext.Key("DROP_HOLDER_KEY");
+	public static final AnimationContext.Key DROP_ROTATION_KEY = new AnimationContext.Key("DROP_ROTATION_KEY");
+	public static final AnimationContext.Key DROP_SCALE_KEY = new AnimationContext.Key("DROP_SCALE_KEY");
 	public static final AnimationContext.Key DRAGGED_ITEM_KEY = new AnimationContext.Key("DRAGGED_ITEM_KEY");
 	
 	Item dragged;
-	ItemHolder originalHolder;
+	ItemHolder initialHolder;
+	Float startRotation;
+	Float startScale;
 	Location anchor;
 	Location startLocation;
+	
 	Location dropLocation;
+	ItemHolder dropHolder;
+	Float dropRotation;
+	Float dropScale;
+	
 	ItemHolder dragLayer;
 	Board board;
 	
@@ -44,8 +55,14 @@ public abstract class AbstractDragProfile implements DragProfile {
 			anchor = DragProcessor.getAnchor(event, dragged);
 			launchDragAnimation(dragged);
 			startLocation = dragged.getLocation();
+			startRotation = dragged.getRotation();
+			startScale = dragged.getScale();
 			if (dragLayer!=null) {
-				originalHolder = dragged.getParent();
+				initialHolder = dragged.getParent();
+				float dragLayerRotation = TransformUtil.transformRotation(dragged.getParent(), dragLayer, dragged.getRotation());
+				dragged.setRotation(dragLayerRotation);
+				float dragLayerScale = TransformUtil.transformScale(dragged.getParent(), dragLayer, dragged.getScale());
+				dragged.setScale(dragLayerScale);
 				this.dragged.changeParent(dragLayer);
 			}
 		}
@@ -96,8 +113,7 @@ public abstract class AbstractDragProfile implements DragProfile {
 	public void drop(MouseEvent event, Board board) {
 		ParallelAnimation animation = new ParallelAnimation();
 		if (!resolveDrop(event, board, animation)) {
-			returnDraggedToOriginalHolder();
-			adjustDraggedLocationOnDrop(animation, startLocation);
+			adjustDraggedOnDrop(animation, initialHolder, startLocation, startRotation, startScale);
 		}
 		if (getDraggedDropAnimation(dragged)!=null) {
 			Animation dropAnimation = getDraggedDropAnimation(dragged).create();
@@ -108,27 +124,48 @@ public abstract class AbstractDragProfile implements DragProfile {
 		dragged = null;
 	}
 
-	protected void returnDraggedToOriginalHolder() {
-		if (originalHolder!=null) {
-			dragged.changeParent(originalHolder);
+	protected void returnDraggedToInitialHolder() {
+		if (initialHolder!=null) {
+			dragged.changeParent(initialHolder);
 		}
 	}
 	
-	protected void adjustDraggedLocationOnDrop(
-			ParallelAnimation animation, Location draggedLocation) {
-		Animation.Factory revertToOrigin = getAdjustLocationAnimation(dragged);
-		if (revertToOrigin!=null) {
-			Animation revertToOriginInstance = revertToOrigin.create();
+	protected void adjustDraggedOnDrop(
+			ParallelAnimation animation, 
+			ItemHolder draggedHolder,
+			Location draggedLocation,
+			Float draggedRotation,
+			Float draggedScale) 
+	{
+		Animation.Factory moveAnimationFactory = getAdjustLocationAnimation(dragged);
+		if (moveAnimationFactory!=null) {
+			Animation moveAnimation = moveAnimationFactory.create();
+			dropRotation = draggedRotation;
+			dropScale = draggedScale;
 			dropLocation = draggedLocation;
-			animation.addAnimation(revertToOriginInstance);
+			dropHolder = draggedHolder;
+			animation.addAnimation(moveAnimation);
 		}
 		else {
+			if (draggedHolder!=null) {
+				dragged.setRotation(draggedRotation);
+				dragged.setScale(draggedScale);
+				dragged.changeParent(draggedHolder);
+			}
 			dragged.setLocation(draggedLocation);
 		}
 	}
+
+	protected float adjustDraggedRotation(Item dragged, ItemHolder draggedHolder) {
+		return TransformUtil.transformRotation(dragged.getParent(), draggedHolder, dragged.getRotation());
+	}
 	
+	protected float adjustDraggedScale(Item dragged, ItemHolder draggedHolder) {
+		return TransformUtil.transformScale(dragged.getParent(), draggedHolder, dragged.getRotation());
+	}
+
 	protected boolean resolveDrop(MouseEvent event, Board board, ParallelAnimation animation) {
-		returnDraggedToOriginalHolder();
+		returnDraggedToInitialHolder();
 		Location mouseLocation = DragProcessor.followMouse(event, dragged, anchor);
 		dragged.setLocation(mouseLocation);
 		return true;
@@ -141,16 +178,22 @@ public abstract class AbstractDragProfile implements DragProfile {
 	protected abstract Animation.Factory getDraggedDropAnimation(Item dragged);
 
 	public AnimationContext retrieveAnimationContext() {
-		return new DragAnimationContext(dragged, dropLocation);
+		return new DragAnimationContext(dragged, dropLocation, dropHolder, dropRotation, dropScale);
 	}
 	
 	public static class DragAnimationContext implements AnimationContext {
 		Item dragged;
 		Location dropLocation;
+		ItemHolder dropHolder;
+		Float dropRotation;
+		Float dropScale;
 	
-		public DragAnimationContext(Item dragged, Location dropLocation) {
+		public DragAnimationContext(Item dragged, Location dropLocation, ItemHolder dropHolder, Float dropRotation, Float dropScale) {
 			this.dragged = dragged;
 			this.dropLocation = dropLocation;
+			this.dropHolder = dropHolder;
+			this.dropRotation = dropRotation;
+			this.dropScale = dropScale;
 		}
 		
 		public Location getLocation(Key locationKey) {
@@ -160,14 +203,23 @@ public abstract class AbstractDragProfile implements DragProfile {
 			return null;
 		}
 		
-		public Item getItem(Key itemKey) {
+		public Moveable getItem(Key itemKey) {
 			if (itemKey==DRAGGED_ITEM_KEY) {
 				return dragged;
+			}
+			else if (itemKey==DROP_HOLDER_KEY) {
+				return dropHolder;
 			}
 			return null;
 		}
 		
 		public Float getFactor(Key itemKey) {
+			if (itemKey==DROP_ROTATION_KEY) {
+				return dropRotation;
+			}
+			else if (itemKey==DROP_SCALE_KEY) {
+				return dropScale;
+			}
 			return null;
 		}
 	}

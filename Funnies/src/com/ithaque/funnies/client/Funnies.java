@@ -35,7 +35,7 @@ import com.ithaque.funnies.shared.basic.items.animations.RotateAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.ScalingAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.easing.OutBackEasing;
 import com.ithaque.funnies.shared.basic.processors.AbstractDragProfile;
-import com.ithaque.funnies.shared.basic.processors.DiscreteRotateProfile;
+import com.ithaque.funnies.shared.basic.processors.TargetedRotateProfile;
 import com.ithaque.funnies.shared.basic.processors.DragProcessor;
 import com.ithaque.funnies.shared.basic.processors.GestureEvent;
 import com.ithaque.funnies.shared.basic.processors.GestureProfile;
@@ -189,10 +189,10 @@ public class Funnies implements EntryPoint {
 		profile.setShowAllowedTargetAnimation(new FaceFadingAnimation.Builder(500, 1, 0.2f).setItemKey(profile.OTHER_TARGET_KEY));
 		profile.setHideAllowedTargetAnimation(new FaceFadingAnimation.Builder(500, 1, 0.0f).setItemKey(profile.OTHER_TARGET_KEY));
 		
-		DiscreteRotateProfile rotateProfile = new DiscreteRotateProfile();
+		TargetedRotateProfile rotateProfile = new TargetedRotateProfile();
 		rotateProfile.setFinishRotationAnimation(new RotateAnimation.Builder(1000)
-			.setItemKey(DiscreteRotateProfile.ROTATABLE_ITEM_KEY)
-			.setRotationKey(DiscreteRotateProfile.ROTATION_KEY));
+			.setItemKey(TargetedRotateProfile.ROTATABLE_ITEM_KEY)
+			.setRotationKey(TargetedRotateProfile.ROTATION_KEY));
 		rotateProfile.addRotatable(iitem2);
 		
 		MatchHandler dMatch = new MatchHandler() {
