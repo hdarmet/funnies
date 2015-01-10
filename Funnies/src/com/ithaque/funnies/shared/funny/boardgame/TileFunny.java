@@ -8,16 +8,17 @@ import com.ithaque.funnies.shared.basic.ItemHolder;
 import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.TransformUtil;
 import com.ithaque.funnies.shared.basic.items.BaseItem;
+import com.ithaque.funnies.shared.basic.items.DecoratedItem;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
 import com.ithaque.funnies.shared.basic.items.animations.FaceFadingAnimation;
 import com.ithaque.funnies.shared.basic.processors.AbstractTargetedDragProfile;
-import com.ithaque.funnies.shared.funny.AbstractFunny;
+import com.ithaque.funnies.shared.funny.DecoratedFunny;
 import com.ithaque.funnies.shared.funny.DropTargetFunny;
 import com.ithaque.funnies.shared.funny.IncompatibleRingException;
 import com.ithaque.funnies.shared.funny.Ring;
 import com.ithaque.funnies.shared.funny.TrackableFunny;
 
-public class TileFunny extends AbstractFunny implements DropTargetFunny, TrackableFunny {
+public class TileFunny extends DecoratedFunny implements DropTargetFunny, TrackableFunny {
 
 	public static final Animation.Factory DEFAULT_ENTER_TARGET_ANIMATION = 
 		new FaceFadingAnimation.Builder(100, 1.0f)
@@ -32,7 +33,7 @@ public class TileFunny extends AbstractFunny implements DropTargetFunny, Trackab
 		new FaceFadingAnimation.Builder(100, 0.0f)
 			.setItem(AbstractTargetedDragProfile.possibleDropTarget());
 
-	Item tileItem;
+	DecoratedItem tileItem;
 	Item hilightItem;
 	Item activableItem;
 	GroupItem holderItem;
@@ -43,7 +44,7 @@ public class TileFunny extends AbstractFunny implements DropTargetFunny, Trackab
 	Animation.Factory hideAllowedTargetAnimation = DEFAULT_HIDE_ALLOWED_TARGET_ANIMATION;
 	Animation.Factory exitTargetAnimation = DEFAULT_EXIT_TARGET_ANIMATION;
 	
-	public TileFunny(String id, Item tileItem, Item hilightItem, Item activableItem) {
+	public TileFunny(String id, DecoratedItem tileItem, Item hilightItem, Item activableItem) {
 		super(id);
 		this.tileItem = tileItem;
 		this.hilightItem = hilightItem;
@@ -53,7 +54,7 @@ public class TileFunny extends AbstractFunny implements DropTargetFunny, Trackab
 
 	public TileFunny(String id, String tileImageUrl, String activableImageUrl, String targetImageUrl, Location[] shape) {
 		this(id,
-			new ImageItem(tileImageUrl),
+			new DecoratedItem(new ImageItem(tileImageUrl)),
 			new ImageItem(activableImageUrl),
 			new ImageItem(targetImageUrl)
 		);
@@ -283,6 +284,11 @@ public class TileFunny extends AbstractFunny implements DropTargetFunny, Trackab
 	@Override
 	public Location getLocation() {
 		return TransformUtil.transformLocation(tileItem.getParent(), tileItem.getLocation());
+	}
+
+	@Override
+	public DecoratedItem getDecorationSupport() {
+		return tileItem;
 	}
 
 }

@@ -18,6 +18,10 @@ public abstract class DecoratedFunny extends AbstractFunny {
 
 	public abstract DecoratedItem getDecorationSupport();
 	
+	public Item getDecoration(Integer key) {
+		return decorations.get(key);
+	}
+	
 	public void putDecoration(Integer key, Item decoration, Location location) {
 		if (decorations==null) {
 			decorations = new HashMap<Integer, Item>();

@@ -18,7 +18,6 @@ import com.ithaque.funnies.shared.basic.items.animations.ScalingAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.easing.OutBackEasing;
 import com.ithaque.funnies.shared.basic.processors.AbstractDragProfile;
 import com.ithaque.funnies.shared.basic.processors.TargetedRotateProfile;
-import com.ithaque.funnies.shared.funny.AbstractFunny;
 import com.ithaque.funnies.shared.funny.DecoratedFunny;
 import com.ithaque.funnies.shared.funny.DraggableFunny;
 import com.ithaque.funnies.shared.funny.FunnyObserver;

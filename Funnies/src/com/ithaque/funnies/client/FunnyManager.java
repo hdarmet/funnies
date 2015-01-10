@@ -3,6 +3,7 @@ package com.ithaque.funnies.client;
 import com.ithaque.funnies.shared.basic.Color;
 import com.ithaque.funnies.shared.basic.Font;
 import com.ithaque.funnies.shared.basic.Location;
+import com.ithaque.funnies.shared.basic.items.ImageItem;
 import com.ithaque.funnies.shared.basic.items.SpriteImageItem;
 import com.ithaque.funnies.shared.basic.items.StatusItem;
 import com.ithaque.funnies.shared.funny.Circus;
@@ -39,6 +40,9 @@ public class FunnyManager extends AbstracCircusManager {
 		public Sketch process(DropEvent dropRequest) {
 			System.out.println("Drop : "+dropRequest.getDropped().getId()+" on : "+dropRequest.getTarget().getId());
 			lastTarget = dropRequest.getTarget();
+			CounterFunny counter = (CounterFunny)dropRequest.getDropped();
+			StatusItem item = (StatusItem)counter.getDecoration(1);
+			item.changeStatus(99);
 			return null;
 		}
 	};
@@ -98,6 +102,11 @@ public class FunnyManager extends AbstracCircusManager {
 		float dx = 13.0f;
 		float dy = (float)(13.0f*Math.sqrt(3.0));
 		TileFunny.HHexFunny tile = new TileFunny.HHexFunny("t"+id, "hexagon.png", "hhexagon.png", "rhexagon.png", 26.0f, x*dx, y*dy);
+		if ((x+y)%7==0) {
+			ImageItem tree = new ImageItem("tree.png");
+			tree.setScale(0.05f);
+			tile.putDecoration(1, tree, new Location(0.0f, 0.0f));
+		}
 		return tile;
 	}
 	
