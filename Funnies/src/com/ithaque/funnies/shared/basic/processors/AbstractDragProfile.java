@@ -3,6 +3,9 @@ package com.ithaque.funnies.shared.basic.processors;
 import com.ithaque.funnies.shared.Geometric;
 import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.AnimationContext;
+import com.ithaque.funnies.shared.basic.AnimationContext.FactorFinder;
+import com.ithaque.funnies.shared.basic.AnimationContext.LocationFinder;
+import com.ithaque.funnies.shared.basic.AnimationContext.MoveableFinder;
 import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Graphics;
 import com.ithaque.funnies.shared.basic.GraphicsUtil;
@@ -18,27 +21,21 @@ import com.ithaque.funnies.shared.basic.processors.DragProcessor.DragProfile;
 
 public abstract class AbstractDragProfile implements DragProfile {
 
-	public static final AnimationContext.Key DROP_LOCATION_KEY = new AnimationContext.Key("DROP_LOCATION_KEY");
-	public static final AnimationContext.Key DROP_HOLDER_KEY = new AnimationContext.Key("DROP_HOLDER_KEY");
-	public static final AnimationContext.Key DROP_ROTATION_KEY = new AnimationContext.Key("DROP_ROTATION_KEY");
-	public static final AnimationContext.Key DROP_SCALE_KEY = new AnimationContext.Key("DROP_SCALE_KEY");
-	public static final AnimationContext.Key DRAGGED_ITEM_KEY = new AnimationContext.Key("DRAGGED_ITEM_KEY");
-	
 	Item dragged;
-	ItemHolder initialHolder;
-	Float startRotation;
-	Float startScale;
 	Location anchor;
-	Location startLocation;
+	ItemHolder dragLayer;
+	Board board;
+	
+	ItemHolder initialHolder;
+	Float initialRotation;
+	Float initialScale;
+	Location initialLocation;
 	
 	Location dropLocation;
 	ItemHolder dropHolder;
 	Float dropRotation;
 	Float dropScale;
-	
-	ItemHolder dragLayer;
-	Board board;
-	
+		
 	public AbstractDragProfile(Board board) {
 		this.board = board;
 	}
@@ -53,10 +50,9 @@ public abstract class AbstractDragProfile implements DragProfile {
 		if (dragged!=null && acceptDraggeable(dragged)) {
 			this.dragged = dragged;
 			anchor = DragProcessor.getAnchor(event, dragged);
-			launchDragAnimation(dragged);
-			startLocation = dragged.getLocation();
-			startRotation = dragged.getRotation();
-			startScale = dragged.getScale();
+			initialLocation = dragged.getLocation();
+			initialRotation = dragged.getRotation();
+			initialScale = dragged.getScale();
 			if (dragLayer!=null) {
 				initialHolder = dragged.getParent();
 				float dragLayerRotation = TransformUtil.transformRotation(dragged.getParent(), dragLayer, dragged.getRotation());
@@ -65,6 +61,7 @@ public abstract class AbstractDragProfile implements DragProfile {
 				dragged.setScale(dragLayerScale);
 				this.dragged.changeParent(dragLayer);
 			}
+			launchDragAnimation(dragged);
 		}
 		return this.dragged!=null;
 	}
@@ -90,30 +87,33 @@ public abstract class AbstractDragProfile implements DragProfile {
 		Location mouseLocation = DragProcessor.followMouse(event, dragged, anchor);
 		dragged.setLocation(mouseLocation);
 		if (dragged.getParent() instanceof Layer) {
-			Layer layer = (Layer)dragged.getParent();
-			Graphics graphics = board.getGraphics();
-			Location[] absShape = TransformUtil.transformShape(dragged, dragged.getShape());
-			Location[] area = Geometric.getArea(absShape);
-			Location overhead = GraphicsUtil.inDisplayLimits( 
-				0.0f, 0.0f, graphics.getDisplayWidth(), graphics.getDisplayHeight(),
-				area[0].getX(), area[0].getY(), area[1].getX(), area[1].getY());
-			if (overhead != null) {
-				Location absLocation = TransformUtil.transformLocation(layer.getParent(), layer.getLocation());
-				Location newLocation = new Location(absLocation.getX()-overhead.getX(), absLocation.getY()-overhead.getY());
-				layer.setLocation(TransformUtil.invertTransformLocation(layer.getParent(), newLocation));
-			}
+			scrollLayerIfRequired((Layer)dragged.getParent(), board);
 		}
-		reactToDrag(event, board);
+		processDrag(event, board);
 	}
 
-	protected void reactToDrag(MouseEvent event, Board board) {
+	protected void scrollLayerIfRequired(Layer layer, Board board) {
+		Graphics graphics = board.getGraphics();
+		Location[] absShape = TransformUtil.transformShape(dragged, dragged.getShape());
+		Location[] area = Geometric.getArea(absShape);
+		Location overhead = GraphicsUtil.inDisplayLimits( 
+			0.0f, 0.0f, graphics.getDisplayWidth(), graphics.getDisplayHeight(),
+			area[0].getX(), area[0].getY(), area[1].getX(), area[1].getY());
+		if (overhead != null) {
+			Location absLocation = TransformUtil.transformLocation(layer.getParent(), layer.getLocation());
+			Location newLocation = new Location(absLocation.getX()-overhead.getX(), absLocation.getY()-overhead.getY());
+			layer.setLocation(TransformUtil.invertTransformLocation(layer.getParent(), newLocation));
+		}
+	}
+
+	protected void processDrag(MouseEvent event, Board board) {
 	}
 
 	@Override
 	public void drop(MouseEvent event, Board board) {
 		ParallelAnimation animation = new ParallelAnimation();
 		if (!resolveDrop(event, board, animation)) {
-			adjustDraggedOnDrop(animation, initialHolder, startLocation, startRotation, startScale);
+			adjustDraggedOnDrop(animation, initialHolder, initialLocation, initialRotation, initialScale);
 		}
 		if (getDraggedDropAnimation(dragged)!=null) {
 			Animation dropAnimation = getDraggedDropAnimation(dragged).create();
@@ -124,12 +124,6 @@ public abstract class AbstractDragProfile implements DragProfile {
 		dragged = null;
 	}
 
-	protected void returnDraggedToInitialHolder() {
-		if (initialHolder!=null) {
-			dragged.changeParent(initialHolder);
-		}
-	}
-	
 	protected void adjustDraggedOnDrop(
 			ParallelAnimation animation, 
 			ItemHolder draggedHolder,
@@ -165,7 +159,9 @@ public abstract class AbstractDragProfile implements DragProfile {
 	}
 
 	protected boolean resolveDrop(MouseEvent event, Board board, ParallelAnimation animation) {
-		returnDraggedToInitialHolder();
+		if (initialHolder!=null) {
+			dragged.changeParent(initialHolder);
+		}
 		Location mouseLocation = DragProcessor.followMouse(event, dragged, anchor);
 		dragged.setLocation(mouseLocation);
 		return true;
@@ -195,33 +191,51 @@ public abstract class AbstractDragProfile implements DragProfile {
 			this.dropRotation = dropRotation;
 			this.dropScale = dropScale;
 		}
-		
-		public Location getLocation(Key locationKey) {
-			if (locationKey==DROP_LOCATION_KEY) {
-				return dropLocation;
-			}
-			return null;
-		}
-		
-		public Moveable getItem(Key itemKey) {
-			if (itemKey==DRAGGED_ITEM_KEY) {
-				return dragged;
-			}
-			else if (itemKey==DROP_HOLDER_KEY) {
-				return dropHolder;
-			}
-			return null;
-		}
-		
-		public Float getFactor(Key itemKey) {
-			if (itemKey==DROP_ROTATION_KEY) {
-				return dropRotation;
-			}
-			else if (itemKey==DROP_SCALE_KEY) {
-				return dropScale;
-			}
-			return null;
-		}
+	}
+	
+	public static MoveableFinder draggedItem() {
+		return new MoveableFinder() {
+			@Override
+			public Moveable find(AnimationContext context) {
+				return ((DragAnimationContext)context).dragged;
+			}			
+		};
+	}
+	
+	public static LocationFinder dropLocation() {
+		return new LocationFinder() {
+			@Override
+			public Location find(AnimationContext context) {
+				return ((DragAnimationContext)context).dropLocation;
+			}			
+		};
+	}
+	
+	public static MoveableFinder dropItemHolder() {
+		return new MoveableFinder() {
+			@Override
+			public Moveable find(AnimationContext context) {
+				return ((DragAnimationContext)context).dropHolder;
+			}			
+		};
+	}
+
+	public static FactorFinder dropRotation() {
+		return new FactorFinder() {
+			@Override
+			public Float find(AnimationContext context) {
+				return ((DragAnimationContext)context).dropRotation;
+			}			
+		};
+	}
+	
+	public static FactorFinder dropScale() {
+		return new FactorFinder() {
+			@Override
+			public Float find(AnimationContext context) {
+				return ((DragAnimationContext)context).dropScale;
+			}			
+		};
 	}
 	
 }

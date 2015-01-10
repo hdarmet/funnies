@@ -3,15 +3,16 @@ package com.ithaque.funnies.shared.basic.processors;
 import com.ithaque.funnies.shared.Geometric;
 import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.AnimationContext;
+import com.ithaque.funnies.shared.basic.AnimationContext.FactorFinder;
+import com.ithaque.funnies.shared.basic.AnimationContext.MoveableFinder;
 import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.MouseEvent;
+import com.ithaque.funnies.shared.basic.Moveable;
 import com.ithaque.funnies.shared.basic.processors.DragProcessor.DragProfile;
 
 public class RotateProfile implements DragProfile {
-	public static final AnimationContext.Key ROTATABLE_ITEM_KEY = new AnimationContext.Key("ROTATABLE_ITEM_KEY");
-	public static final AnimationContext.Key ROTATION_KEY = new AnimationContext.Key("ROTATION_KEY");
 
 	Item rotatable = null;
 	float rotatableAngle = 0.0f;
@@ -99,24 +100,24 @@ public class RotateProfile implements DragProfile {
 			this.rotatable = rotatable;
 			this.finalAngle = finalAngle;
 		}
-		
-		public Location getLocation(Key locationKey) {
-			return null;
-		}
-		
-		public Item getItem(Key itemKey) {
-			if (itemKey==ROTATABLE_ITEM_KEY) {
-				return rotatable;
-			}
-			return null;
-		}
-		
-		public Float getFactor(Key itemKey) {
-			if (itemKey==ROTATION_KEY) {
-				return finalAngle;
-			}
-			return null;
-		}
+	}
+	
+	public static MoveableFinder rotatableItem() {
+		return new MoveableFinder() {
+			@Override
+			public Moveable find(AnimationContext context) {
+				return ((DragAnimationContext)context).rotatable;
+			}			
+		};
+	}
+
+	public static FactorFinder rotation() {
+		return new FactorFinder() {
+			@Override
+			public Float find(AnimationContext context) {
+				return ((DragAnimationContext)context).finalAngle;
+			}			
+		};
 	}
 
 }

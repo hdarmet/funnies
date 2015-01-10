@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.AnimationContext;
+import com.ithaque.funnies.shared.basic.AnimationContext.MoveableFinder;
 import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.ItemHolder;
@@ -14,10 +15,6 @@ import com.ithaque.funnies.shared.basic.Moveable;
 import com.ithaque.funnies.shared.basic.items.animations.ParallelAnimation;
 
 public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
-
-	public static final AnimationContext.Key PREVIOUS_TARGET_KEY = new AnimationContext.Key("PREVIOUS_TARGET_KEY");
-	public static final AnimationContext.Key NEW_TARGET_KEY = new AnimationContext.Key("NEW_TARGET_KEY");
-	public static final AnimationContext.Key OTHER_TARGET_KEY = new AnimationContext.Key("OTHER_TARGET_KEY");
 	
 	List<Item> draggeables = new ArrayList<Item>();
 	List<Item> targets = new ArrayList<Item>();
@@ -50,7 +47,7 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 	}
 
 	@Override
-	protected void reactToDrag(MouseEvent event, Board board) {
+	protected void processDrag(MouseEvent event, Board board) {
 		Item target = getTarget(dragged, event);
 		if (target!=currentTarget) {
 			if (currentTarget!=null && getExitTargetAnimation(currentTarget)!=null) {
@@ -110,7 +107,7 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 		return adjustDraggedScale(dragged, getDropItemHolder(dragged, target));
 	}
 
-	protected void animateTargetOnDrop(Item dragged, Item target) {
+	void animateTargetOnDrop(Item dragged, Item target) {
 		Animation.Factory itemAnimation = getTargetDropAnimation(target);
 		if (itemAnimation==null) {
 			itemAnimation = getExitTargetAnimation(target);
@@ -208,22 +205,34 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 			this.otherTarget = otherTarget;
 		}
 		
-		public Moveable getItem(Key itemKey) {
-			Moveable item = super.getItem(itemKey);
-			if (item==null) {
-				if (itemKey==PREVIOUS_TARGET_KEY) {
-					return previousTarget;
-				}
-				else if (itemKey==NEW_TARGET_KEY) {
-					return newTarget;
-				}			
-				else if (itemKey==OTHER_TARGET_KEY) {
-					return otherTarget;
-				}	
-			}
-			return item;
-		}
-		
 	}
+	
+	public static MoveableFinder previousDropTarget() {
+		return new MoveableFinder() {
+			@Override
+			public Moveable find(AnimationContext context) {
+				return ((DragDropAnimationContext)context).previousTarget;
+			}			
+		};
+	}
+	
+	public static MoveableFinder newDropTarget() {
+		return new MoveableFinder() {
+			@Override
+			public Moveable find(AnimationContext context) {
+				return ((DragDropAnimationContext)context).newTarget;
+			}			
+		};
+	}
+	
+	public static MoveableFinder possibleDropTarget() {
+		return new MoveableFinder() {
+			@Override
+			public Moveable find(AnimationContext context) {
+				return ((DragDropAnimationContext)context).otherTarget;
+			}			
+		};
+	}
+
 }
 

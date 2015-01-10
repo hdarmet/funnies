@@ -1,6 +1,7 @@
 package com.ithaque.funnies.shared.basic.items.animations;
 
-import com.ithaque.funnies.shared.basic.AnimationContext.Key;
+import com.ithaque.funnies.shared.basic.AnimationContext.FactorFinder;
+import com.ithaque.funnies.shared.basic.AnimationContext.MoveableFinder;
 import com.ithaque.funnies.shared.basic.items.animations.easing.SineInOutEasing;
 
 
@@ -8,7 +9,7 @@ public class ScalingAnimation extends SoftenAnimation {
 
 	Float newScale = null;
 	float baseScale;
-	Key scaleKey ;
+	FactorFinder scaleFinder ;
 	
 	public ScalingAnimation(Easing easing) {
 		super(easing);
@@ -36,12 +37,12 @@ public class ScalingAnimation extends SoftenAnimation {
 		return result;
 	}
 	
-	public void setScalingKey(Key scaleKey) {
-		this.scaleKey = scaleKey;
+	public void setScaling(FactorFinder scaleFinder) {
+		this.scaleFinder = scaleFinder;
 	}
 	
 	public Float getScale() {
-		return newScale==null ? getContext().getFactor(scaleKey) : newScale;
+		return newScale==null ? scaleFinder.find(getContext()) : newScale;
 	}
 	
 	@Override
@@ -58,7 +59,7 @@ public class ScalingAnimation extends SoftenAnimation {
 
 	public static class Builder extends SoftenAnimation.Builder {
 		Float newScale;
-		Key scaleKey;
+		FactorFinder scaleFinder;
 		
 		public Builder(Easing.Factory easing, Float newScale) {
 			super(easing);
@@ -69,14 +70,14 @@ public class ScalingAnimation extends SoftenAnimation {
 			this(new SineInOutEasing.Builder(duration), newScale);
 		}
 		
-		public Builder setScaleKey(Key scaleKey) {
-			this.scaleKey = scaleKey;
+		public Builder setScale(FactorFinder scaleFinder) {
+			this.scaleFinder = scaleFinder;
 			return this;
 		}
 		
 		@Override
-		public Builder setItemKey(Key itemKey) {
-			super.setItemKey(itemKey);
+		public Builder setItem(MoveableFinder itemFinder) {
+			super.setItem(itemFinder);
 			return this;
 		}
 
@@ -89,8 +90,8 @@ public class ScalingAnimation extends SoftenAnimation {
 
 		protected void prepare(SoftenAnimation animation) {
 			super.prepare(animation);
-			if (scaleKey!=null) {
-				((ScalingAnimation)animation).setScalingKey(scaleKey);
+			if (scaleFinder!=null) {
+				((ScalingAnimation)animation).setScaling(scaleFinder);
 			}
 		}
 		

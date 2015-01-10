@@ -3,14 +3,8 @@ package com.ithaque.funnies.client;
 import com.ithaque.funnies.shared.basic.Color;
 import com.ithaque.funnies.shared.basic.Font;
 import com.ithaque.funnies.shared.basic.Location;
-import com.ithaque.funnies.shared.basic.items.animations.FaceFadingAnimation;
-import com.ithaque.funnies.shared.basic.items.animations.MoveAnimation;
-import com.ithaque.funnies.shared.basic.items.animations.RotateAnimation;
-import com.ithaque.funnies.shared.basic.items.animations.ScalingAnimation;
-import com.ithaque.funnies.shared.basic.items.animations.easing.OutBackEasing;
-import com.ithaque.funnies.shared.basic.processors.AbstractDragProfile;
-import com.ithaque.funnies.shared.basic.processors.AbstractTargetedDragProfile;
-import com.ithaque.funnies.shared.basic.processors.TargetedRotateProfile;
+import com.ithaque.funnies.shared.basic.items.SpriteImageItem;
+import com.ithaque.funnies.shared.basic.items.StatusItem;
 import com.ithaque.funnies.shared.funny.Circus;
 import com.ithaque.funnies.shared.funny.Funny;
 import com.ithaque.funnies.shared.funny.SimpleSketch;
@@ -118,6 +112,15 @@ public class FunnyManager extends AbstracCircusManager {
 				(float)(Math.PI/3.0f*4.0f),
 				(float)(Math.PI/3.0f*5.0f)
 			});
+		StatusItem status1 = new StatusItem("status.png", 50, 10, 10, 380, 380);
+		status1.setScale(0.5f);
+		StatusItem status2 = new StatusItem("status.png", 90, 10, 10, 380, 380);
+		status2.setScale(0.5f);
+		StatusItem status3 = new StatusItem("status.png", 10, 10, 10, 380, 380);
+		status3.setScale(0.5f);
+		counter.putDecoration(1, status1, new Location(-20, -20));
+		counter.putDecoration(2, status2, new Location(0, -20));
+		counter.putDecoration(3, status3, new Location(20, -20));
 		return counter;
 	}
 	

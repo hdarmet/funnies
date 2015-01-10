@@ -1,6 +1,7 @@
 package com.ithaque.funnies.shared.basic.items.animations;
 
-import com.ithaque.funnies.shared.basic.AnimationContext.Key;
+import com.ithaque.funnies.shared.basic.AnimationContext.FactorFinder;
+import com.ithaque.funnies.shared.basic.AnimationContext.MoveableFinder;
 import com.ithaque.funnies.shared.basic.items.animations.easing.SineInOutEasing;
 
 
@@ -8,7 +9,7 @@ public class RotateAnimation extends SoftenAnimation {
 
 	Float newAngle = null;
 	float baseAngle;
-	Key rotationKey ;
+	FactorFinder rotationFinder ;
 	
 	public RotateAnimation(Easing easing) {
 		super(easing);
@@ -36,17 +37,16 @@ public class RotateAnimation extends SoftenAnimation {
 		return result;
 	}
 	
-	public void setRotationKey(Key rotationKey) {
-		this.rotationKey = rotationKey;
+	public void setRotation(FactorFinder rotationFinder) {
+		this.rotationFinder = rotationFinder;
 	}
 	
 	public Float getRotation() {
-		return newAngle==null ? getContext().getFactor(rotationKey) : newAngle;
+		return newAngle==null ? rotationFinder.find(getContext()) : newAngle;
 	}
 	
 	@Override
 	public boolean executeAnimation(long time) {
-		System.out.println("animate : "+baseAngle+" "+getRotation());
 		getItem().setRotation(easing.getValue(baseAngle, getRotation()));
 		return true;
 	}
@@ -59,7 +59,7 @@ public class RotateAnimation extends SoftenAnimation {
 
 	public static class Builder extends SoftenAnimation.Builder {
 		Float newRotation;
-		Key rotationKey;
+		FactorFinder rotationFinder;
 		
 		public Builder(Easing.Factory easing, Float newAngle) {
 			super(easing);
@@ -78,13 +78,13 @@ public class RotateAnimation extends SoftenAnimation {
 			this(duration, null);
 		}
 
-		public Builder setItemKey(Key itemKey) {
-			super.setItemKey(itemKey);
+		public Builder setItem(MoveableFinder itemFinder) {
+			super.setItem(itemFinder);
 			return this;
 		}
 
-		public Builder setRotationKey(Key rotationKey) {
-			this.rotationKey = rotationKey;
+		public Builder setRotation(FactorFinder rotationFinder) {
+			this.rotationFinder = rotationFinder;
 			return this;
 		}
 		
@@ -97,8 +97,8 @@ public class RotateAnimation extends SoftenAnimation {
 
 		protected void prepare(SoftenAnimation animation) {
 			super.prepare(animation);
-			if (rotationKey!=null) {
-				((RotateAnimation)animation).setRotationKey(rotationKey);
+			if (rotationFinder!=null) {
+				((RotateAnimation)animation).setRotation(rotationFinder);
 			}
 		}
 

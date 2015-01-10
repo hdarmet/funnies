@@ -3,9 +3,9 @@ package com.ithaque.funnies.shared.funny;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.ithaque.funnies.shared.basic.GroupItem;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.Location;
+import com.ithaque.funnies.shared.basic.items.DecoratedItem;
 
 public abstract class DecoratedFunny extends AbstractFunny {
 
@@ -16,23 +16,24 @@ public abstract class DecoratedFunny extends AbstractFunny {
 		super(id);
 	}
 
-	public abstract GroupItem getDecorationSupport();
+	public abstract DecoratedItem getDecorationSupport();
 	
 	public void putDecoration(Integer key, Item decoration, Location location) {
 		if (decorations==null) {
 			decorations = new HashMap<Integer, Item>();
 			keys = new HashMap<Item, Integer>();
 		}
-		if (decorations.get(key)!=null) {
-			getDecorationSupport().removeItem(decorations.get(key));
+		Item previousDecoration = decorations.get(key);
+		if (previousDecoration!=null) {
+			getDecorationSupport().removeItem(previousDecoration);
+			keys.remove(previousDecoration);
 		}
 		decorations.put(key, decoration);
 		keys.put(decoration, key);
 		boolean done = false;
-		for (int index=1; index<getDecorationSupport().getItemCount(); index++) {
+		for (int index=0; index<getDecorationSupport().getItemCount(); index++) {
 			if (keys.get(getDecorationSupport().getItem(index))>key) {
 				getDecorationSupport().addItem(index, decoration);
-				decoration.setLocation(location);
 				done = true;
 				break;
 			}
@@ -40,6 +41,7 @@ public abstract class DecoratedFunny extends AbstractFunny {
 		if (!done) {
 			getDecorationSupport().addItem(decoration);
 		}
+		decoration.setLocation(location);
 	}
 	
 	public void removeDecoration(Integer key) {
@@ -56,4 +58,5 @@ public abstract class DecoratedFunny extends AbstractFunny {
 			}
 		}
 	}
+	
 }

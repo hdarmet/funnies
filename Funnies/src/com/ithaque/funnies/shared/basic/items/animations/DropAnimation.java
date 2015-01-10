@@ -1,6 +1,5 @@
 package com.ithaque.funnies.shared.basic.items.animations;
 
-import com.ithaque.funnies.shared.basic.AnimationContext.FactorFinder;
 import com.ithaque.funnies.shared.basic.AnimationContext.LocationFinder;
 import com.ithaque.funnies.shared.basic.AnimationContext.MoveableFinder;
 import com.ithaque.funnies.shared.basic.ItemHolder;
@@ -8,54 +7,27 @@ import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.TransformUtil;
 import com.ithaque.funnies.shared.basic.items.animations.easing.LinearEasing;
 
-public class ChangeAnimation extends SoftenAnimation {
+public class DropAnimation extends SoftenAnimation {
 
-	ItemHolder destinationHolder;
 	Location location;
-	Float rotation;
-	Float scale;
-
+	Location destLocation;
 	Location baseLocation;
-	Float baseRotation;
-	Float baseScale;
-	
-	Location targetLocation;
-	Float targetRotation;
-	Float targetScale;
-	
-	MoveableFinder destinationHolderFinder;
+	ItemHolder destinationHolder;
 	LocationFinder locationFinder;
-	FactorFinder rotationFinder;
-	FactorFinder scaleFinder;
+	MoveableFinder destinationHolderFinder;
 	
-	public ChangeAnimation(Easing easing) {
+	public DropAnimation(Easing easing) {
 		super(easing);
 	}
 	
-	public ChangeAnimation(
-		Easing easing, 
-		ItemHolder destinationHolder, 
-		Location location,
-		Float rotation,
-		Float scale) 
-	{
+	public DropAnimation(Easing easing, ItemHolder destinationHolder, Location location) {
 		super(easing);
 		this.destinationHolder = destinationHolder;
 		this.location = location;
-		this.rotation = rotation;
-		this.scale = scale;
 	}
 
 	public void setLocation(LocationFinder locationFinder) {
 		this.locationFinder = locationFinder;
-	}
-
-	public void setRotation(FactorFinder rotationFinder) {
-		this.rotationFinder = rotationFinder;
-	}
-
-	public void setScale(FactorFinder scaleFinder) {
-		this.scaleFinder = scaleFinder;
 	}
 
 	public void setDestinationHolder(MoveableFinder destinationHolderFinder) {
@@ -64,16 +36,11 @@ public class ChangeAnimation extends SoftenAnimation {
 
 	@Override
 	public boolean executeAnimation(long time) {
-		if (getLocation()!=null) {
+		Location location = getItem().getLocation();
+		if (location!=null && getLocation()!=null) {
 			getItem().setLocation(
-				getEasing().getValue(baseLocation.getX(), targetLocation.getX()),
-				getEasing().getValue(baseLocation.getY(), targetLocation.getY()));
-		}
-		if (getRotation()!=null) {
-			getItem().setRotation(getEasing().getValue(baseRotation, targetRotation));
-		}
-		if (getScale()!=null) {
-			getItem().setScale(getEasing().getValue(baseScale, targetScale));
+				getEasing().getValue(baseLocation.getX(), destLocation.getX()),
+				getEasing().getValue(baseLocation.getY(), destLocation.getY()));
 		}
 		return true;
 	}
@@ -81,17 +48,13 @@ public class ChangeAnimation extends SoftenAnimation {
 	@Override
 	public void finish(long time) {
 		if (getDestinationHolder() != null && getDestinationHolder()!=getItem().getParent()) {
+			float rotation = TransformUtil.transformRotation(getItem().getParent(), getDestinationHolder(), getItem().getRotation());
+			getItem().setRotation(rotation);
+			float scale = TransformUtil.transformScale(getItem().getParent(), getDestinationHolder(), getItem().getScale());
+			getItem().setScale(scale);
 			getItem().changeParent(getDestinationHolder());
 		}
-		if (getLocation()!=null) {
-			getItem().setLocation(getLocation());
-		}
-		if (getRotation()!=null) {
-			getItem().setRotation(getRotation());
-		}
-		if (getScale()!=null) {
-			getItem().setScale(getScale());
-		}
+		getItem().setLocation(getLocation());
 		super.finish(time);
 	}
 	
@@ -101,14 +64,10 @@ public class ChangeAnimation extends SoftenAnimation {
 		if (result) {
 			this.baseLocation = getItem().getLocation();
 			if (getDestinationHolder()!=null && getDestinationHolder() != getItem().getParent()) {
-				targetLocation = TransformUtil.transformLocation(getDestinationHolder(), getItem().getParent(), getLocation());
-				targetRotation = TransformUtil.transformRotation(getDestinationHolder(), getItem().getParent(), getRotation());
-				targetScale = TransformUtil.transformScale(getDestinationHolder(), getItem().getParent(), getScale());
+				destLocation = TransformUtil.transformLocation(getDestinationHolder(), getItem().getParent(), getLocation());
 			}
 			else {
-				targetLocation = getLocation();
-				targetRotation = getRotation();
-				targetScale = getScale();
+				destLocation = getLocation();
 			}
 		}
 		return result;
@@ -140,29 +99,9 @@ public class ChangeAnimation extends SoftenAnimation {
 		this.destinationHolder = destinationHolder;
 	}
 
-	public Float getRotation() {
-		return rotation==null ? rotationFinder.find(getContext()) : rotation;
-	}
-
-	public void setRotation(Float rotation) {
-		this.rotation = rotation;
-	}
-	
-	public Float getScale() {
-		return scale==null ? scaleFinder.find(getContext()) : scale;
-	}
-
-	public void setScale(Float scale) {
-		this.scale = scale;
-	}
-	
 	public static class Builder extends SoftenAnimation.Builder {
 		Location location;
 		LocationFinder locationFinder;
-		Float rotation;
-		FactorFinder rotationFinder;
-		Float scale;
-		FactorFinder scaleFinder;
 		ItemHolder destinationHolder;
 		MoveableFinder destinationHolderFinder;
 
@@ -175,8 +114,8 @@ public class ChangeAnimation extends SoftenAnimation {
 		}
 		
 		@Override
-		public ChangeAnimation create() {
-			ChangeAnimation animation =  new ChangeAnimation(getEasing().create());
+		public DropAnimation create() {
+			DropAnimation animation =  new DropAnimation(getEasing().create());
 			prepare(animation); 
 			return animation;
 		}
@@ -192,16 +131,6 @@ public class ChangeAnimation extends SoftenAnimation {
 			return this;
 		}
 		
-		public Builder setRotation(FactorFinder rotationFinder) {
-			this.rotationFinder = rotationFinder;
-			return this;
-		}
-
-		public Builder setScale(FactorFinder scaleFinder) {
-			this.scaleFinder = scaleFinder;
-			return this;
-		}
-
 		public Builder setDestinationHolder(MoveableFinder destinationHolderFinder) {
 			this.destinationHolderFinder = destinationHolderFinder;
 			return this;
@@ -210,33 +139,17 @@ public class ChangeAnimation extends SoftenAnimation {
 		@Override
 		protected void prepare(SoftenAnimation animation) {
 			super.prepare(animation);
-			ChangeAnimation changeAnim = (ChangeAnimation)animation;
 			if (location!=null) {
-				changeAnim.setLocation(location);
+				((DropAnimation)animation).setLocation(location);
 			}
 			else if (locationFinder!=null) {
-				changeAnim.setLocation(locationFinder);
+				((DropAnimation)animation).setLocation(locationFinder);
 			}
-
-			if (rotation!=null) {
-				changeAnim.setRotation(rotation);
-			}
-			else if (rotationFinder!=null) {
-				changeAnim.setRotation(rotationFinder);
-			}
-			
-			if (scale!=null) {
-				changeAnim.setScale(scale);
-			}
-			else if (scaleFinder!=null) {
-				changeAnim.setScale(scaleFinder);
-			}
-
 			if (destinationHolder!=null) {
-				changeAnim.setDestinationHolder(destinationHolder);
+				((DropAnimation)animation).setDestinationHolder(destinationHolder);
 			}
 			else if (destinationHolderFinder!=null) {
-				changeAnim.setDestinationHolder(destinationHolderFinder);
+				((DropAnimation)animation).setDestinationHolder(destinationHolderFinder);
 			}
 		}
 
@@ -245,16 +158,6 @@ public class ChangeAnimation extends SoftenAnimation {
 			return this;
 		}	
 
-		public Builder setRotation(Float rotation) {
-			this.rotation = rotation;
-			return this;
-		}
-		
-		public Builder setScale(Float scale) {
-			this.scale = scale;
-			return this;
-		}
-		
 		public Builder setDestinationHolder(ItemHolder destinationHolder) {
 			this.destinationHolder = destinationHolder;
 			return this;

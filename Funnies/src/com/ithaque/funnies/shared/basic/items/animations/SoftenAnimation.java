@@ -3,7 +3,7 @@ package com.ithaque.funnies.shared.basic.items.animations;
 import com.ithaque.funnies.shared.Trace;
 import com.ithaque.funnies.shared.basic.AbstractAnimation;
 import com.ithaque.funnies.shared.basic.Animation;
-import com.ithaque.funnies.shared.basic.AnimationContext.Key;
+import com.ithaque.funnies.shared.basic.AnimationContext.MoveableFinder;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.items.animations.easing.LinearEasing;
 
@@ -13,21 +13,21 @@ public abstract class SoftenAnimation extends AbstractAnimation {
 	
 	Item item;
 	Easing easing;
-	Key itemKey = null;
+	MoveableFinder itemFinder = null;
 
 	public SoftenAnimation(Easing easing) {
 		this.easing = easing;
 	}
 	
-	public void setItemKey(Key itemKey) {
-		this.itemKey = itemKey;
+	public void setItemFinder(MoveableFinder itemFinder) {
+		this.itemFinder = itemFinder;
 	}
 
 	@Override
 	public boolean start(long time) {
 		super.start(time);
 		if (Trace.debug) {
-			Trace.debug("Item : "+getItem()+" "+itemKey+" "+item+" "+this);
+			Trace.debug("Item : "+getItem()+" "+itemFinder+" "+item+" "+this);
 		}
 		this.easing.launch(getItem().getBoard());
 		return true;
@@ -43,7 +43,7 @@ public abstract class SoftenAnimation extends AbstractAnimation {
 	}
 	
 	public Item getItem() {
-		return item==null ? (Item)getContext().getItem(itemKey) : item;
+		return item==null ? (Item)itemFinder.find(getContext()) : item;
 	}
 
 	public long getDuration() {
@@ -56,15 +56,15 @@ public abstract class SoftenAnimation extends AbstractAnimation {
 	
 	public static abstract class Builder implements Animation.Factory {
 		Easing.Factory easing;
-		Key itemKey;
+		MoveableFinder itemFinder;
 		
 		public Builder(Easing.Factory easing) {
 			super();
 			this.easing = easing;
 		}
 
-		public Builder setItemKey(Key itemKey) {
-			this.itemKey = itemKey;
+		public Builder setItem(MoveableFinder itemFinder) {
+			this.itemFinder = itemFinder;
 			return this;
 		}
 
@@ -73,8 +73,8 @@ public abstract class SoftenAnimation extends AbstractAnimation {
 		}
 
 		protected void prepare(SoftenAnimation animation) {
-			if (itemKey!=null) {
-				animation.setItemKey(itemKey);
+			if (itemFinder!=null) {
+				animation.setItemFinder(itemFinder);
 			}
 		}
 

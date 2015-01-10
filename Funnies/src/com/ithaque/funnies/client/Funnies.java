@@ -27,24 +27,25 @@ import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.MultiLayered;
 import com.ithaque.funnies.shared.basic.Processor;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
-import com.ithaque.funnies.shared.basic.items.TextItem;
 import com.ithaque.funnies.shared.basic.items.PolygonItem;
+import com.ithaque.funnies.shared.basic.items.TextItem;
+import com.ithaque.funnies.shared.basic.items.animations.DropAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.FaceFadingAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.MoveAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.RotateAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.ScalingAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.easing.OutBackEasing;
 import com.ithaque.funnies.shared.basic.processors.AbstractDragProfile;
-import com.ithaque.funnies.shared.basic.processors.TargetedRotateProfile;
+import com.ithaque.funnies.shared.basic.processors.AbstractTargetedDragProfile;
 import com.ithaque.funnies.shared.basic.processors.DragProcessor;
 import com.ithaque.funnies.shared.basic.processors.GestureEvent;
 import com.ithaque.funnies.shared.basic.processors.GestureProfile;
 import com.ithaque.funnies.shared.basic.processors.GestureRecognition.Gesture;
 import com.ithaque.funnies.shared.basic.processors.GestureRecognition.MatchHandler;
-import com.ithaque.funnies.shared.basic.processors.RotateProfile;
 import com.ithaque.funnies.shared.basic.processors.ScalingProcessor;
 import com.ithaque.funnies.shared.basic.processors.ScrollProfile;
 import com.ithaque.funnies.shared.basic.processors.SimpleTargetedDragProfile;
+import com.ithaque.funnies.shared.basic.processors.TargetedRotateProfile;
 import com.ithaque.funnies.shared.funny.boardgame.GameBoardCircus;
 
 /**
@@ -180,19 +181,19 @@ public class Funnies implements EntryPoint {
 		profile.addDraggeable(iitem);
 		profile.addTarget(titem);
 		profile.addTarget(titem2);
-		profile.setBeginDragAnimation(new ScalingAnimation.Builder(500, 0.6f).setItemKey(profile.DRAGGED_ITEM_KEY));
+		profile.setBeginDragAnimation(new ScalingAnimation.Builder(500, 0.6f).setItem(AbstractDragProfile.draggedItem()));
 //		profile.setAdjustLocationAnimation(new ScalingAnimation.Builder(500, 0.5f));
-		profile.setAdjustLocationAnimation(new MoveAnimation.Builder(500).setItemKey(profile.DRAGGED_ITEM_KEY).setLocationKey(AbstractDragProfile.DROP_LOCATION_KEY));
-		profile.setEnterTargetAnimation(new FaceFadingAnimation.Builder(1000, 0, 1.0f).setItemKey(profile.NEW_TARGET_KEY));
-		profile.setExitTargetAnimation(new FaceFadingAnimation.Builder(1000, 0, 0.0f).setItemKey(profile.PREVIOUS_TARGET_KEY));
-		profile.setDraggedDropAnimation(new ScalingAnimation.Builder(500, 0.5f).setItemKey(AbstractDragProfile.DRAGGED_ITEM_KEY));
-		profile.setShowAllowedTargetAnimation(new FaceFadingAnimation.Builder(500, 1, 0.2f).setItemKey(profile.OTHER_TARGET_KEY));
-		profile.setHideAllowedTargetAnimation(new FaceFadingAnimation.Builder(500, 1, 0.0f).setItemKey(profile.OTHER_TARGET_KEY));
+		profile.setAdjustLocationAnimation(new DropAnimation.Builder(500).setItem(AbstractDragProfile.draggedItem()).setLocation(AbstractDragProfile.dropLocation()));
+		profile.setEnterTargetAnimation(new FaceFadingAnimation.Builder(1000, 0, 1.0f).setItem(AbstractTargetedDragProfile.newDropTarget()));
+		profile.setExitTargetAnimation(new FaceFadingAnimation.Builder(1000, 0, 0.0f).setItem(AbstractTargetedDragProfile.previousDropTarget()));
+		profile.setDraggedDropAnimation(new ScalingAnimation.Builder(500, 0.5f).setItem(AbstractDragProfile.draggedItem()));
+		profile.setShowAllowedTargetAnimation(new FaceFadingAnimation.Builder(500, 1, 0.2f).setItem(AbstractTargetedDragProfile.possibleDropTarget()));
+		profile.setHideAllowedTargetAnimation(new FaceFadingAnimation.Builder(500, 1, 0.0f).setItem(AbstractTargetedDragProfile.possibleDropTarget()));
 		
 		TargetedRotateProfile rotateProfile = new TargetedRotateProfile();
 		rotateProfile.setFinishRotationAnimation(new RotateAnimation.Builder(1000)
-			.setItemKey(TargetedRotateProfile.ROTATABLE_ITEM_KEY)
-			.setRotationKey(TargetedRotateProfile.ROTATION_KEY));
+			.setItem(TargetedRotateProfile.rotatableItem())
+			.setRotation(TargetedRotateProfile.rotation()));
 		rotateProfile.addRotatable(iitem2);
 		
 		MatchHandler dMatch = new MatchHandler() {

@@ -3,24 +3,36 @@ package com.ithaque.funnies.shared.basic;
 public interface AnimationContext {
 	
 	
-	public static class Key {
+//	public static class Key {
+//
+//		String label;
+//
+//		public Key(String label) {
+//			this.label = label;
+//		}
+//		
+//		@Override
+//		public String toString() {
+//			return label;
+//		}
+//		
+//	}
 
-		String label;
-
-		public Key(String label) {
-			this.label = label;
-		}
-		
-		@Override
-		public String toString() {
-			return label;
-		}
-		
+//	Location getLocation(Key locationKey);
+//	
+//	Moveable getItem(Key itemKey);
+//	
+//	Float getFactor(Key factorKey);
+	
+	public interface LocationFinder {
+		Location find(AnimationContext context);
 	}
-
-	Location getLocation(Key locationKey);
 	
-	Moveable getItem(Key itemKey);
+	public interface MoveableFinder {
+		Moveable find(AnimationContext context);
+	}
 	
-	Float getFactor(Key factorKey);
+	public interface FactorFinder {
+		Float find(AnimationContext context);
+	}
 }

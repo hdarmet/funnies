@@ -21,16 +21,16 @@ public class TileFunny extends AbstractFunny implements DropTargetFunny, Trackab
 
 	public static final Animation.Factory DEFAULT_ENTER_TARGET_ANIMATION = 
 		new FaceFadingAnimation.Builder(100, 1.0f)
-			.setItemKey(AbstractTargetedDragProfile.NEW_TARGET_KEY);
+			.setItem(AbstractTargetedDragProfile.newDropTarget());
 	public static final Animation.Factory DEFAULT_EXIT_TARGET_ANIMATION = 
 		new FaceFadingAnimation.Builder(100, 0.0f)
-			.setItemKey(AbstractTargetedDragProfile.PREVIOUS_TARGET_KEY);
+			.setItem(AbstractTargetedDragProfile.previousDropTarget());
 	public static final Animation.Factory DEFAULT_SHOW_ALLOWED_TARGET_ANIMATION = 
 		new FaceFadingAnimation.Builder(100, 0.2f)
-			.setItemKey(AbstractTargetedDragProfile.OTHER_TARGET_KEY);
+			.setItem(AbstractTargetedDragProfile.possibleDropTarget());
 	public static final Animation.Factory DEFAULT_HIDE_ALLOWED_TARGET_ANIMATION =
 		new FaceFadingAnimation.Builder(100, 0.0f)
-			.setItemKey(AbstractTargetedDragProfile.OTHER_TARGET_KEY);
+			.setItem(AbstractTargetedDragProfile.possibleDropTarget());
 
 	Item tileItem;
 	Item hilightItem;

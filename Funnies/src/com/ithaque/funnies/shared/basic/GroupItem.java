@@ -107,7 +107,7 @@ public class GroupItem extends Item implements ItemHolder {
 	}
 
 	@Override
-	protected void registerOnBoard(Board newBoard) {
+	public void registerOnBoard(Board newBoard) {
 		super.registerOnBoard(newBoard);
 		for (Item item : items) {
 			item.registerOnBoard(newBoard);
@@ -115,7 +115,7 @@ public class GroupItem extends Item implements ItemHolder {
 	}
 
 	@Override
-	protected void unregisterOnBoard(Board oldBoard) {
+	public void unregisterOnBoard(Board oldBoard) {
 		super.registerOnBoard(oldBoard);
 		for (Item item : items) {
 			item.registerOnBoard(oldBoard);

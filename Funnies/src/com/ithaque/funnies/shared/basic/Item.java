@@ -51,17 +51,16 @@ public class Item implements Moveable {
 		if (newParent!=currentParent) {
 			currentParent.removeItem(this);
 			newParent.addItem(this);
-			Location absoluteLocation = TransformUtil.transformLocation(currentParent, getLocation());
-			Location relativeLocation = TransformUtil.invertTransformLocation(getParent(), absoluteLocation);
-			setLocation(relativeLocation);
+			Location location = TransformUtil.transformLocation(currentParent, getParent(), getLocation());
+			setLocation(location);
 		}
 	}
 	
-	protected void registerOnBoard(Board newBoard) {
+	public void registerOnBoard(Board newBoard) {
 		newBoard.register(this);
 	}
 	
-	protected void unregisterOnBoard(Board oldBoard) {
+	public void unregisterOnBoard(Board oldBoard) {
 		oldBoard.register(this);
 	}
 	

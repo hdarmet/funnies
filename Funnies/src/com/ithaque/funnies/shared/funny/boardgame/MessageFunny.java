@@ -72,7 +72,7 @@ public class MessageFunny extends AbstractFunny implements Funny {
 	public Animation play(float x, float y, float displacement, long duration) {
 		item.setLocation(new Location(x, y));
 		ParallelAnimation animation = new ParallelAnimation();
-		animation.addAnimation(new MoveAnimation(new LinearEasing(duration), null, new Location(x, y-displacement)).setItem(item));
+		animation.addAnimation(new MoveAnimation(new LinearEasing(duration), new Location(x, y-displacement)).setItem(item));
 		SequenceAnimation fading = new SequenceAnimation();
 		fading.addAnimation(new FadingAnimation((long)(duration*0.1f), 1.0f).setItem(item));
 		fading.addAnimation(new FadingAnimation((long)(duration*0.9f), 0.0f).setItem(item));
