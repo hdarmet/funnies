@@ -6,7 +6,6 @@ import com.ithaque.funnies.shared.basic.GroupItem;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.ItemHolder;
 import com.ithaque.funnies.shared.basic.Location;
-import com.ithaque.funnies.shared.basic.TransformUtil;
 import com.ithaque.funnies.shared.basic.items.BaseItem;
 import com.ithaque.funnies.shared.basic.items.DecoratedItem;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
@@ -16,9 +15,10 @@ import com.ithaque.funnies.shared.funny.DecoratedFunny;
 import com.ithaque.funnies.shared.funny.DropTargetFunny;
 import com.ithaque.funnies.shared.funny.IncompatibleRingException;
 import com.ithaque.funnies.shared.funny.Ring;
+import com.ithaque.funnies.shared.funny.TargetFunny;
 import com.ithaque.funnies.shared.funny.TrackableFunny;
 
-public class TileFunny extends DecoratedFunny implements DropTargetFunny, TrackableFunny {
+public class TileFunny extends DecoratedFunny implements DropTargetFunny, TrackableFunny, TargetFunny {
 
 	public static final Animation.Factory DEFAULT_ENTER_TARGET_ANIMATION = 
 		new FaceFadingAnimation.Builder(100, 1.0f)
@@ -216,6 +216,16 @@ public class TileFunny extends DecoratedFunny implements DropTargetFunny, Tracka
 		return ((BaseItem)holderItem).getStackTop();
 	}
 	
+	@Override
+	public Location getTargetLocation(Item dragged) {
+		return ((BaseItem)holderItem).getTargetLocation(dragged);
+	}
+
+	@Override
+	public ItemHolder getTargetHolder() {
+		return ((BaseItem)holderItem).getStackTop();
+	}
+	
 	public static class HHexFunny extends TileFunny {
 
 		public HHexFunny(
@@ -283,7 +293,7 @@ public class TileFunny extends DecoratedFunny implements DropTargetFunny, Tracka
 
 	@Override
 	public Location getLocation() {
-		return TransformUtil.transformLocation(tileItem.getParent(), tileItem.getLocation());
+		return tileItem.getAbsoluteLocation();
 	}
 
 	@Override

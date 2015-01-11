@@ -4,10 +4,8 @@ import com.ithaque.funnies.shared.basic.Color;
 import com.ithaque.funnies.shared.basic.Font;
 import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
-import com.ithaque.funnies.shared.basic.items.SpriteImageItem;
 import com.ithaque.funnies.shared.basic.items.StatusItem;
 import com.ithaque.funnies.shared.funny.Circus;
-import com.ithaque.funnies.shared.funny.Funny;
 import com.ithaque.funnies.shared.funny.SimpleSketch;
 import com.ithaque.funnies.shared.funny.Sketch;
 import com.ithaque.funnies.shared.funny.boardgame.ArrowFunny;
@@ -25,7 +23,7 @@ import com.ithaque.funnies.shared.funny.notifications.DropEvent;
 
 public class FunnyManager extends AbstracCircusManager {
 
-	Funny lastTarget = null;
+	TileFunny lastTarget = null;
 	Circus circus;
 	DiceFunny dice;
 	EphemeralFunny boom;
@@ -38,12 +36,15 @@ public class FunnyManager extends AbstracCircusManager {
 		new Handler<DropEvent>(DropEvent.class, this) {
 		@Override
 		public Sketch process(DropEvent dropRequest) {
-			System.out.println("Drop : "+dropRequest.getDropped().getId()+" on : "+dropRequest.getTarget().getId());
-			lastTarget = dropRequest.getTarget();
+			SimpleSketch sketch = new SimpleSketch();
+			if (lastTarget!=null) {
+				sketch.addAnimation(counter2.move().turnTo(lastTarget).goTo(lastTarget).getAnimation());
+			}
+			lastTarget = (TileFunny)dropRequest.getTarget();
 			CounterFunny counter = (CounterFunny)dropRequest.getDropped();
 			StatusItem item = (StatusItem)counter.getDecoration(1);
 			item.changeStatus(99);
-			return null;
+			return sketch;
 		}
 	};
 

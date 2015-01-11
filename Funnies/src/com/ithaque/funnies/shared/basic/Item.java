@@ -48,10 +48,11 @@ public class Item implements Moveable {
 	
 	public void changeParent(ItemHolder newParent) {
 		ItemHolder currentParent = getParent();
+		Location location = getLocation();
 		if (newParent!=currentParent) {
 			currentParent.removeItem(this);
 			newParent.addItem(this);
-			Location location = TransformUtil.transformLocation(currentParent, getParent(), getLocation());
+			location = TransformUtil.transformLocation(currentParent, getParent(), location);
 			setLocation(location);
 		}
 	}
@@ -245,6 +246,10 @@ public class Item implements Moveable {
 		}
 	}
 
+	public Location getAbsoluteLocation() {
+		return TransformUtil.transformLocation(getParent(), location);
+	}
+	
 	public float getAbsoluteRotation() {
 		ItemHolder parent = this.getParent();
 		float angle = getRotation();

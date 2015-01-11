@@ -9,7 +9,7 @@ import com.ithaque.funnies.shared.basic.items.animations.easing.LinearEasing;
 
 public class DropAnimation extends SoftenAnimation {
 
-	Location location;
+	Location location;	
 	Location destLocation;
 	Location baseLocation;
 	ItemHolder destinationHolder;
@@ -37,10 +37,12 @@ public class DropAnimation extends SoftenAnimation {
 	@Override
 	public boolean executeAnimation(long time) {
 		Location location = getItem().getLocation();
-		if (location!=null && getLocation()!=null) {
-			getItem().setLocation(
-				getEasing().getValue(baseLocation.getX(), destLocation.getX()),
-				getEasing().getValue(baseLocation.getY(), destLocation.getY()));
+		if (location!=null) { 
+			if (getLocation()!=null) {
+				getItem().setLocation(
+					getEasing().getValue(baseLocation.getX(), destLocation.getX()),
+					getEasing().getValue(baseLocation.getY(), destLocation.getY()));
+			}
 		}
 		return true;
 	}
@@ -48,14 +50,22 @@ public class DropAnimation extends SoftenAnimation {
 	@Override
 	public void finish(long time) {
 		if (getDestinationHolder() != null && getDestinationHolder()!=getItem().getParent()) {
-			float rotation = TransformUtil.transformRotation(getItem().getParent(), getDestinationHolder(), getItem().getRotation());
+			float rotation = getRotation();
 			getItem().setRotation(rotation);
-			float scale = TransformUtil.transformScale(getItem().getParent(), getDestinationHolder(), getItem().getScale());
+			float scale = getScale();
 			getItem().setScale(scale);
 			getItem().changeParent(getDestinationHolder());
 		}
 		getItem().setLocation(getLocation());
 		super.finish(time);
+	}
+	
+	Float getRotation() {
+		return TransformUtil.transformRotation(getItem().getParent(), getDestinationHolder(), getItem().getRotation());
+	}
+	
+	Float getScale() {
+		return TransformUtil.transformScale(getItem().getParent(), getDestinationHolder(), getItem().getScale());
 	}
 	
 	@Override
@@ -100,10 +110,10 @@ public class DropAnimation extends SoftenAnimation {
 	}
 
 	public static class Builder extends SoftenAnimation.Builder {
-		Location location;
-		LocationFinder locationFinder;
-		ItemHolder destinationHolder;
-		MoveableFinder destinationHolderFinder;
+		Location location = null;
+		LocationFinder locationFinder = null;
+		ItemHolder destinationHolder = null;
+		MoveableFinder destinationHolderFinder = null;
 
 		public Builder(Easing.Factory easing) {
 			super(easing);
@@ -130,7 +140,7 @@ public class DropAnimation extends SoftenAnimation {
 			this.locationFinder = locationFinder;
 			return this;
 		}
-		
+
 		public Builder setDestinationHolder(MoveableFinder destinationHolderFinder) {
 			this.destinationHolderFinder = destinationHolderFinder;
 			return this;
@@ -138,18 +148,19 @@ public class DropAnimation extends SoftenAnimation {
 
 		@Override
 		protected void prepare(SoftenAnimation animation) {
+			DropAnimation dropAnimation = (DropAnimation)animation;
 			super.prepare(animation);
 			if (location!=null) {
-				((DropAnimation)animation).setLocation(location);
+				dropAnimation.setLocation(location);
 			}
 			else if (locationFinder!=null) {
-				((DropAnimation)animation).setLocation(locationFinder);
+				dropAnimation.setLocation(locationFinder);
 			}
 			if (destinationHolder!=null) {
-				((DropAnimation)animation).setDestinationHolder(destinationHolder);
+				dropAnimation.setDestinationHolder(destinationHolder);
 			}
 			else if (destinationHolderFinder!=null) {
-				((DropAnimation)animation).setDestinationHolder(destinationHolderFinder);
+				dropAnimation.setDestinationHolder(destinationHolderFinder);
 			}
 		}
 

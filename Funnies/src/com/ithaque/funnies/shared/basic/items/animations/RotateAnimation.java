@@ -9,6 +9,7 @@ public class RotateAnimation extends SoftenAnimation {
 
 	Float newAngle = null;
 	float baseAngle;
+	float targetAngle;
 	FactorFinder rotationFinder ;
 	
 	public RotateAnimation(Easing easing) {
@@ -33,6 +34,7 @@ public class RotateAnimation extends SoftenAnimation {
 		boolean result = super.start(time);
 		if (result) {
 			this.baseAngle = getItem().getRotation();
+			this.targetAngle = getRotation();
 		}
 		return result;
 	}
@@ -47,7 +49,7 @@ public class RotateAnimation extends SoftenAnimation {
 	
 	@Override
 	public boolean executeAnimation(long time) {
-		getItem().setRotation(easing.getValue(baseAngle, getRotation()));
+		getItem().setRotation(easing.getValue(baseAngle, targetAngle));
 		return true;
 	}
 

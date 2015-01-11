@@ -123,4 +123,18 @@ public class Geometric {
 		}
 		return angle;
 	}
+
+	public static Float optimizeRotation(Float currentAngle, Float targetAngle) {
+		float diff = targetAngle - currentAngle;
+		while (diff<-Math.PI) {
+			targetAngle+=(float)Math.PI*2.0f;
+			diff+=(float)Math.PI*2.0f;
+		}
+		while (diff>Math.PI) {
+			targetAngle-=(float)Math.PI*2.0f;
+			diff-=(float)Math.PI*2.0f;
+		}
+		return targetAngle;
+	}
+	
 }

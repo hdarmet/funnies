@@ -1,5 +1,6 @@
 package com.ithaque.funnies.shared.basic.items.animations;
 
+import com.ithaque.funnies.shared.Geometric;
 import com.ithaque.funnies.shared.basic.AnimationContext.FactorFinder;
 import com.ithaque.funnies.shared.basic.AnimationContext.LocationFinder;
 import com.ithaque.funnies.shared.basic.AnimationContext.MoveableFinder;
@@ -64,6 +65,7 @@ public class ChangeAnimation extends SoftenAnimation {
 
 	@Override
 	public boolean executeAnimation(long time) {
+		computeTargetMetrics();
 		if (getLocation()!=null) {
 			getItem().setLocation(
 				getEasing().getValue(baseLocation.getX(), targetLocation.getX()),
@@ -100,20 +102,28 @@ public class ChangeAnimation extends SoftenAnimation {
 		boolean result = super.start(time);
 		if (result) {
 			this.baseLocation = getItem().getLocation();
-			if (getDestinationHolder()!=null && getDestinationHolder() != getItem().getParent()) {
-				targetLocation = TransformUtil.transformLocation(getDestinationHolder(), getItem().getParent(), getLocation());
-				targetRotation = TransformUtil.transformRotation(getDestinationHolder(), getItem().getParent(), getRotation());
-				targetScale = TransformUtil.transformScale(getDestinationHolder(), getItem().getParent(), getScale());
-			}
-			else {
-				targetLocation = getLocation();
-				targetRotation = getRotation();
-				targetScale = getScale();
-			}
+			this.baseRotation = getItem().getRotation();
+			this.baseScale = getItem().getScale();
+			computeTargetMetrics();
 		}
 		return result;
 	}
-	
+
+	private void computeTargetMetrics() {
+		if (getDestinationHolder()!=null && getDestinationHolder() != getItem().getParent()) {
+			targetLocation = TransformUtil.transformLocation(getDestinationHolder(), getItem().getParent(), getLocation());
+			targetRotation = TransformUtil.transformRotation(getDestinationHolder(), getItem().getParent(), getRotation());
+			targetScale = TransformUtil.transformScale(getDestinationHolder(), getItem().getParent(), getScale());
+		}
+		else {
+			targetLocation = getLocation();
+			targetRotation = getRotation();
+			targetScale = getScale();
+		}
+		Float currentAngle = getItem().getRotation();
+		targetRotation = Geometric.optimizeRotation(currentAngle, targetRotation);
+	}
+
 	public Location getLocation() {
 		return location==null ? locationFinder.find(getContext()) : location;
 	}

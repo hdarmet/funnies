@@ -6,15 +6,21 @@ import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.Animation.Factory;
 import com.ithaque.funnies.shared.basic.Event.Type;
 import com.ithaque.funnies.shared.basic.Item;
+import com.ithaque.funnies.shared.basic.ItemHolder;
 import com.ithaque.funnies.shared.basic.ItemObserver;
 import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.TransformUtil;
 import com.ithaque.funnies.shared.basic.items.DecoratedItem;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
 import com.ithaque.funnies.shared.basic.items.StackItem;
+import com.ithaque.funnies.shared.basic.items.animations.ChangeAnimation;
+import com.ithaque.funnies.shared.basic.items.animations.DragAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.DropAnimation;
+import com.ithaque.funnies.shared.basic.items.animations.OptimizedRotateAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.RotateAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.ScalingAnimation;
+import com.ithaque.funnies.shared.basic.items.animations.SequenceAnimation;
+import com.ithaque.funnies.shared.basic.items.animations.easing.LinearEasing;
 import com.ithaque.funnies.shared.basic.items.animations.easing.OutBackEasing;
 import com.ithaque.funnies.shared.basic.processors.AbstractDragProfile;
 import com.ithaque.funnies.shared.basic.processors.TargetedRotateProfile;
@@ -24,6 +30,7 @@ import com.ithaque.funnies.shared.funny.FunnyObserver;
 import com.ithaque.funnies.shared.funny.IncompatibleRingException;
 import com.ithaque.funnies.shared.funny.Ring;
 import com.ithaque.funnies.shared.funny.RotatableFunny;
+import com.ithaque.funnies.shared.funny.TargetFunny;
 import com.ithaque.funnies.shared.funny.TrackableFunny;
 
 public class CounterFunny extends DecoratedFunny implements DraggableFunny, RotatableFunny, TrackableFunny {
@@ -32,11 +39,13 @@ public class CounterFunny extends DecoratedFunny implements DraggableFunny, Rota
 	public static final Animation.Factory DEFAULT_BEGIN_DRAG_ANIMATION = 
 		new ScalingAnimation.Builder(500, 1.1f)
 			.setItem(AbstractDragProfile.draggedItem());
-	public static final Animation.Factory DEFAULT_ADJUST_LOCATION_ANIMATION = 
-		new DropAnimation.Builder(new OutBackEasing.Builder(1000))
+	public static final Animation.Factory DEFAULT_MOVE_ANIMATION = 
+		new ChangeAnimation.Builder(new OutBackEasing.Builder(1000))
 			.setItem(AbstractDragProfile.draggedItem())
 			.setDestinationHolder(AbstractDragProfile.dropItemHolder())
-			.setLocation(AbstractDragProfile.dropLocation());
+			.setLocation(AbstractDragProfile.dropLocation())
+			.setRotation(AbstractDragProfile.dropRotation())
+			.setScale(AbstractDragProfile.dropScale());
 	public static final Animation.Factory DEFAULT_DRAGGED_DROP_ANIMATION = 
 		new ScalingAnimation.Builder(500, 1.0f)
 			.setItem(AbstractDragProfile.draggedItem());
@@ -48,9 +57,10 @@ public class CounterFunny extends DecoratedFunny implements DraggableFunny, Rota
 	StackItem counterStackItem;
 	DecoratedItem counterItem;
 	Animation.Factory beginDragAnimation=DEFAULT_BEGIN_DRAG_ANIMATION;
-	Animation.Factory adjustLocationAnimation=DEFAULT_ADJUST_LOCATION_ANIMATION;
+	Animation.Factory adjustLocationAnimation=DEFAULT_MOVE_ANIMATION;
 	Animation.Factory draggedDropAnimation=DEFAULT_DRAGGED_DROP_ANIMATION;
 	Animation.Factory finishRotateAnimation=DEFAULT_FINISH_ROTATE_ANIMATION;
+	
 	ItemObserver observer;
 	float[] allowedAngles = null;
 	
@@ -143,7 +153,7 @@ public class CounterFunny extends DecoratedFunny implements DraggableFunny, Rota
 	public void setFinishRotateAnimation(Factory finishRotateAnimation) {
 		this.finishRotateAnimation = finishRotateAnimation;
 	}
-
+	
 	@Override
 	public Float adjustRotation(float angle) {
 		angle = Geometric.adjustAngle(angle);
@@ -219,7 +229,7 @@ public class CounterFunny extends DecoratedFunny implements DraggableFunny, Rota
 
 	@Override
 	public Location getLocation() {
-		return TransformUtil.transformLocation(counterStackItem.getParent(), counterStackItem.getLocation());
+		return counterStackItem.getAbsoluteLocation();
 	}
 
 	@Override
@@ -227,4 +237,52 @@ public class CounterFunny extends DecoratedFunny implements DraggableFunny, Rota
 		return counterItem;
 	}
 
+	public Move move() {
+		return new Move();
+	}
+	
+	public class Move {
+		SequenceAnimation sequenceAnimation = new SequenceAnimation();
+		TargetFunny lastTarget = null;
+		
+		public Move turnTo(TargetFunny target) {
+			Location counterLocation = getLocation();
+			Location targetLocation = target.getLocation();
+			Float angle = Geometric.computeAngle(counterLocation, targetLocation);
+			TransformUtil.transformAbsoluteRotation(counterStackItem.getParent(), angle);
+			angle = adjustRotation(angle);
+			RotateAnimation animation = new OptimizedRotateAnimation(1000, angle);
+			animation.setItem(counterStackItem);
+			sequenceAnimation.addAnimation(animation);
+			return this;
+		}
+		
+		public Move goTo(TargetFunny target) {
+			lastTarget = target;
+			ItemHolder targetHolder = target.getTargetHolder();
+			Location targetLocation = target.getTargetLocation(counterStackItem);
+			Location dragTargetLocation = TransformUtil.transformLocation(targetHolder, getRing().dragLayer, targetLocation);
+			DragAnimation dragAnimation = new DragAnimation(new LinearEasing(1000), getRing().dragLayer, dragTargetLocation);
+			dragAnimation.setItem(counterStackItem);
+			sequenceAnimation.addAnimation(dragAnimation);
+			return this;
+		}	
+			
+		void stopTo(TargetFunny target) {
+			ItemHolder targetHolder = target.getTargetHolder();
+			Location targetLocation = target.getTargetLocation(counterStackItem);
+			DropAnimation dropAnimation = new DropAnimation(new LinearEasing(1000), targetHolder, targetLocation);
+			dropAnimation.setItem(counterStackItem);
+			sequenceAnimation.addAnimation(dropAnimation);
+		}
+		
+		public Animation getAnimation() {
+			if (lastTarget!=null) {
+				stopTo(lastTarget);
+			}
+			return sequenceAnimation;
+		}
+		
+	}
+	
 }

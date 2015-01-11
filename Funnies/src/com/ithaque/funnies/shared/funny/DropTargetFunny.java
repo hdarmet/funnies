@@ -24,4 +24,5 @@ public interface DropTargetFunny extends Funny {
 	Location getDropLocation(Item dragged, Item target);
 
 	ItemHolder getDropHolder(Item dragged, Item target);
+
 }

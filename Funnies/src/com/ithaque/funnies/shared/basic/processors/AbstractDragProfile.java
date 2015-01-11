@@ -155,7 +155,7 @@ public abstract class AbstractDragProfile implements DragProfile {
 	}
 	
 	protected float adjustDraggedScale(Item dragged, ItemHolder draggedHolder) {
-		return TransformUtil.transformScale(dragged.getParent(), draggedHolder, dragged.getRotation());
+		return TransformUtil.transformScale(dragged.getParent(), draggedHolder, dragged.getScale());
 	}
 
 	protected boolean resolveDrop(MouseEvent event, Board board, ParallelAnimation animation) {
@@ -179,8 +179,8 @@ public abstract class AbstractDragProfile implements DragProfile {
 	
 	public static class DragAnimationContext implements AnimationContext {
 		Item dragged;
-		Location dropLocation;
 		ItemHolder dropHolder;
+		Location dropLocation;
 		Float dropRotation;
 		Float dropScale;
 	
