@@ -26,7 +26,9 @@ public class OptimizedRotateAnimation extends RotateAnimation {
 	public Float getRotation() {
 		Float currentAngle = getItem().getRotation();
 		Float targetAngle = super.getRotation();
-		return Geometric.optimizeRotation(currentAngle, targetAngle);
+		Float result =  Geometric.optimizeRotation(currentAngle, targetAngle);
+		System.out.println("Angles : "+currentAngle+" "+targetAngle+" "+result);
+		return result;
 	}
 
 	public static class Builder extends RotateAnimation.Builder {

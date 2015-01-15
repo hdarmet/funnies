@@ -44,9 +44,15 @@ public class GroupItem extends Item implements ItemHolder {
 	
 	public void fire(ChangeType changeType) {
 		super.fire(changeType);
-		if (changeType==ChangeType.PARENT || changeType==ChangeType.ANCESTOR)
-		for (Item item : new ArrayList<Item>(items)) {
-			item.fire(ChangeType.ANCESTOR);
+		if (changeType==ChangeType.PARENT || changeType==ChangeType.ANCESTOR) {
+			for (Item item : new ArrayList<Item>(items)) {
+				item.fire(ChangeType.ANCESTOR);
+			}
+		}
+		else {
+			for (Item item : new ArrayList<Item>(items)) {
+				item.fire(changeType);
+			}
 		}
 	}
 	

@@ -14,6 +14,7 @@ import com.ithaque.funnies.shared.basic.items.DecoratedItem;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
 import com.ithaque.funnies.shared.basic.items.StackItem;
 import com.ithaque.funnies.shared.basic.items.animations.ChangeAnimation;
+import com.ithaque.funnies.shared.basic.items.animations.ChangeFaceAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.DragAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.DropAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.OptimizedRotateAnimation;
@@ -23,7 +24,9 @@ import com.ithaque.funnies.shared.basic.items.animations.SequenceAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.easing.LinearEasing;
 import com.ithaque.funnies.shared.basic.items.animations.easing.OutBackEasing;
 import com.ithaque.funnies.shared.basic.processors.AbstractDragProfile;
+import com.ithaque.funnies.shared.basic.processors.RandomAnimationProcessor;
 import com.ithaque.funnies.shared.basic.processors.TargetedRotateProfile;
+import com.ithaque.funnies.shared.funny.AnimatedFunny;
 import com.ithaque.funnies.shared.funny.DecoratedFunny;
 import com.ithaque.funnies.shared.funny.DraggableFunny;
 import com.ithaque.funnies.shared.funny.FunnyObserver;
@@ -33,7 +36,7 @@ import com.ithaque.funnies.shared.funny.RotatableFunny;
 import com.ithaque.funnies.shared.funny.TargetFunny;
 import com.ithaque.funnies.shared.funny.TrackableFunny;
 
-public class CounterFunny extends DecoratedFunny implements DraggableFunny, RotatableFunny, TrackableFunny {
+public class CounterFunny extends DecoratedFunny implements DraggableFunny, RotatableFunny, TrackableFunny, AnimatedFunny {
 	private static final float BIG_FLOAT = 10000f;
 
 	public static final Animation.Factory DEFAULT_BEGIN_DRAG_ANIMATION = 
@@ -54,8 +57,9 @@ public class CounterFunny extends DecoratedFunny implements DraggableFunny, Rota
 			.setItem(TargetedRotateProfile.rotatableItem())
 			.setRotation(TargetedRotateProfile.rotation());
 
+	Item counterItem;
 	StackItem counterStackItem;
-	DecoratedItem counterItem;
+	DecoratedItem counterDecorationItem;
 	Animation.Factory beginDragAnimation=DEFAULT_BEGIN_DRAG_ANIMATION;
 	Animation.Factory adjustLocationAnimation=DEFAULT_MOVE_ANIMATION;
 	Animation.Factory draggedDropAnimation=DEFAULT_DRAGGED_DROP_ANIMATION;
@@ -66,8 +70,9 @@ public class CounterFunny extends DecoratedFunny implements DraggableFunny, Rota
 	
 	public CounterFunny(String id, Item counterItem) {
 		super(id);
-		this.counterItem = new DecoratedItem(counterItem);
-		this.counterStackItem = new StackItem(this.counterItem);
+		this.counterItem = counterItem;
+		this.counterDecorationItem = new DecoratedItem(counterItem);
+		this.counterStackItem = new StackItem(this.counterDecorationItem);
 		this.observer = new ItemObserver() {			
 			@Override
 			public void change(ItemObserver.ChangeType type, Item item) {
@@ -78,7 +83,7 @@ public class CounterFunny extends DecoratedFunny implements DraggableFunny, Rota
 		};
 	}
 	
-	public CounterFunny(String id, String counterImageUrl) {
+	public CounterFunny(String id, String ... counterImageUrl) {
 		this(id,
 			new ImageItem(counterImageUrl)
 		);
@@ -164,12 +169,16 @@ public class CounterFunny extends DecoratedFunny implements DraggableFunny, Rota
 		float diff = BIG_FLOAT;
 		for (Float aAngle : allowedAngles) {
 			float aDiff = aAngle-angle;
+			while (aDiff>Math.PI) {
+				aDiff= aDiff-(float)(2.0f*Math.PI);
+				aAngle = aAngle-(float)(2.0f*Math.PI);
+			}
+			while (aDiff<-Math.PI) {
+				aDiff= aDiff+(float)(2.0f*Math.PI);
+				aAngle = aAngle+(float)(2.0f*Math.PI);
+			}
 			if (aDiff<0) {
 				aDiff=-aDiff;
-			}
-			if (aDiff>Math.PI) {
-				aDiff=(float)(2.0f*Math.PI-aDiff);
-				aAngle = (float)(2.0f*Math.PI)-aAngle;
 			}
 			if (aDiff<diff) {
 				bestAngle = aAngle;
@@ -234,7 +243,7 @@ public class CounterFunny extends DecoratedFunny implements DraggableFunny, Rota
 
 	@Override
 	public DecoratedItem getDecorationSupport() {
-		return counterItem;
+		return counterDecorationItem;
 	}
 
 	public Move move() {
@@ -250,7 +259,7 @@ public class CounterFunny extends DecoratedFunny implements DraggableFunny, Rota
 			Location targetLocation = target.getLocation();
 			Float angle = Geometric.computeAngle(counterLocation, targetLocation);
 			TransformUtil.transformAbsoluteRotation(counterStackItem.getParent(), angle);
-			angle = adjustRotation(angle);
+			angle = adjustRotation(angle);			
 			RotateAnimation animation = new OptimizedRotateAnimation(1000, angle);
 			animation.setItem(counterStackItem);
 			sequenceAnimation.addAnimation(animation);
@@ -283,6 +292,18 @@ public class CounterFunny extends DecoratedFunny implements DraggableFunny, Rota
 			return sequenceAnimation;
 		}
 		
+	}
+
+	@Override
+	public Animation.Factory getAnimation(Item item) {
+		return new SequenceAnimation.Builder()
+				.addAnimation(new ChangeFaceAnimation.Builder(500, 1).setItem(RandomAnimationProcessor.animatedItem()))
+				.addAnimation(new ChangeFaceAnimation.Builder(500, 0).setItem(RandomAnimationProcessor.animatedItem()));
+	}
+
+	@Override
+	public Item[] getAnimatedItems() {
+		return new Item[] {counterItem};
 	}
 	
 }

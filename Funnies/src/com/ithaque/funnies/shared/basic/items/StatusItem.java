@@ -48,7 +48,6 @@ public class StatusItem extends SpriteImageItem {
 	
 	void setStatus(int status) {
 		setOpacity(this.status, 0.0f);
-		System.out.println("change status "+this.status+" "+status);
 		this.status = status;
 		setOpacity(this.status, 1.0f);
 	}

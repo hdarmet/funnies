@@ -69,19 +69,15 @@ public class ChangeFaceAnimation extends SoftenAnimation {
 		getItem().setOpacity(imageIndex, opacity);
 	}
 	
-	public static class Builder implements Factory {
-		Easing.Factory easing;
-		String url = null;
+	public static class Builder extends SoftenAnimation.Builder {
 		Integer targetIndex = null;
 		
 		public Builder(Easing.Factory easing) {
-			super();
-			this.easing = easing;
+			super(easing);
 		}
 
 		public Builder(Easing.Factory easing, Integer targetIndex) {
-			super();
-			this.easing = easing;
+			super(easing);
 			this.targetIndex = targetIndex;
 		}
 
@@ -91,7 +87,9 @@ public class ChangeFaceAnimation extends SoftenAnimation {
 		
 		@Override
 		public ChangeFaceAnimation create() {
-			return new ChangeFaceAnimation(easing.create(), targetIndex);
+			ChangeFaceAnimation animation = new ChangeFaceAnimation(easing.create(), targetIndex);
+			prepare(animation);
+			return animation;
 		}	
 
 	}

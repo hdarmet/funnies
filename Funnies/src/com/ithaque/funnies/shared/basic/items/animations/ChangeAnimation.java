@@ -65,13 +65,14 @@ public class ChangeAnimation extends SoftenAnimation {
 
 	@Override
 	public boolean executeAnimation(long time) {
-		computeTargetMetrics();
+		//computeTargetMetrics();
 		if (getLocation()!=null) {
 			getItem().setLocation(
 				getEasing().getValue(baseLocation.getX(), targetLocation.getX()),
 				getEasing().getValue(baseLocation.getY(), targetLocation.getY()));
 		}
 		if (getRotation()!=null) {
+			System.out.println("rotate : "+(getEasing().getValue(baseRotation, targetRotation)));
 			getItem().setRotation(getEasing().getValue(baseRotation, targetRotation));
 		}
 		if (getScale()!=null) {
@@ -109,7 +110,7 @@ public class ChangeAnimation extends SoftenAnimation {
 		return result;
 	}
 
-	private void computeTargetMetrics() {
+	void computeTargetMetrics() {
 		if (getDestinationHolder()!=null && getDestinationHolder() != getItem().getParent()) {
 			targetLocation = TransformUtil.transformLocation(getDestinationHolder(), getItem().getParent(), getLocation());
 			targetRotation = TransformUtil.transformRotation(getDestinationHolder(), getItem().getParent(), getRotation());
@@ -120,8 +121,7 @@ public class ChangeAnimation extends SoftenAnimation {
 			targetRotation = getRotation();
 			targetScale = getScale();
 		}
-		Float currentAngle = getItem().getRotation();
-		targetRotation = Geometric.optimizeRotation(currentAngle, targetRotation);
+		targetRotation = Geometric.optimizeRotation(baseRotation, targetRotation);
 	}
 
 	public Location getLocation() {

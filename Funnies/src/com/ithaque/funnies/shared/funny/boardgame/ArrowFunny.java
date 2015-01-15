@@ -81,8 +81,6 @@ public class ArrowFunny extends AbstractFunny {
 		else {
 			sourceLocation = TransformUtil.invertTransformLocation(getArrowSupport(), source.getLocation());
 			destLocation = TransformUtil.invertTransformLocation(getArrowSupport(), destination.getLocation());
-			System.out.println("ASL : "+source.getLocation()+" "+"ADL : "+destination.getLocation());
-			System.out.println("SL : "+sourceLocation+" "+"DL : "+destLocation);
 			float distance = Geometric.computeDistance(sourceLocation, destLocation);
 			float angle = Geometric.computeAngle(sourceLocation, destLocation);
 			Location[] arrowShape = computeArrowShape(distance-margin, headHeight, headWidth, queueWidth);

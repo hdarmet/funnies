@@ -17,11 +17,13 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.ithaque.funnies.client.platform.GWTPlatform;
 import com.ithaque.funnies.shared.FieldVerifier;
+import com.ithaque.funnies.shared.basic.Animation.Factory;
 import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Color;
 import com.ithaque.funnies.shared.basic.Event;
 import com.ithaque.funnies.shared.basic.Event.Type;
 import com.ithaque.funnies.shared.basic.Font;
+import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.Layer;
 import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.MultiLayered;
@@ -42,6 +44,7 @@ import com.ithaque.funnies.shared.basic.processors.GestureEvent;
 import com.ithaque.funnies.shared.basic.processors.GestureProfile;
 import com.ithaque.funnies.shared.basic.processors.GestureRecognition.Gesture;
 import com.ithaque.funnies.shared.basic.processors.GestureRecognition.MatchHandler;
+import com.ithaque.funnies.shared.basic.processors.RandomAnimationProcessor;
 import com.ithaque.funnies.shared.basic.processors.ScalingProcessor;
 import com.ithaque.funnies.shared.basic.processors.ScrollProfile;
 import com.ithaque.funnies.shared.basic.processors.SimpleTargetedDragProfile;
@@ -195,6 +198,21 @@ public class Funnies implements EntryPoint {
 			.setItem(TargetedRotateProfile.rotatableItem())
 			.setRotation(TargetedRotateProfile.rotation()));
 		rotateProfile.addRotatable(iitem2);
+		
+		RandomAnimationProcessor animProcessor = new RandomAnimationProcessor(board, 2000, "alarm", 2) {
+			@Override
+			protected void animate(Item item) {
+				System.out.println("animate item : "+item);
+			}
+
+			@Override
+			protected Factory getAnimation(Item item) {
+				return null;
+			}	
+		};
+		animProcessor.addAnimated(sitem);
+		animProcessor.addAnimated(pitem);
+		board.addProcessor(animProcessor);
 		
 		MatchHandler dMatch = new MatchHandler() {
 			@Override

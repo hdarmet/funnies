@@ -33,7 +33,9 @@ public class GWTPlatform implements Platform {
 	    Timer timer = new Timer() {
 	        @Override
 	        public void run() {
-	        	GWTPlatform.this.board.animate();
+	        	long time = getTime();
+	        	GWTPlatform.this.board.alarm(time);
+	        	GWTPlatform.this.board.animate(time);
 	        	GWTPlatform.this.board.render();
 	        }
 	    };

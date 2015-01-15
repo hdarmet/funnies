@@ -12,6 +12,7 @@ import com.ithaque.funnies.shared.Trace;
 public class Board implements BaseDevice, LayoutDevice {
 
 	List<Item> items = new ArrayList<Item>();
+	List<Alarm> alarms = new ArrayList<Alarm>();
 	List<Animation> animations = new ArrayList<Animation>();
 	List<Processor> processors = new ArrayList<Processor>();
 	Platform platform;
@@ -48,8 +49,8 @@ public class Board implements BaseDevice, LayoutDevice {
 					maxLevel = highestLevel;
 				}
 			}
-			platform.getGraphics().setLayer(token);
-			Graphics graphics = platform.getGraphics();
+			Graphics graphics = getGraphics();
+			graphics.setLayer(token);
 			graphics.clear();
 			for (int level=0; level <= maxLevel; level++) {
 				for (Item item : items) {
@@ -64,8 +65,7 @@ public class Board implements BaseDevice, LayoutDevice {
 		}
 	}
 	
-	public void animate() {
-		long time = platform.getTime();
+	public void animate(long time) {
 		List<Animation> finished = null;
 		boolean atLeastOne = false;
 		for (Animation animation : new ArrayList<Animation>(animations)) {
@@ -298,6 +298,22 @@ public class Board implements BaseDevice, LayoutDevice {
 	@Override
 	public Token getLayerToken() {
 		return token;
+	}
+
+	public void addAlarm(long timeout, boolean repeat, String alarmId) {
+		alarms.add(new Alarm(timeout, repeat, alarmId)); 
+	}
+
+	public void alarm(long time) {
+		for (Alarm alarm : new ArrayList<Alarm>(alarms)) {
+			Event event = alarm.process(time);
+			if (alarm.isFinished()) {
+				alarms.remove(alarm);
+			}
+			if (event!=null) {
+				processEvent(event);
+			}
+		}
 	}
 
 }

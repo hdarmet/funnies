@@ -84,8 +84,9 @@ public class ParallelAnimation extends AbstractAnimation implements CompositeAni
 			super();
 		}
 
-		public void addAnimation(Animation.Factory animation) {
+		public Builder addAnimation(Animation.Factory animation) {
 			animations.add(animation);
+			return this;
 		}
 		
 		@Override

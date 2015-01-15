@@ -8,8 +8,10 @@ import com.ithaque.funnies.shared.basic.processors.ScalingProcessor;
 import com.ithaque.funnies.shared.basic.processors.ScrollProfile;
 import com.ithaque.funnies.shared.funny.ActivableFunny;
 import com.ithaque.funnies.shared.funny.ActivationProcessor;
+import com.ithaque.funnies.shared.funny.AnimatedFunny;
 import com.ithaque.funnies.shared.funny.Circus;
 import com.ithaque.funnies.shared.funny.CircusDnDProfile;
+import com.ithaque.funnies.shared.funny.CircusRandomAnimationProcessor;
 import com.ithaque.funnies.shared.funny.CircusRotateProfile;
 import com.ithaque.funnies.shared.funny.DraggableFunny;
 import com.ithaque.funnies.shared.funny.DropTargetFunny;
@@ -27,6 +29,7 @@ public class GameBoardRing extends Ring {
 	private static final String INFO_LAYER = "info";
 	private static final String ANIMATION_LAYER = "animation";
 	private static final String DRAG_LAYER = "drag";
+	private static final String RANDOM = "random";
 
 	public GameBoardRing(Circus circus, float width, float height) {
 		super(circus, width, height);
@@ -46,6 +49,7 @@ public class GameBoardRing extends Ring {
 	ScrollProfile scrollProfile;
 	ScalingProcessor scalingProcessor;
 	ActivationProcessor activationProcessor;
+	CircusRandomAnimationProcessor animationProcessor;
 	
 	@Override
 	protected Item buildContent(float width, float height) {
@@ -70,10 +74,12 @@ public class GameBoardRing extends Ring {
 		scalingProcessor = new ScalingProcessor(1.1f, 0.25f, 4.0f);
 		scalingProcessor.addScalable(backgroundLayer);
 		activationProcessor= new ActivationProcessor(this);
+		animationProcessor=new CircusRandomAnimationProcessor(this, 1000, RANDOM, 4);
 		
 		getBoard().addProcessor(dragProcessor);
 		getBoard().addProcessor(scalingProcessor);
 		getBoard().addProcessor(activationProcessor);
+		getBoard().addProcessor(animationProcessor);
 		return baseLayer;
 	}
 
@@ -92,6 +98,9 @@ public class GameBoardRing extends Ring {
 		if (funny instanceof ActivableFunny) {
 			activationProcessor.registerActivableFunny((ActivableFunny)funny);
 		}
+		if (funny instanceof AnimatedFunny) {
+			animationProcessor.registerAnimatedFunny((AnimatedFunny)funny);
+		}
 		return result;
 	}
 
@@ -109,6 +118,9 @@ public class GameBoardRing extends Ring {
 		}
 		if (funny instanceof ActivableFunny) {
 			activationProcessor.unregisterActivableFunny((ActivableFunny)funny);
+		}
+		if (funny instanceof AnimatedFunny) {
+			animationProcessor.unregisterAnimatedFunny((AnimatedFunny)funny);
 		}
 		return result;
 	}

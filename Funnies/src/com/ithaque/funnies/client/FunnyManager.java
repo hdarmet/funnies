@@ -111,8 +111,8 @@ public class FunnyManager extends AbstracCircusManager {
 		return tile;
 	}
 	
-	CounterFunny createCounter(int id, String url, float x, float y) {
-		CounterFunny counter = new CounterFunny("c"+id, url+".png");
+	CounterFunny createCounter(int id, String url1, String url2, float x, float y) {
+		CounterFunny counter = new CounterFunny("c"+id, url1+".png", url2+".png");
 		counter.setLocation(new Location(x, y));
 		counter.setAllowedAngles(new float[] {
 				0.0f,
@@ -162,12 +162,12 @@ public class FunnyManager extends AbstracCircusManager {
 			}
 		}
 
-		circus.enterRing(counter1 = createCounter(1, "u1", -400, -50));
-		circus.enterRing(createCounter(2, "u1", -400, 0));
-		circus.enterRing(createCounter(3, "u1", -400, 50));
-		circus.enterRing(createCounter(4, "u2", 400, -50));
-		circus.enterRing(createCounter(5, "u2", 400, 0));
-		circus.enterRing(counter2 = createCounter(6, "u2", 400, 50));
+		circus.enterRing(counter1 = createCounter(1, "u1", "u2", -400, -50));
+		circus.enterRing(createCounter(2, "u1", "u2", -400, 0));
+		circus.enterRing(createCounter(3, "u1", "u2", -400, 50));
+		circus.enterRing(createCounter(4, "u2", "u1", 400, -50));
+		circus.enterRing(createCounter(5, "u2", "u1", 400, 0));
+		circus.enterRing(counter2 = createCounter(6, "u2", "u1", 400, 50));
 		
 		circus.enterRing(dice=createDiceFunny());
 		circus.enterRing(boom=createExplosion());

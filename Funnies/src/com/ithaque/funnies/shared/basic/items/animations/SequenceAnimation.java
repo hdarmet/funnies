@@ -20,12 +20,12 @@ public class SequenceAnimation extends AbstractAnimation implements CompositeAni
 	public boolean start(long time) {
 		boolean result = super.start(time);
 		if (result) {
+			for (Animation child : animations) {
+				child.setContext(getContext());
+			}
 			if (!animations.isEmpty()) {
 				endTime = time+getDuration();
 				currentChild = animations.remove(0);
-				if (currentChild.getContext()==null) {
-					currentChild.setContext(getContext());
-				}
 				currentChild.start(time);
 			}
 		}
@@ -55,9 +55,6 @@ public class SequenceAnimation extends AbstractAnimation implements CompositeAni
 			}
 			else {
 				currentChild = animations.remove(0);
-				if (currentChild.getContext()==null) {
-					currentChild.setContext(getContext());
-				}
 				currentChild.start(time);
 			}
 		}
@@ -93,8 +90,9 @@ public class SequenceAnimation extends AbstractAnimation implements CompositeAni
 			super();
 		}
 
-		public void addAnimation(Animation.Factory animation) {
+		public Builder addAnimation(Animation.Factory animation) {
 			animations.add(animation);
+			return this;
 		}
 		
 		@Override
