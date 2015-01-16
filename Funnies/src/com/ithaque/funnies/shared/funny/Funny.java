@@ -7,11 +7,11 @@ public interface Funny {
 
 	String getId();
 	
-	void enterRing(Ring ring);
+	void enterRing(AbstractRing ring);
 
-	void exitRing(Ring ring);
+	void exitRing(AbstractRing ring);
 	
-	Ring getRing();
+	AbstractRing getRing();
 
 	void addObserver(FunnyObserver observer);
 

@@ -18,5 +18,5 @@ public interface ItemHolder extends Moveable {
 	int indexOfItem(Item item);
 	float getAbsoluteRotation();
 	float getAbsoluteScale();
-
+	LayoutDevice getLayout();
 }

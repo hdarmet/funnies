@@ -3,6 +3,7 @@ package com.ithaque.funnies.shared.basic;
 public class Event {
 
 	public enum Type {
+		ALL,
 		MOUSE_DOWN,
 		MOUSE_UP,
 		MOUSE_CLICK,

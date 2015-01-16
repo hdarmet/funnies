@@ -2,7 +2,7 @@ package com.ithaque.funnies.shared.funny.boardgame;
 
 import com.ithaque.funnies.shared.basic.Platform;
 import com.ithaque.funnies.shared.funny.Circus;
-import com.ithaque.funnies.shared.funny.Ring;
+import com.ithaque.funnies.shared.funny.AbstractRing;
 
 public class GameBoardCircus extends Circus {
 
@@ -11,7 +11,7 @@ public class GameBoardCircus extends Circus {
 	}
 
 	@Override
-	public Ring buildRing(float width, float height) {
+	public AbstractRing buildRing(float width, float height) {
 		return new GameBoardRing(this, width, height);
 	}
 	

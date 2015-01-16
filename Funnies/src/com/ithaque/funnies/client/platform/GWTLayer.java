@@ -20,6 +20,7 @@ public class GWTLayer {
 	    canvas.setVisible(visible);
 	    canvas.setCoordinateSpaceWidth(1000);
 	    canvas.setCoordinateSpaceHeight(500);
+	    canvas.getContext2d().save();
 	    RootPanel.get("board").add(canvas);
 		return canvas;
 	}

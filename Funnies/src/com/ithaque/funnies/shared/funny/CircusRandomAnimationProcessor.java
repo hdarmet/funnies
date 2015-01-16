@@ -9,13 +9,13 @@ import com.ithaque.funnies.shared.basic.processors.RandomAnimationProcessor;
 
 public class CircusRandomAnimationProcessor extends RandomAnimationProcessor {
 
-	public CircusRandomAnimationProcessor(Ring ring, long timeout, String alarmId, int segCount) {
+	public CircusRandomAnimationProcessor(AbstractRing ring, long timeout, String alarmId, int segCount) {
 		super(ring.getBoard(), timeout, alarmId, segCount);
 		this.ring = ring;
 	}
 
 	Map<Item, AnimatedFunny> animatedFunnies = new HashMap<Item, AnimatedFunny>();
-	Ring ring;
+	AbstractRing ring;
 
 	@Override
 	protected Factory getAnimation(Item item) {

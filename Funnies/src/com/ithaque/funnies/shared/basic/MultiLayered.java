@@ -68,9 +68,28 @@ public class MultiLayered extends GroupItem implements BaseDevice {
 		}
 	};
 	
-	public Layer addLayer(String id) {
+	@Override
+	public Item getMouseTarget(MouseEvent event) {
+		for (int index=getItemCount()-1; index>=0; index--) {
+			Item child = getItem(index);
+			if (child instanceof Device) {
+				Item target = ((Device)child).getMouseTarget(event);
+				if (target!=null) {
+					return target;
+				}
+			}
+		}
+		return null;
+	}
+
+	public Layer createAttachedLayer(String id) {
 		Layer layer = new MultiLayer(id, minX, minY, maxX, maxY);
 		addItem(layer);
 		return layer;
 	}
+	
+	public void addDevice(Device device) {
+		addItem((Item)device);
+	}
+
 }

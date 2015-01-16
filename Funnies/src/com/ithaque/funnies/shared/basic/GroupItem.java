@@ -113,18 +113,18 @@ public class GroupItem extends Item implements ItemHolder {
 	}
 
 	@Override
-	public void registerOnBoard(Board newBoard) {
-		super.registerOnBoard(newBoard);
+	public void registerOnLayout(LayoutDevice newLayout) {
+		super.registerOnLayout(newLayout);
 		for (Item item : items) {
-			item.registerOnBoard(newBoard);
+			item.registerOnLayout(newLayout);
 		}
 	}
 
 	@Override
-	public void unregisterOnBoard(Board oldBoard) {
-		super.registerOnBoard(oldBoard);
+	public void unregisterOnLayout(LayoutDevice oldLayout) {
+		super.unregisterOnLayout(oldLayout);
 		for (Item item : items) {
-			item.registerOnBoard(oldBoard);
+			item.unregisterOnLayout(oldLayout);
 		}
 	}
 	

@@ -13,7 +13,7 @@ import com.ithaque.funnies.shared.basic.items.animations.SequenceAnimation;
 import com.ithaque.funnies.shared.funny.AbstractFunny;
 import com.ithaque.funnies.shared.funny.Funny;
 import com.ithaque.funnies.shared.funny.IncompatibleRingException;
-import com.ithaque.funnies.shared.funny.Ring;
+import com.ithaque.funnies.shared.funny.AbstractRing;
 
 public class EphemeralFunny extends AbstractFunny implements Funny {
 
@@ -41,7 +41,7 @@ public class EphemeralFunny extends AbstractFunny implements Funny {
 	}
 
 	@Override
-	public void enterRing(Ring ring) {
+	public void enterRing(AbstractRing ring) {
 		if (!(ring instanceof GameBoardRing)) {
 			throw new IncompatibleRingException();
 		}
@@ -52,7 +52,7 @@ public class EphemeralFunny extends AbstractFunny implements Funny {
 	}
 
 	@Override
-	public void exitRing(Ring ring) {
+	public void exitRing(AbstractRing ring) {
 		if (ring != getRing()) {
 			throw new IllegalInvokeException();
 		}

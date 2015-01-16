@@ -280,11 +280,7 @@ public class GWTGraphics implements Graphics {
 		context2d.setStrokeStyle(getColor(lineColor));
 		context2d.setFillStyle(getColor(fillColor));
 		
-		context2d.moveTo(trShape[0].getX(), trShape[0].getY());
-		for (int i=1; i<trShape.length; i++) {
-			context2d.lineTo(trShape[i].getX(), trShape[i].getY());
-		}		
-		context2d.lineTo(trShape[0].getX(), trShape[0].getY());
+		definePath(context2d, trShape);
 		context2d.fill();
 		context2d.stroke();
 	}
@@ -345,12 +341,24 @@ public class GWTGraphics implements Graphics {
 //		context2d.setShadowOffsetX(8);
 //		context2d.setShadowOffsetY(8);
 		
+		definePath(context2d, trShape);
+		context2d.stroke();
+	}
+
+	void definePath(Context2d context2d, Location[] trShape) {
 		context2d.moveTo(trShape[0].getX(), trShape[0].getY());
 		for (int i=1; i<trShape.length; i++) {
 			context2d.lineTo(trShape[i].getX(), trShape[i].getY());
 		}		
 		context2d.lineTo(trShape[0].getX(), trShape[0].getY());
-		context2d.stroke();
+	}
+
+
+	@Override
+	public void clip(Item item, Location[] shape) {
+		Location[] absShape = TransformUtil.transformShape(item, shape);
+		definePath(context2d, absShape);
+		context2d.clip();
 	}
 
 	@Override
@@ -423,10 +431,9 @@ public class GWTGraphics implements Graphics {
 	}
 	
 	public void resetContext2d() {
+		context2d.restore();
+		context2d.save();
 		context2d.beginPath();
-		context2d.setTransform(1, 0, 0, 1, 0, 0);
-		context2d.setGlobalAlpha(1.0);
-		//context2d.setShadowColor("#00000000");
 	}
 	
 	Canvas createMouseCanvas() {
@@ -441,6 +448,7 @@ public class GWTGraphics implements Graphics {
 	    canvas.addMouseUpHandler(mouseUpHandler);
 	    canvas.addMouseMoveHandler(mouseMoveHandler);
 	    canvas.addMouseWheelHandler(mouseWheelHandler);
+	    canvas.getContext2d().save();
 	    RootPanel.get("board").add(canvas);
 		return canvas;
 	}

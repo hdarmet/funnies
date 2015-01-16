@@ -13,9 +13,9 @@ import com.ithaque.funnies.shared.funny.notifications.AcceptRotationQuestion;
 public class CircusRotateProfile extends TargetedRotateProfile {
 	Map<Item, RotatableFunny> rotatableFunnies = new HashMap<Item, RotatableFunny>();
 
-	Ring ring;
+	AbstractRing ring;
 	
-	public CircusRotateProfile(Ring ring) {
+	public CircusRotateProfile(AbstractRing ring) {
 		super();
 		this.ring = ring;
 	}

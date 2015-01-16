@@ -15,9 +15,9 @@ public class CircusDnDProfile extends AbstractTargetedDragProfile {
 
 	Map<Item, DraggableFunny> draggableFunnies = new HashMap<Item, DraggableFunny>();
 	Map<Item, DropTargetFunny> targetFunnies = new HashMap<Item, DropTargetFunny>();
-	Ring ring;
+	AbstractRing ring;
 	
-	public CircusDnDProfile(Ring ring) {
+	public CircusDnDProfile(AbstractRing ring) {
 		super(ring.getBoard());
 		this.ring = ring;
 	}

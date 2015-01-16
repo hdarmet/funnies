@@ -9,20 +9,20 @@ public abstract class AbstractFunny implements Funny {
 	
 	List<FunnyObserver> observers = new ArrayList<FunnyObserver>();
 	String id;
-	Ring ring;
+	AbstractRing ring;
 	
 	public AbstractFunny(String id) {
 		this.id = id;
 	}
 	
 	@Override
-	public void enterRing(Ring ring) {
+	public void enterRing(AbstractRing ring) {
 		this.ring = ring;
 		fire(ChangeType.ENTER_RING);
 	}
 
 	@Override
-	public void exitRing(Ring ring) {
+	public void exitRing(AbstractRing ring) {
 		this.ring = null;
 		fire(ChangeType.EXIT_RING);
 	}
@@ -61,7 +61,7 @@ public abstract class AbstractFunny implements Funny {
 	}
 
 	@Override
-	public Ring getRing() {
+	public AbstractRing getRing() {
 		return ring;
 	}
 	

@@ -1,11 +1,14 @@
 package com.ithaque.funnies.shared.funny.boardgame;
 
+import com.ithaque.funnies.shared.basic.FrameLayer;
+import com.ithaque.funnies.shared.basic.GroupItem;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.Layer;
 import com.ithaque.funnies.shared.basic.MultiLayered;
 import com.ithaque.funnies.shared.basic.processors.DragProcessor;
 import com.ithaque.funnies.shared.basic.processors.ScalingProcessor;
 import com.ithaque.funnies.shared.basic.processors.ScrollProfile;
+import com.ithaque.funnies.shared.funny.AbstractRing;
 import com.ithaque.funnies.shared.funny.ActivableFunny;
 import com.ithaque.funnies.shared.funny.ActivationProcessor;
 import com.ithaque.funnies.shared.funny.AnimatedFunny;
@@ -16,10 +19,13 @@ import com.ithaque.funnies.shared.funny.CircusRotateProfile;
 import com.ithaque.funnies.shared.funny.DraggableFunny;
 import com.ithaque.funnies.shared.funny.DropTargetFunny;
 import com.ithaque.funnies.shared.funny.Funny;
-import com.ithaque.funnies.shared.funny.Ring;
 import com.ithaque.funnies.shared.funny.RotatableFunny;
+import com.ithaque.funnies.shared.funny.ToolProcessor;
+import com.ithaque.funnies.shared.funny.TooledFunny;
+import com.ithaque.funnies.shared.funny.TooledRing;
+import com.ithaque.funnies.shared.funny.standard.ToolbarFunny;
 
-public class GameBoardRing extends Ring {
+public class GameBoardRing extends AbstractRing implements TooledRing {
 
 	private static final String BACKGROUND_LAYER = "background";
 	private static final String BOARD_LAYER = "board";
@@ -29,7 +35,9 @@ public class GameBoardRing extends Ring {
 	private static final String INFO_LAYER = "info";
 	private static final String ANIMATION_LAYER = "animation";
 	private static final String DRAG_LAYER = "drag";
+	private static final String TOOLS_LAYER = "tools";
 	private static final String RANDOM = "random";
+	public static final String TOOLBAR = "toolbar";
 
 	public GameBoardRing(Circus circus, float width, float height) {
 		super(circus, width, height);
@@ -42,7 +50,9 @@ public class GameBoardRing extends Ring {
 	Layer piecesLayer;
 	Layer infoLayer;
 	Layer animationLayer;
+	FrameLayer frameLayer;
 	Layer dragLayer;
+	
 	DragProcessor dragProcessor;
 	CircusRotateProfile rotateCounterProfile;
 	CircusDnDProfile dragCounterProfile;
@@ -50,18 +60,23 @@ public class GameBoardRing extends Ring {
 	ScalingProcessor scalingProcessor;
 	ActivationProcessor activationProcessor;
 	CircusRandomAnimationProcessor animationProcessor;
+	ToolProcessor toolProcessor;
+	
+	ToolbarFunny toolbar;
 	
 	@Override
 	protected Item buildContent(float width, float height) {
 		MultiLayered baseLayer = new MultiLayered(-width/2.0f, -height/2.0f, width/2.0f, height/2.0f);
-		backgroundLayer = baseLayer.addLayer(BACKGROUND_LAYER);
-		boardLayer = baseLayer.addLayer(BOARD_LAYER);
-		hilightLayer = baseLayer.addLayer(HILIGHT_LAYER);
-		tilesetLayer = baseLayer.addLayer(TILESET_LAYER);
-		piecesLayer = baseLayer.addLayer(PIECES_LAYER);
-		infoLayer = baseLayer.addLayer(INFO_LAYER);
-		animationLayer = baseLayer.addLayer(ANIMATION_LAYER);
-		dragLayer = baseLayer.addLayer(DRAG_LAYER);
+		backgroundLayer = baseLayer.createAttachedLayer(BACKGROUND_LAYER);
+		boardLayer = baseLayer.createAttachedLayer(BOARD_LAYER);
+		hilightLayer = baseLayer.createAttachedLayer(HILIGHT_LAYER);
+		tilesetLayer = baseLayer.createAttachedLayer(TILESET_LAYER);
+		piecesLayer = baseLayer.createAttachedLayer(PIECES_LAYER);
+		infoLayer = baseLayer.createAttachedLayer(INFO_LAYER);
+		animationLayer = baseLayer.createAttachedLayer(ANIMATION_LAYER);
+		frameLayer = new FrameLayer(TOOLS_LAYER,-width/2.0f, -height/2.0f, width/2.0f, height/2.0f);
+		baseLayer.addDevice(frameLayer);
+		dragLayer = baseLayer.createAttachedLayer(DRAG_LAYER);
 
 		dragProcessor = new DragProcessor();
 		rotateCounterProfile = new CircusRotateProfile(this);
@@ -75,16 +90,22 @@ public class GameBoardRing extends Ring {
 		scalingProcessor.addScalable(backgroundLayer);
 		activationProcessor= new ActivationProcessor(this);
 		animationProcessor=new CircusRandomAnimationProcessor(this, 1000, RANDOM, 4);
+		toolProcessor=new ToolProcessor(this);
 		
+		toolbar = new ToolbarFunny(TOOLBAR);
+		 
 		getBoard().addProcessor(dragProcessor);
 		getBoard().addProcessor(scalingProcessor);
 		getBoard().addProcessor(activationProcessor);
 		getBoard().addProcessor(animationProcessor);
+		getBoard().addProcessor(toolProcessor);
+		
+		toolProcessor.registerToolbar(toolbar);
 		return baseLayer;
 	}
 
 	@Override
-	protected boolean enterRing(Funny funny) {
+	public boolean enterRing(Funny funny) {
 		boolean result = super.enterRing(funny);
 		if (funny instanceof DraggableFunny) {
 			dragCounterProfile.registerDraggableFunny((DraggableFunny)funny);
@@ -101,11 +122,14 @@ public class GameBoardRing extends Ring {
 		if (funny instanceof AnimatedFunny) {
 			animationProcessor.registerAnimatedFunny((AnimatedFunny)funny);
 		}
+		if (funny instanceof TooledFunny) {
+			toolProcessor.registerToolFunny((TooledFunny)funny);
+		}
 		return result;
 	}
 
 	@Override
-	protected boolean exitRing(Funny funny) {
+	public boolean exitRing(Funny funny) {
 		boolean result = super.exitRing(funny);
 		if (funny instanceof DraggableFunny) {
 			dragCounterProfile.unregisterDraggableFunny((DraggableFunny)funny);
@@ -122,7 +146,14 @@ public class GameBoardRing extends Ring {
 		if (funny instanceof AnimatedFunny) {
 			animationProcessor.unregisterAnimatedFunny((AnimatedFunny)funny);
 		}
+		if (funny instanceof TooledFunny) {
+			toolProcessor.unregisterToolFunny((TooledFunny)funny);
+		}
 		return result;
 	}
-	
+
+	@Override
+	public GroupItem getToolSupport() {
+		return frameLayer;
+	}	
 }

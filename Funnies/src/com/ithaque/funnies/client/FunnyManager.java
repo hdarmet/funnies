@@ -12,6 +12,7 @@ import com.ithaque.funnies.shared.funny.boardgame.ArrowFunny;
 import com.ithaque.funnies.shared.funny.boardgame.CounterFunny;
 import com.ithaque.funnies.shared.funny.boardgame.DiceFunny;
 import com.ithaque.funnies.shared.funny.boardgame.EphemeralFunny;
+import com.ithaque.funnies.shared.funny.boardgame.GameBoardRing;
 import com.ithaque.funnies.shared.funny.boardgame.MessageFunny;
 import com.ithaque.funnies.shared.funny.boardgame.TileFunny;
 import com.ithaque.funnies.shared.funny.manager.AbstracCircusManager;
@@ -20,6 +21,9 @@ import com.ithaque.funnies.shared.funny.notifications.AcceptRotatableQuestion;
 import com.ithaque.funnies.shared.funny.notifications.AcceptRotationQuestion;
 import com.ithaque.funnies.shared.funny.notifications.ActivateEvent;
 import com.ithaque.funnies.shared.funny.notifications.DropEvent;
+import com.ithaque.funnies.shared.funny.standard.CommandFunny;
+import com.ithaque.funnies.shared.funny.standard.Icon;
+import com.ithaque.funnies.shared.funny.standard.PanelFunny;
 
 public class FunnyManager extends AbstracCircusManager {
 
@@ -174,6 +178,16 @@ public class FunnyManager extends AbstracCircusManager {
 		
 		circus.enterRing(createArrow());
 		circus.enterRing(message=createMessage());
+		
+		PanelFunny panel = new PanelFunny("sel");
+		Icon icon = new Icon(GameBoardRing.TOOLBAR, 80, 80, "load.png");
+		panel.setToolIcon(icon);
+		circus.enterRing(panel);
+
+		CommandFunny command = new CommandFunny("cmd");
+		icon = new Icon(GameBoardRing.TOOLBAR, 80, 80, "again.png");
+		command.setToolIcon(icon);
+		circus.enterRing(command);
 	}
 
 

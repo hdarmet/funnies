@@ -12,6 +12,8 @@ public interface Graphics {
 
 	void drawText(Item item, String text, Color color, Font font, float opacity);
 	
+	void clip(Item item, Location[] shape);
+
 	void clear();
 
 	float getTextWidth(Font font, String text);
@@ -33,7 +35,7 @@ public interface Graphics {
 	int compareLayers(Token layer1, Token layer2);
 
 	void show();
-	
+
 	public class Singleton {
 		
 		static Graphics instance;

@@ -26,9 +26,9 @@ public class Item implements Moveable {
 		if (getParent()==null) {
 			throw new IllegalInvokeException();
 		}
-		Board oldBoard = getBoard();
+		LayoutDevice oldLayout = getLayout();
 		this.parent = null;
-		unregisterOnBoard(oldBoard);
+		unregisterOnLayout(oldLayout);
 		fire(ChangeType.PARENT);
 		dirty();		
 	}
@@ -38,9 +38,9 @@ public class Item implements Moveable {
 			throw new IllegalInvokeException();
 		}
 		this.parent = parent;
-		Board newBoard = getBoard();
-		if (newBoard!=null) {
-			registerOnBoard(newBoard);
+		LayoutDevice newLayout = getLayout();
+		if (newLayout!=null) {
+			registerOnLayout(newLayout);
 		}
 		fire(ChangeType.PARENT);
 		dirty();
@@ -57,12 +57,12 @@ public class Item implements Moveable {
 		}
 	}
 	
-	public void registerOnBoard(Board newBoard) {
-		newBoard.register(this);
+	public void registerOnLayout(LayoutDevice newLayout) {
+		newLayout.register(this);
 	}
 	
-	public void unregisterOnBoard(Board oldBoard) {
-		oldBoard.register(this);
+	public void unregisterOnLayout(LayoutDevice oldLayout) {
+		oldLayout.unregister(this);
 	}
 	
 	public Set<Event.Type> getEventTypes() {
@@ -72,9 +72,9 @@ public class Item implements Moveable {
 	public void addEventType(Event.Type eventType) {
 		if (!eventTypes.contains(eventType)) {
 			eventTypes.add(eventType);
-			Board board = getBoard();
-			if (board!=null) {
-				board.registerEvent(this, eventType);
+			LayoutDevice layout = getLayout();
+			if (layout!=null) {
+				layout.registerEvent(this, eventType);
 			}
 		}
 	}
@@ -82,9 +82,9 @@ public class Item implements Moveable {
 	public void removeEventType(Event.Type eventType) {
 		if (eventTypes.contains(eventType)) {
 			eventTypes.remove(eventType);
-			Board board = getBoard();
-			if (board!=null) {
-				board.unregisterEvent(this, eventType);
+			LayoutDevice layout = getLayout();
+			if (layout!=null) {
+				layout.unregisterEvent(this, eventType);
 			}
 		}
 	}
@@ -191,12 +191,12 @@ public class Item implements Moveable {
 	}
 	
 	public Board getBoard() {
-		return parent==null ? null : parent.getBoard();
+		return getParent()==null ? null : getParent().getBoard();
 	}
 
 	public void dirty() {
-		if (parent!=null) {
-			parent.dirty();
+		if (getParent()!=null) {
+			getParent().dirty();
 		}
 	}
 	
@@ -247,7 +247,11 @@ public class Item implements Moveable {
 	}
 
 	public Location getAbsoluteLocation() {
-		return TransformUtil.transformLocation(getParent(), location);
+		return TransformUtil.transformLocation(getParent(), getLocation());
+	}
+	
+	public Location[] getAbsoluteShape() {
+		return TransformUtil.transformShape(getParent(), getShape());
 	}
 	
 	public float getAbsoluteRotation() {
@@ -268,5 +272,15 @@ public class Item implements Moveable {
 			parent = ((Item)parent).getParent();
 		}
 		return scale;
+	}
+
+	public LayoutDevice getLayout() {
+		if (getParent()==null) {
+			return null;
+		}
+		if (getParent() instanceof LayoutDevice) {
+			return (LayoutDevice)getParent();
+		}
+		return getParent().getLayout();
 	}
 }

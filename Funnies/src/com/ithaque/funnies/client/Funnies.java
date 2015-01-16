@@ -89,8 +89,8 @@ public class Funnies implements EntryPoint {
 		iitem.addEventType(Type.MOUSE_DOWN);
 
 		MultiLayered layered = new MultiLayered(-500, -300, 500, 300);
-		Layer layerTwo = layered.addLayer("unit");
-		Layer dragLayer = layered.addLayer("drag");
+		Layer layerTwo = layered.createAttachedLayer("unit");
+		Layer dragLayer = layered.createAttachedLayer("drag");
 		
 		layerTwo.addItem(iitem);
 		board.addItem(layered);
@@ -155,11 +155,11 @@ public class Funnies implements EntryPoint {
 		mitem.setLocation(50, 50);
 		
 		MultiLayered layered = new MultiLayered(-500, -300, 500, 300);
-		Layer layerZero = layered.addLayer("back");
-		Layer gestureLayer = layered.addLayer("gesture");
-		Layer layerOne = layered.addLayer("map");
-		Layer layerTwo = layered.addLayer("unit");
-		Layer dragLayer = layered.addLayer("drag");
+		Layer layerZero = layered.createAttachedLayer("back");
+		Layer gestureLayer = layered.createAttachedLayer("gesture");
+		Layer layerOne = layered.createAttachedLayer("map");
+		Layer layerTwo = layered.createAttachedLayer("unit");
+		Layer dragLayer = layered.createAttachedLayer("drag");
 		board.addItem(layered);
 
 		layerZero.addItem(sitem);

@@ -15,9 +15,9 @@ import com.ithaque.funnies.shared.funny.notifications.ActivateEvent;
 public class ActivationProcessor implements Processor {
 
 	Map<Item, ActivableFunny> activables = new HashMap<Item, ActivableFunny>();
-	Ring ring;
+	AbstractRing ring;
 	
-	public ActivationProcessor(Ring ring) {
+	public ActivationProcessor(AbstractRing ring) {
 		this.ring = ring;
 	}
 	

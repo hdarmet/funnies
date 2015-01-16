@@ -12,7 +12,7 @@ import com.ithaque.funnies.shared.funny.AbstractFunny;
 import com.ithaque.funnies.shared.funny.Funny;
 import com.ithaque.funnies.shared.funny.FunnyObserver;
 import com.ithaque.funnies.shared.funny.IncompatibleRingException;
-import com.ithaque.funnies.shared.funny.Ring;
+import com.ithaque.funnies.shared.funny.AbstractRing;
 import com.ithaque.funnies.shared.funny.TrackableFunny;
 
 public class ArrowFunny extends AbstractFunny {
@@ -120,7 +120,7 @@ public class ArrowFunny extends AbstractFunny {
 	}
 	
 	@Override
-	public void enterRing(Ring ring) {
+	public void enterRing(AbstractRing ring) {
 		if (!(ring instanceof GameBoardRing)) {
 			throw new IncompatibleRingException();
 		}
@@ -132,7 +132,7 @@ public class ArrowFunny extends AbstractFunny {
 	}
 
 	@Override
-	public void exitRing(Ring ring) {
+	public void exitRing(AbstractRing ring) {
 		if (ring != getRing()) {
 			throw new IllegalInvokeException();
 		}

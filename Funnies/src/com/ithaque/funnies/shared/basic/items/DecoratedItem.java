@@ -1,10 +1,10 @@
 package com.ithaque.funnies.shared.basic.items;
 
-import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Graphics;
 import com.ithaque.funnies.shared.basic.GroupItem;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.ItemObserver.ChangeType;
+import com.ithaque.funnies.shared.basic.LayoutDevice;
 import com.ithaque.funnies.shared.basic.Location;
 
 public class DecoratedItem extends GroupItem {
@@ -41,15 +41,15 @@ public class DecoratedItem extends GroupItem {
 	}
 	
 	@Override
-	public void registerOnBoard(Board newBoard) {
-		baseItem.registerOnBoard(newBoard);
-		super.registerOnBoard(newBoard);
+	public void registerOnLayout(LayoutDevice newLayout) {
+		baseItem.registerOnLayout(newLayout);
+		super.registerOnLayout(newLayout);
 	}
 
 	@Override
-	public void unregisterOnBoard(Board oldBoard) {
-		baseItem.unregisterOnBoard(oldBoard);
-		super.unregisterOnBoard(oldBoard);
+	public void unregisterOnLayout(LayoutDevice oldLayout) {
+		baseItem.unregisterOnLayout(oldLayout);
+		super.unregisterOnLayout(oldLayout);
 	}
 	
 	@Override

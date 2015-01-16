@@ -1,11 +1,7 @@
 package com.ithaque.funnies.shared.basic;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import com.ithaque.funnies.shared.Trace;
 
@@ -16,7 +12,8 @@ public class Board implements BaseDevice, LayoutDevice {
 	List<Animation> animations = new ArrayList<Animation>();
 	List<Processor> processors = new ArrayList<Processor>();
 	Platform platform;
-	Map<Event.Type, Set<Item>> events = new HashMap<Event.Type, Set<Item>>();
+	ItemRegistry eventRegistry = new ItemRegistry(this);
+	
 	boolean dirty = false;
 	Token token;
 	
@@ -38,6 +35,11 @@ public class Board implements BaseDevice, LayoutDevice {
 	
 	public float randomize() {
 		return platform.randomize();
+	}
+	
+	@Override
+	public LayoutDevice getLayout() {
+		return this;
 	}
 	
 	public void render() {
@@ -194,64 +196,45 @@ public class Board implements BaseDevice, LayoutDevice {
 		processors.remove(processor);
 	}
 
+	@Override
 	public void unregister(Item item) {
-		for (Event.Type eventType : item.getEventTypes()) {
-			unregisterEvent(item, eventType);
-		}
+		eventRegistry.unregister(item);
 	}
 
+	@Override
 	public void register(Item item) {
-		for (Event.Type eventType : item.getEventTypes()) {
-			registerEvent(item, eventType);
-		}
+		eventRegistry.register(item);
 	}
 
+	@Override
 	public void registerEvent(Item item, Event.Type eventType) {
-		getEventRegistery(eventType).add(item);
-		if (Trace.debug) {
-			Trace.debug("Add event "+eventType+" to "+item+"\n");
-		}
+		eventRegistry.registerEvent(item, eventType);
 	}
 
+	@Override
 	public void unregisterEvent(Item item, Event.Type eventType) {
-		getEventRegistery(eventType).remove(item);
-		if (Trace.debug) {
-			Trace.debug("Remove event "+eventType+" from "+item+"\n");
-		}
+		eventRegistry.unregisterEvent(item, eventType);
 	}
-
-	Set<Item> getEventRegistery(Event.Type eventType) {
-		Set<Item> registry = events.get(eventType);
-		if (registry==null) {
-			registry = new HashSet<Item>();
-			events.put(eventType, registry);
+	
+	@Override
+	public Item getMouseTarget(MouseEvent event) {
+		for (int index=getItemCount()-1; index>=0; index--) {
+			Item child = getItem(index);
+			if (child instanceof Device) {
+				Item target = ((Device)child).getMouseTarget(event);
+				if (target!=null) {
+					return target;
+				}
+			}
 		}
-		return registry;
+		return eventRegistry.getMouseTarget(event);
 	}
-
+	
 	@Override
 	public int indexOfItem(Item item) {
 		return items.indexOf(item);
 	}
-	
-	public Item getMouseTarget(MouseEvent event) {
-		ItemComparator itemComparator = new ItemComparator();
-		Item target = null;
-		for (Item item : getEventRegistery(event.getType())) {
-			if (item.acceptEvent(event)) {
-				if (target==null) {
-					target=item;
-				}
-				else {
-					if (itemComparator.compare(target, item)<0) {
-						target=item;
-					}
-				}
-			}
-		}
-		return target;
-	}
-		
+
 	@Override
 	public float getScale() {
 		return ItemHolder.STANDARD_SCALE;

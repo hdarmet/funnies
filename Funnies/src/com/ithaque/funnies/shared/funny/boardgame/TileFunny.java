@@ -14,7 +14,7 @@ import com.ithaque.funnies.shared.basic.processors.AbstractTargetedDragProfile;
 import com.ithaque.funnies.shared.funny.DecoratedFunny;
 import com.ithaque.funnies.shared.funny.DropTargetFunny;
 import com.ithaque.funnies.shared.funny.IncompatibleRingException;
-import com.ithaque.funnies.shared.funny.Ring;
+import com.ithaque.funnies.shared.funny.AbstractRing;
 import com.ithaque.funnies.shared.funny.TargetFunny;
 import com.ithaque.funnies.shared.funny.TrackableFunny;
 
@@ -169,7 +169,7 @@ public class TileFunny extends DecoratedFunny implements DropTargetFunny, Tracka
 	}
 	
 	@Override
-	public void enterRing(Ring ring) {
+	public void enterRing(AbstractRing ring) {
 		if (!(ring instanceof GameBoardRing)) {
 			throw new IncompatibleRingException();
 		}
@@ -188,7 +188,7 @@ public class TileFunny extends DecoratedFunny implements DropTargetFunny, Tracka
 	}
 
 	@Override
-	public void exitRing(Ring ring) {
+	public void exitRing(AbstractRing ring) {
 		if (ring != getRing()) {
 			throw new IllegalInvokeException();
 		}

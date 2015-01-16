@@ -40,7 +40,7 @@ public class Circus {
 	}
 	
 	public Ring buildRing(float width, float height) {
-		return new Ring(this, width, height);
+		return new AbstractRing(this, width, height) {};
 	}
 	
 	public boolean enterRing(Funny funny) {

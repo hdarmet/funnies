@@ -17,8 +17,8 @@ public class ItemComparator implements Comparator<Item> {
 		if (item2==null) {
 			return 1;
 		}
-		LayoutDevice item1Layout = getLayout(item1);
-		LayoutDevice item2Layout = getLayout(item2);
+		LayoutDevice item1Layout = item1.getLayout();
+		LayoutDevice item2Layout = item2.getLayout();
 		if (item1Layout!=item2Layout) {
 			if (item1Layout==null) {
 				return -1;
@@ -36,16 +36,6 @@ public class ItemComparator implements Comparator<Item> {
 		return comparePathes(item1Path, item2Path);
 	}
 	
-	LayoutDevice getLayout(Item item) {
-		while (item.getParent()!=null) {
-			if (item.getParent() instanceof LayoutDevice) {
-				return (LayoutDevice)item.getParent();
-			}
-			item=(Item)item.getParent();
-		}
-		return null;
-	}
-
 	List<Integer> getPath(Item item) {
 		List<Integer> path = new ArrayList<Integer>();
 		buildPath(item, path);

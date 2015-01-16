@@ -1,6 +1,5 @@
 package com.ithaque.funnies.shared.basic;
 
-public interface BaseDevice extends ItemHolder, Device {
-
+public interface Device extends ItemHolder {
 	public Item getMouseTarget(MouseEvent event);
 }
