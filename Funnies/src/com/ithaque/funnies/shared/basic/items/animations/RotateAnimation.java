@@ -39,6 +39,13 @@ public class RotateAnimation extends SoftenAnimation {
 		return result;
 	}
 	
+	@Override
+	public void reset() {
+		super.reset();
+		this.baseAngle = 0.0f;
+		this.targetAngle = 0.0f;
+	}
+	
 	public void setRotation(FactorFinder rotationFinder) {
 		this.rotationFinder = rotationFinder;
 	}

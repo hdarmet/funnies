@@ -76,6 +76,13 @@ public class ParallelAnimation extends AbstractAnimation implements CompositeAni
 		animations.add(animation);
 	}
 	
+	@Override
+	public void reset() {
+		for (Animation animation : animations) {
+			animation.reset();
+		}
+	}
+	
 	public static class Builder implements Factory {
 
 		List<Animation.Factory> animations = new ArrayList<Animation.Factory>();

@@ -17,7 +17,7 @@ public class Icon {
 	}
 
 	public Icon(String toolSupportId, float width, float height, String ... urls) {
-		this(toolSupportId, width, height, new ImageItem(urls));
+		this(toolSupportId, width, height, new ImageItem(0, urls));
 	}
 	
 	public Item getIconItem() {

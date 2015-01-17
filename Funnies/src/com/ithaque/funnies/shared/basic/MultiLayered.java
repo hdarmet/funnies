@@ -1,5 +1,9 @@
 package com.ithaque.funnies.shared.basic;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 import com.ithaque.funnies.shared.IllegalInvokeException;
 
 
@@ -82,6 +86,19 @@ public class MultiLayered extends GroupItem implements BaseDevice {
 		return null;
 	}
 
+	@Override
+	public Collection<Item> getMouseTargets(MouseEvent event) {
+		Set<Item> targets = new HashSet<Item>();
+		for (int index=getItemCount()-1; index>=0; index--) {
+			Item child = getItem(index);
+			if (child instanceof Device) {
+				Collection<Item> childTargets = ((Device)child).getMouseTargets(event);
+				targets.addAll(childTargets);
+			}
+		}
+		return targets;
+	}
+	
 	public Layer createAttachedLayer(String id) {
 		Layer layer = new MultiLayer(id, minX, minY, maxX, maxY);
 		addItem(layer);

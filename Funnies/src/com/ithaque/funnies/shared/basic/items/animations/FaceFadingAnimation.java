@@ -49,6 +49,11 @@ public class FaceFadingAnimation extends SoftenAnimation {
 		super.finish(time);
 	}
 
+	@Override
+	public void reset() {
+		super.reset();
+		this.baseOpacity = 0.0f;
+	}
 	float getOpacity() {
 		return getItem().getOpacity(index);
 	}

@@ -180,12 +180,12 @@ public class FunnyManager extends AbstracCircusManager {
 		circus.enterRing(message=createMessage());
 		
 		PanelFunny panel = new PanelFunny("sel");
-		Icon icon = new Icon(GameBoardRing.TOOLBAR, 80, 80, "load.png");
+		Icon icon = new Icon(GameBoardRing.TOOLBAR, 80, 80, "load.png", "rload.png");
 		panel.setToolIcon(icon);
 		circus.enterRing(panel);
 
 		CommandFunny command = new CommandFunny("cmd");
-		icon = new Icon(GameBoardRing.TOOLBAR, 80, 80, "again.png");
+		icon = new Icon(GameBoardRing.TOOLBAR, 80, 80, "again.png", "ragain.png");
 		command.setToolIcon(icon);
 		circus.enterRing(command);
 	}

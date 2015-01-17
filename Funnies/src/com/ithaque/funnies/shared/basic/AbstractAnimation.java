@@ -3,25 +3,29 @@ package com.ithaque.funnies.shared.basic;
 public abstract class AbstractAnimation implements Animation {
 	
 	AnimationContext context;
+	boolean finished = false;
 	
 	public AbstractAnimation() {
 	}
 	
 	@Override
-	public boolean animate(long time) {
-		if (time+Animation.INTERVAL>=getEndTime()) {
-			return false;
+	public final boolean animate(long time) {
+		if (!isFinished()) {
+			if (time+Animation.INTERVAL>=getEndTime()) {
+				return false;
+			}
+			else {
+				return executeAnimation(time);
+			}
 		}
-		else {
-			return executeAnimation(time);
-		}
+		return false;
 	}
 
 	protected abstract boolean executeAnimation(long time);
 
 	@Override
 	public boolean start(long time) {
-		return true;
+		return !isFinished();
 	}
 	
 	@Override
@@ -36,6 +40,16 @@ public abstract class AbstractAnimation implements Animation {
 	
 	@Override
 	public void finish(long time) {
+		finished = true;
+	}
+	
+	public boolean isFinished() {
+		return finished;
+	}
+
+	@Override
+	public void reset() {
+		finished = false;
 	}
 	
 	public abstract long getEndTime();

@@ -57,6 +57,12 @@ public class ScalingAnimation extends SoftenAnimation {
 		super.finish(time);
 	}
 
+	@Override
+	public void reset() {
+		super.reset();
+		this.baseScale = 0.0f;
+	}
+	
 	public static class Builder extends SoftenAnimation.Builder {
 		Float newScale;
 		FactorFinder scaleFinder;

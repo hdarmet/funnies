@@ -1,6 +1,7 @@
 package com.ithaque.funnies.shared.funny;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,14 @@ public class ToolProcessor implements Processor {
 			TooledFunnyRecord record = tooledFunnies.get(selected);
 			if (record!=null) {
 				record.funny.activateTool(record.icon);
+				return true;
+			}
+		}
+		else if (event.getType()==Type.MOUSE_MOVE) {
+			Collection<Item> hoveredItems = 
+				board.getMouseTargets((MouseEvent)event);
+			for (ToolbarFunny toolbar : toolbars) {
+				toolbar.hover(hoveredItems);
 			}
 		}
 		return false;
@@ -54,7 +63,6 @@ public class ToolProcessor implements Processor {
 			tooledFunnies.put(icon.getIconItem(), new TooledFunnyRecord(funny, icon, icon.getIconItem()));
 			for (ToolbarFunny toolbar : toolbars) {
 				if (toolbar.addTool(icon)) {
-					icon.getIconItem().addEventType(Type.MOUSE_CLICK);
 					placed = true;
 					break;
 				}
@@ -71,7 +79,6 @@ public class ToolProcessor implements Processor {
 			tooledFunnies.remove(icon.getIconItem());
 			for (ToolbarFunny toolbar : toolbars) {
 				if (toolbar.removeTool(icon)) {
-					icon.getIconItem().removeEventType(Type.MOUSE_CLICK);
 					found = true;
 					break;
 				}

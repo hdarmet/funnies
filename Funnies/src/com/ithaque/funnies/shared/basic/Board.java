@@ -1,7 +1,10 @@
 package com.ithaque.funnies.shared.basic;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.ithaque.funnies.shared.Trace;
 
@@ -228,6 +231,20 @@ public class Board implements BaseDevice, LayoutDevice {
 			}
 		}
 		return eventRegistry.getMouseTarget(event);
+	}
+
+	@Override
+	public Collection<Item> getMouseTargets(MouseEvent event) {
+		Set<Item> targets = new HashSet<Item>();
+		for (int index=getItemCount()-1; index>=0; index--) {
+			Item child = getItem(index);
+			if (child instanceof Device) {
+				Collection<Item> childTargets = ((Device)child).getMouseTargets(event);
+				targets.addAll(childTargets);
+			}
+		}
+		targets.addAll(eventRegistry.getMouseTargets(event));
+		return targets;
 	}
 	
 	@Override

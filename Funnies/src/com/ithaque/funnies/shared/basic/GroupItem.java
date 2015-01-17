@@ -133,4 +133,41 @@ public class GroupItem extends Item implements ItemHolder {
 		return items.indexOf(item);
 	}
 
+	@Override
+	public Location[] getShape() {
+		Location[] shape = super.getShape();
+		if (shape!=null) {
+			return shape;
+		}
+		float minX = Float.MAX_VALUE;
+		float maxX = -Float.MAX_VALUE;
+		float minY = Float.MAX_VALUE;
+		float maxY = -Float.MAX_VALUE;
+		for (Item item : items) {
+			shape = item.getShape();
+			Location itemLoc = item.getLocation();
+			if (shape!=null) {
+				for (Location location : shape) {
+					if (location.getX()+itemLoc.getX()<minX) {
+						minX = location.getX()+itemLoc.getX();
+					}
+					if (location.getX()+itemLoc.getX()>maxX) {
+						maxX = location.getX()+itemLoc.getX();
+					}
+					if (location.getY()+itemLoc.getY()<minY) {
+						minY = location.getY()+itemLoc.getY();
+					}
+					if (location.getY()+itemLoc.getY()>maxY) {
+						maxY = location.getY()+itemLoc.getY();
+					}
+				}
+			}
+		}
+		if (minX==Float.MAX_VALUE) {
+			return null;
+		}
+		else {
+			return new Location[] {new Location(minX, minY), new Location(maxX, minY), new Location(maxX, maxY), new Location(minX, maxY)};
+		}
+	}
 }

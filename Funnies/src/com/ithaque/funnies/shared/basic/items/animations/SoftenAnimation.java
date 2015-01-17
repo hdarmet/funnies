@@ -25,12 +25,14 @@ public abstract class SoftenAnimation extends AbstractAnimation {
 
 	@Override
 	public boolean start(long time) {
-		super.start(time);
-		if (Trace.debug) {
-			Trace.debug("Item : "+getItem()+" "+itemFinder+" "+item+" "+this);
+		if (super.start(time)) {
+			if (Trace.debug) {
+				Trace.debug("Item : "+getItem()+" "+itemFinder+" "+item+" "+this);
+			}
+			this.easing.launch(getItem().getBoard());
+			return true;
 		}
-		this.easing.launch(getItem().getBoard());
-		return true;
+		return false;
 	}
 	
 	protected Easing getEasing() {

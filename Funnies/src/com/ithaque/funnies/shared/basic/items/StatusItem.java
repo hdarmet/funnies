@@ -62,38 +62,56 @@ public class StatusItem extends SpriteImageItem {
 		int startStatus;
 		int targetStatus;
 		int speed;
+		boolean finished = false;
 		boolean canceled = false;
 
 		@Override
 		public boolean start(long time) {
-			this.startStatus = status;
-			this.startTime = time;
-			this.speed = changeSpeed;
-			return true;
+			if (!isFinished()) {
+				this.startStatus = status;
+				this.startTime = time;
+				this.speed = changeSpeed;
+				return true;
+			}
+			else {
+				return false;
+			}
 		}
 
 		@Override
 		public boolean animate(long time) {
-			long duration = getDuration();
-			if (canceled || startStatus==targetStatus || time>=startTime+duration) {
-				return false;
+			if (!isFinished()) {
+				long duration = getDuration();
+				if (canceled || startStatus==targetStatus || time>=startTime+duration) {
+					return false;
+				}
+				else {
+					int range = targetStatus-startStatus;
+					int delta = (int)(range*(time-startTime)/duration);
+					setStatus(startStatus+delta);
+					return true;
+				}
 			}
 			else {
-				int range = targetStatus-startStatus;
-				int delta = (int)(range*(time-startTime)/duration);
-				setStatus(startStatus+delta);
-				return true;
+				return false;
 			}
 		}
 
 		@Override
 		public void finish(long time) {
-			if (!canceled) {
-				setStatus(targetStatus);
+			if (!isFinished()) {
+				if (!canceled) {
+					setStatus(targetStatus);
+				}
+				if (currentStatusAnimation==this) {
+					currentStatusAnimation = null;
+				}
 			}
-			if (currentStatusAnimation==this) {
-				currentStatusAnimation = null;
-			}
+		}
+		
+		@Override
+		public boolean isFinished() {
+			return finished || canceled;
 		}
 
 		@Override
@@ -109,6 +127,13 @@ public class StatusItem extends SpriteImageItem {
 		public long getDuration() {
 			int change = targetStatus-startStatus;
 			return speed*(change>0?change:-change);
+		}
+		
+		@Override
+		public void reset() {
+			startStatus = 0;
+			finished = false;
+			canceled = false;
 		}
 		
 	}

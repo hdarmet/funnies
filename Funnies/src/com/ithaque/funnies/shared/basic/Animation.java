@@ -10,6 +10,8 @@ public interface Animation {
 
 	boolean start(long time);
 
+	void reset();
+	
 	AnimationContext getContext();
 
 	void setContext(AnimationContext context);
@@ -19,5 +21,7 @@ public interface Animation {
 	public interface Factory {
 		Animation create();
 	}
+
+	boolean isFinished();
 
 }

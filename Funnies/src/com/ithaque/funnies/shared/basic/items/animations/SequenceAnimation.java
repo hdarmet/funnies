@@ -14,6 +14,7 @@ public class SequenceAnimation extends AbstractAnimation implements CompositeAni
 	List<Animation> animations = new ArrayList<Animation>();
 	Animation currentChild;
 	Long duration = null;
+	int index = 0;
 	long endTime;
 	
 	@Override
@@ -23,9 +24,9 @@ public class SequenceAnimation extends AbstractAnimation implements CompositeAni
 			for (Animation child : animations) {
 				child.setContext(getContext());
 			}
-			if (!animations.isEmpty()) {
+			if (index<animations.size()) {
 				endTime = time+getDuration();
-				currentChild = animations.remove(0);
+				currentChild = animations.get(index++);
 				currentChild.start(time);
 			}
 		}
@@ -50,11 +51,11 @@ public class SequenceAnimation extends AbstractAnimation implements CompositeAni
 		}
 		if (!currentChild.animate(time)) {
 			currentChild.finish(time);
-			if (animations.isEmpty()) {
+			if (index>=animations.size()) {
 				return false;
 			}
 			else {
-				currentChild = animations.remove(0);
+				currentChild = animations.get(index++);
 				currentChild.start(time);
 			}
 		}
@@ -80,6 +81,15 @@ public class SequenceAnimation extends AbstractAnimation implements CompositeAni
 	@Override
 	public void addAnimation(Animation animation) {
 		animations.add(animation);
+	}
+	
+	@Override
+	public void reset() {
+		index=0;
+		for (Animation animation : animations) {
+			animation.reset();
+		}
+		super.reset();
 	}
 	
 	public static class Builder implements Factory {

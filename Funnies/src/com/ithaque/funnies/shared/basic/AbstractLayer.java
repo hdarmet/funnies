@@ -1,5 +1,7 @@
 package com.ithaque.funnies.shared.basic;
 
+import java.util.Collection;
+
 import com.ithaque.funnies.shared.IllegalInvokeException;
 import com.ithaque.funnies.shared.Trace;
 
@@ -107,6 +109,12 @@ public abstract class AbstractLayer extends GroupItem implements LayoutDevice {
 	public Item getMouseTarget(MouseEvent event) {
 		return eventRegistry.getMouseTarget(event);
 	}
+	
+	@Override
+	public Collection<Item> getMouseTargets(MouseEvent event) {
+		return eventRegistry.getMouseTargets(event);
+	}
+
 	@Override
 	public void unsetDirty() {
 		dirty = false;

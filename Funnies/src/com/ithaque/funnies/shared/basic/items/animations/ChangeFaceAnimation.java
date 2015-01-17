@@ -29,6 +29,12 @@ public class ChangeFaceAnimation extends SoftenAnimation {
 		return result;
 	}
 	
+	@Override
+	public void reset() {
+		super.reset();
+		this.baseIndex = null;
+	}
+	
 	Integer getCurrentIndex(AbstractImageItem item) {
 		for (int index=0; index<item.getImageCount(); index++) {
 			if (item.getOpacity(index)==1.0f) {

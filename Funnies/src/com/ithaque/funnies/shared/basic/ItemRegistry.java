@@ -1,5 +1,6 @@
 package com.ithaque.funnies.shared.basic;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -60,6 +61,16 @@ public class ItemRegistry {
 		return target;
 	}
 	
+	public Collection<Item> getMouseTargets(MouseEvent event) {
+		Set<Item> targets = new HashSet<Item>();
+		for (Item item : getTargetItems(event.getType())) {
+			if (item.acceptEvent(event)) {
+				targets.add(item);
+			}
+		}
+		return targets;
+	}
+
 	public Set<Item> getTargetItems(Type eventType) {
 		Set<Item> items = new HashSet<Item>();
 		items.addAll(getEventRegistery(eventType));

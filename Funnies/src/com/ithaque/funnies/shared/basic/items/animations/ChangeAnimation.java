@@ -64,6 +64,14 @@ public class ChangeAnimation extends SoftenAnimation {
 	}
 
 	@Override
+	public void reset() {
+		super.reset();
+		this.baseLocation = null;
+		this.baseRotation = null;
+		this.baseScale = null;
+	}
+	
+	@Override
 	public boolean executeAnimation(long time) {
 		//computeTargetMetrics();
 		if (getLocation()!=null) {

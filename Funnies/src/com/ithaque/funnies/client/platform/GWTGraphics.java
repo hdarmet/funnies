@@ -363,12 +363,18 @@ public class GWTGraphics implements Graphics {
 
 	@Override
 	public Float getImageWidth(Token token) {
+		if (token==null) {
+			return null;
+		}
 		ImageElementRecord imageRecord = imageElements.get(token);
 		return !imageRecord.ready ? null : (float)imageRecord.image.getWidth();
 	}
 
 	@Override
 	public Float getImageHeight(Token token) {
+		if (token==null) {
+			return null;
+		}
 		ImageElementRecord imageRecord = imageElements.get(token);
 		return !imageRecord.ready ? null : (float)imageRecord.image.getHeight();
 	}

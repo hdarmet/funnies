@@ -23,6 +23,13 @@ public class ImageItem extends AbstractImageItem {
 		setUrls(urls);
 	}
 	
+	public ImageItem(int index, String ... urls) {
+		setUrls(urls);
+		for (int face=0; face<getImageCount(); face++) {
+			setOpacity(face, face==index?1.0f:0.0f);
+		}
+	}
+	
 	public float getOpacity(String url) {
 		Facet facet = urlsMap.get(url);
 		return facet==null ? 0.0f : facet.opacity;

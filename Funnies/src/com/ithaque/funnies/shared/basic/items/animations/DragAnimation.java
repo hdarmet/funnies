@@ -53,6 +53,13 @@ public class DragAnimation extends SoftenAnimation {
 	}
 	
 	@Override
+	public void reset() {
+		super.reset();
+		this.baseLocation = null;
+		this.destLocation = null;
+	}
+	
+	@Override
 	public boolean executeAnimation(long time) {
 		Location location = getItem().getLocation();
 		if (location!=null && destLocation!=null) {

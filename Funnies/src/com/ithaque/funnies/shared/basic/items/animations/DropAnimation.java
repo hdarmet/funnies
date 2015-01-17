@@ -83,6 +83,13 @@ public class DropAnimation extends SoftenAnimation {
 		return result;
 	}
 	
+	@Override
+	public void reset() {
+		super.reset();
+		this.baseLocation = null;
+		this.destLocation = null;
+	}
+	
 	public Location getLocation() {
 		return location==null ? locationFinder.find(getContext()) : location;
 	}
