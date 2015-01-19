@@ -4,6 +4,7 @@ import com.ithaque.funnies.shared.basic.AnimationContext.LocationFinder;
 import com.ithaque.funnies.shared.basic.AnimationContext.MoveableFinder;
 import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.items.animations.easing.LinearEasing;
+import com.ithaque.funnies.shared.basic.items.animations.easing.SineInOutEasing;
 
 public class MoveAnimation extends SoftenAnimation {
 
@@ -21,6 +22,14 @@ public class MoveAnimation extends SoftenAnimation {
 		this.location = location;
 	}
 
+	public MoveAnimation(long duration) {
+		this(new SineInOutEasing(duration));
+	}
+	
+	public MoveAnimation(long duration, Location location) {
+		this(new SineInOutEasing(duration), location);
+	}
+	
 	public void setLocation(LocationFinder locationKey) {
 		this.locationFinder = locationKey;
 	}
@@ -63,8 +72,9 @@ public class MoveAnimation extends SoftenAnimation {
 		return location==null ? locationFinder.find(getContext()) : location;
 	}
 
-	public void setLocation(Location location) {
+	public MoveAnimation setLocation(Location location) {
 		this.location = location;
+		return this;
 	}
 	
 	public static class Builder extends SoftenAnimation.Builder {

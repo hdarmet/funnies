@@ -1,6 +1,10 @@
 package com.ithaque.funnies.shared.basic.items;
 
+import com.ithaque.funnies.shared.basic.Animation;
+import com.ithaque.funnies.shared.basic.AnimationContext.MoveableFinder;
 import com.ithaque.funnies.shared.basic.Token;
+import com.ithaque.funnies.shared.basic.items.animations.ChangeFaceAnimation;
+import com.ithaque.funnies.shared.basic.items.animations.SequenceAnimation;
 
 public class SpriteImageItem extends AbstractImageItem {
 
@@ -125,5 +129,15 @@ public class SpriteImageItem extends AbstractImageItem {
 	public Token getToken(int index) {
 		return token;
 	}
-	
+
+	public static Animation.Factory play(long duration, int imageCount, MoveableFinder finder) {
+		SequenceAnimation.Builder animationBuilder = new SequenceAnimation.Builder();
+		long stepDuration = duration/imageCount;
+		for (int index=0; index<imageCount-1; index++) {
+			animationBuilder.addAnimation(new ChangeFaceAnimation.Builder(stepDuration, index+1).setItem(finder));
+		}
+		animationBuilder.addAnimation(new ChangeFaceAnimation.Builder(stepDuration, 0).setItem(finder));
+		return animationBuilder;
+	}
+
 }

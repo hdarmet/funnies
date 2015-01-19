@@ -1,6 +1,6 @@
 package com.ithaque.funnies.shared.funny;
 
-import com.ithaque.funnies.shared.funny.standard.Icon;
+
 
 public interface TooledFunny extends Funny {
 
@@ -8,4 +8,8 @@ public interface TooledFunny extends Funny {
 
 	void activateTool(Icon icon);
 
+	boolean isEnabled();
+	
+	void setEnabled(boolean enabled);
+		
 }

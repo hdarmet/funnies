@@ -19,7 +19,7 @@ public abstract class SoftenAnimation extends AbstractAnimation {
 		this.easing = easing;
 	}
 	
-	public void setItemFinder(MoveableFinder itemFinder) {
+	public void setItem(MoveableFinder itemFinder) {
 		this.itemFinder = itemFinder;
 	}
 
@@ -76,7 +76,7 @@ public abstract class SoftenAnimation extends AbstractAnimation {
 
 		protected void prepare(SoftenAnimation animation) {
 			if (itemFinder!=null) {
-				animation.setItemFinder(itemFinder);
+				animation.setItem(itemFinder);
 			}
 		}
 

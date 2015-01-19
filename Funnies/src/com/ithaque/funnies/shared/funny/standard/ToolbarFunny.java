@@ -6,30 +6,52 @@ import java.util.List;
 
 import com.ithaque.funnies.shared.IllegalInvokeException;
 import com.ithaque.funnies.shared.basic.Animation;
+import com.ithaque.funnies.shared.basic.AnimationContext;
 import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Event.Type;
 import com.ithaque.funnies.shared.basic.GroupItem;
 import com.ithaque.funnies.shared.basic.Item;
+import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.items.animations.CancelableAnimation;
-import com.ithaque.funnies.shared.basic.items.animations.ChangeFaceAnimation;
+import com.ithaque.funnies.shared.basic.items.animations.FadingAnimation;
+import com.ithaque.funnies.shared.basic.items.animations.MoveAnimation;
+import com.ithaque.funnies.shared.basic.items.animations.ParallelAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.RepeatableAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.ScalingAnimation;
-import com.ithaque.funnies.shared.basic.items.animations.SequenceAnimation;
 import com.ithaque.funnies.shared.funny.AbstractFunny;
 import com.ithaque.funnies.shared.funny.AbstractRing;
+import com.ithaque.funnies.shared.funny.Funny;
+import com.ithaque.funnies.shared.funny.FunnyObserver;
+import com.ithaque.funnies.shared.funny.Icon;
+import com.ithaque.funnies.shared.funny.TooledFunny;
 import com.ithaque.funnies.shared.funny.TooledRing;
 
-public class ToolbarFunny extends AbstractFunny {
+public class ToolbarFunny extends AbstractFunny implements FunnyObserver {
 
-	static final float MIN_SCALE = 0.3f;
-	static final float MAX_SCALE = 1.0f;
+	static final float MIN_SCALE = 0.8f;
+	static final float MAX_SCALE = 1.2f;
+	static final long DURATION = 2000;
 	
 	float minimize = MIN_SCALE;
 	float maximize = MAX_SCALE;
 	boolean hover = false;
 	CancelableAnimation hoverAnimation = null;
 	boolean activated = false;
-	
+	GroupItem toolbarItem;
+	List<ToolRecord> tools = new ArrayList<ToolRecord>();
+
+	class ToolRecord {
+		TooledFunny tool;
+		Icon icon;
+		RepeatableAnimation hoverAnimation = null;
+		
+		ToolRecord(TooledFunny tool, Icon icon) {
+			this.tool = tool;
+			this.icon = icon;
+			this.hoverAnimation = null;
+		}
+	}
+
 	public ToolbarFunny(String toolbarId) {
 		super(toolbarId);
 		toolbarItem = new GroupItem();
@@ -42,39 +64,43 @@ public class ToolbarFunny extends AbstractFunny {
 		this.maximize = maximize;
 		return this;
 	}
-	
-	GroupItem toolbarItem;
-	List<ToolRecord> tools = new ArrayList<ToolRecord>();
-	
-	public boolean addTool(Icon icon) {
+		
+	public boolean addTool(TooledFunny tool, Icon icon) {
 		if (icon.getToolSupportId().equals(getId())) {
-			icon.getIconItem().addEventType(Type.MOUSE_CLICK);
+			icon.setToolbar(this);
+			if (tool.isEnabled()) {
+				icon.getIconItem().addEventType(Type.MOUSE_CLICK);
+			}
 			icon.getIconItem().addEventType(Type.MOUSE_MOVE);
-			tools.add(new ToolRecord(icon, true));
-			icon.iconItem.setLocation(-getWidth()/2.0f, getHeight(icon));
-			toolbarItem.addItem(icon.iconItem);
+			tools.add(new ToolRecord(tool, icon));
+			Location location = new Location(-getWidth()/2.0f, getHeight(icon));
+			icon.getIconItem().setLocation(location);
+			tool.addObserver(this);
+			toolbarItem.addItem(icon.getIconItem());
 			return true;
 		}
 		return false;
 	}
 	
-	public boolean removeTool(Icon icon) {
+	public boolean removeTool(TooledFunny tool, Icon icon) {
 		for (ToolRecord record : new ArrayList<ToolRecord>(tools)) {
-			if (record.tool == icon) {
+			if (record.tool == tool && record.icon == icon) {
+				icon.setToolbar(null);
 				icon.getIconItem().removeEventType(Type.MOUSE_CLICK);
 				icon.getIconItem().removeEventType(Type.MOUSE_MOVE);
 				tools.remove(record);
-				toolbarItem.removeItem(icon.iconItem);
+				record.tool.removeObserver(this);
+				toolbarItem.removeItem(record.icon.getIconItem());
 				return true;
 			}
 		}
 		return false;
 	}
-
+	
 	public List<Icon> getTools() {
 		List<Icon> icons = new ArrayList<Icon>();
 		for (ToolRecord record : tools) {
-			icons.add(record.tool);
+			icons.add(record.icon);
 		}
 		return icons;
 	}
@@ -82,12 +108,12 @@ public class ToolbarFunny extends AbstractFunny {
 	protected float getHeight(Icon icon) {
 		float height = 0.0f;
 		for (ToolRecord record : tools) {
-			if (record.activated) {
-				if (record.tool==icon) {
-					return height+icon.height/2.0f;
+			if (record.tool.isEnabled()) {
+				if (record.icon==icon) {
+					return height+icon.getHeight()/2.0f;
 				}
 				else {
-					height+=icon.height;
+					height+=icon.getHeight();
 				}
 			}
 		}
@@ -97,8 +123,8 @@ public class ToolbarFunny extends AbstractFunny {
 	float getHeight() {
 		float height = 0.0f;
 		for (ToolRecord record : tools) {
-			if (record.activated) {
-				height += record.tool.height;
+			if (record.tool.isEnabled()) {
+				height += record.icon.getHeight();
 			}
 		}
 		return height;
@@ -107,23 +133,11 @@ public class ToolbarFunny extends AbstractFunny {
 	float getWidth() {
 		float width = 0.0f;
 		for (ToolRecord record : tools) {
-			if (record.activated && record.tool.width>width) {
-				width = record.tool.width;
+			if (record.tool.isEnabled() && record.icon.getWidth()>width) {
+				width = record.icon.getWidth();
 			}
 		}
 		return width;
-	}
-
-	class ToolRecord {
-		Icon tool;
-		boolean activated;
-		RepeatableAnimation hoverAnimation = null;
-		
-		ToolRecord(Icon tool, boolean activated) {
-			this.tool = tool;
-			this.activated = activated;
-			this.hoverAnimation = null;
-		}
 	}
 	
 	public Item getToolbarItem() {
@@ -155,41 +169,57 @@ public class ToolbarFunny extends AbstractFunny {
 	public void hover(Collection<Item> hoveredItems) {
 		hoverToolbar(hoveredItems);
 		for (ToolRecord toolRecord : tools) {
-			if (toolRecord.activated) {
+			if (toolRecord.tool.isEnabled()) {
 				hoverTool(toolRecord, hoveredItems);
 			}
 		}
 	}
 
-	void hoverTool(ToolRecord tool, Collection<Item> hoveredItems) {
-		if (hoveredItems.contains(tool.tool.getIconItem())) {
-			if (tool.hoverAnimation==null) {
-				tool.hoverAnimation = new RepeatableAnimation(createToolAnimation(tool.tool.iconItem));
-				getBoard().launchAnimation(tool.hoverAnimation);
+	void hoverTool(ToolRecord toolRecord, Collection<Item> hoveredItems) {
+		if (hoveredItems.contains(toolRecord.icon.getIconItem())) {
+			if (toolRecord.hoverAnimation==null) {
+				Animation animation = createToolAnimation(toolRecord);
+				if (animation!=null) {
+					toolRecord.hoverAnimation = new RepeatableAnimation(animation);
+					getBoard().launchAnimation(toolRecord.hoverAnimation);
+				}
 			}
-			else if (tool.hoverAnimation.isFinished()) {
-				tool.hoverAnimation.reset();
-				getBoard().launchAnimation(tool.hoverAnimation);
+			else if (toolRecord.hoverAnimation.isFinished()) {
+				toolRecord.hoverAnimation.reset();
+				if (toolRecord.hoverAnimation!=null) {
+					getBoard().launchAnimation(toolRecord.hoverAnimation);
+				}
 			}
 		}
 		else {
-			if (tool.hoverAnimation!=null && !tool.hoverAnimation.isFinished()) {
-				tool.hoverAnimation.stop();
+			if (toolRecord.hoverAnimation!=null && !toolRecord.hoverAnimation.isFinished()) {
+				toolRecord.hoverAnimation.stop();
 			}
 		}
 	}
 
-	Animation createToolAnimation(Item iconItem) {
-		SequenceAnimation sequence = new SequenceAnimation();
-		sequence.addAnimation(new ChangeFaceAnimation(2000, 1).setItem(iconItem));
-		sequence.addAnimation(new ChangeFaceAnimation(2000, 0).setItem(iconItem));
-		return sequence;
+	public void activateTool(TooledFunny funny, Icon icon) {
+		if (!activated) {
+			this.activated = true;
+			minimizeToolbar();
+			funny.activateTool(icon);
+		}
+	}
+
+	Animation createToolAnimation(ToolRecord record) {
+		Animation.Factory factory = record.icon.getHoverAnimation();
+		if (factory!=null) {
+			AnimationContext context = new Icon.IconAnimationContext(record.icon.getIconItem().getWrapped());
+			Animation animation = factory.create();
+			animation.setContext(context);
+			return animation;
+		}
+		return null;
 	}
 
 	void hoverToolbar(Collection<Item> hoveredItems) {
 		boolean hover = hoveredItems.contains(this.toolbarItem);
-		if (this.hover!=hover && (this.hoverAnimation==null || this.hoverAnimation.isFinished()|| !activated)) {
-			activated = false;
+		if (this.hover!=hover && (this.hoverAnimation==null || this.hoverAnimation.isFinished()) && !activated) {
 			this.hover = hover;
 			if (hover) {
 				maximizeToolbar();
@@ -197,7 +227,6 @@ public class ToolbarFunny extends AbstractFunny {
 			else {
 				minimizeToolbar();
 			}
-			this.toolbarItem.getBoard().launchAnimation(this.hoverAnimation);
 		}
 	}
 
@@ -206,16 +235,73 @@ public class ToolbarFunny extends AbstractFunny {
 			this.hoverAnimation.cancel();
 		}
 		this.hoverAnimation =  new CancelableAnimation(new ScalingAnimation(1000, maximize).setItem(toolbarItem));
+		getBoard().launchAnimation(this.hoverAnimation);
 	}
 
 	void minimizeToolbar() {
 		if (this.hoverAnimation!=null && !(this.hoverAnimation.isFinished())) {
 			this.hoverAnimation.cancel();
 		}
-		this.hoverAnimation =  new CancelableAnimation(new ScalingAnimation(1000, minimize).setItem(toolbarItem));
+		this.hoverAnimation =  new CancelableAnimation(new ScalingAnimation(1000, minimize).setItem(toolbarItem)) {
+			public void finish(long time) {
+				super.finish(time);
+				activated = false;
+			}
+		};
+		getBoard().launchAnimation(this.hoverAnimation);
 	}
 
 	Board getBoard() {
 		return this.toolbarItem.getBoard();
 	}
+
+	@Override
+	public void change(ChangeType type, Funny funny) {
+		if (type==ChangeType.ENABLING) {
+			for (ToolRecord record : tools) {
+				if (record.tool==funny) {
+					Item item = record.icon.getIconItem();
+					if (record.tool.isEnabled()) {
+						item.addEventType(Type.MOUSE_CLICK);
+					}
+					else {
+						item.removeEventType(Type.MOUSE_CLICK);
+					}
+				}
+			}
+			adjustLayout();
+		}
+	}
+
+	void adjustLayout() {
+		ParallelAnimation animation = new ParallelAnimation();
+		float height = 0.0f;
+		float width = getWidth();
+		for (ToolRecord record : tools) {
+			Item item = record.icon.getIconItem();
+			if (record.tool.isEnabled()) {
+				Location newLocation = new Location(-width/2.0f, height+record.icon.getHeight()/2.0f);
+				Location iconLocation = item.getLocation();
+				if (!iconLocation.equals(newLocation)) {
+					if (item.getOpacity()==0.0f) {
+						item.setLocation(newLocation);
+					}
+					else {
+						animation.addAnimation(new MoveAnimation(DURATION).setLocation(newLocation).setItem(item));
+					}
+				}
+				if (item.getOpacity()<1.0f) {
+					animation.addAnimation(new FadingAnimation(DURATION, 1.0f).setItem(item));
+				}
+				height+=record.icon.getHeight();
+			}
+			else {
+				if (item.getOpacity()>0.0f) {
+					animation.addAnimation(new FadingAnimation(DURATION, 0.0f).setItem(item));
+				}
+			}
+		}
+		getBoard().launchAnimation(animation);
+	}
+
 }

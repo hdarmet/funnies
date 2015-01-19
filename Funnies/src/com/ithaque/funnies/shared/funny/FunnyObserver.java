@@ -5,7 +5,8 @@ public interface FunnyObserver {
 	public enum ChangeType {
 		ENTER_RING,
 		EXIT_RING,
-		LOCATION
+		LOCATION,
+		ENABLING
 	}
 	
 	void change(ChangeType type, Funny funny);

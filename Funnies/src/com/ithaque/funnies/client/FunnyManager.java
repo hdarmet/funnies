@@ -6,6 +6,7 @@ import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
 import com.ithaque.funnies.shared.basic.items.StatusItem;
 import com.ithaque.funnies.shared.funny.Circus;
+import com.ithaque.funnies.shared.funny.Icon;
 import com.ithaque.funnies.shared.funny.SimpleSketch;
 import com.ithaque.funnies.shared.funny.Sketch;
 import com.ithaque.funnies.shared.funny.boardgame.ArrowFunny;
@@ -22,7 +23,6 @@ import com.ithaque.funnies.shared.funny.notifications.AcceptRotationQuestion;
 import com.ithaque.funnies.shared.funny.notifications.ActivateEvent;
 import com.ithaque.funnies.shared.funny.notifications.DropEvent;
 import com.ithaque.funnies.shared.funny.standard.CommandFunny;
-import com.ithaque.funnies.shared.funny.standard.Icon;
 import com.ithaque.funnies.shared.funny.standard.PanelFunny;
 
 public class FunnyManager extends AbstracCircusManager {
@@ -180,14 +180,40 @@ public class FunnyManager extends AbstracCircusManager {
 		circus.enterRing(message=createMessage());
 		
 		PanelFunny panel = new PanelFunny("sel");
-		Icon icon = new Icon(GameBoardRing.TOOLBAR, 80, 80, "load.png", "rload.png");
+		Icon icon = new Icon.SingleImageIcon(GameBoardRing.TOOLBAR, 80, 80, "load.png"/*, "rload.png"*/);
 		panel.setToolIcon(icon);
 		circus.enterRing(panel);
 
-		CommandFunny command = new CommandFunny("cmd");
-		icon = new Icon(GameBoardRing.TOOLBAR, 80, 80, "again.png", "ragain.png");
+		final CommandFunny command = new CommandFunny("cmd") {
+			@Override
+			public void activateTool(Icon icon) {
+				System.out.println("Command activated :)");	
+			}
+		};
+		icon = new Icon.DoubleImageIcon(GameBoardRing.TOOLBAR, 80, 80, "again.png", "ragain.png");
 		command.setToolIcon(icon);
 		circus.enterRing(command);
+
+		CommandFunny save = new CommandFunny("sav") {
+			@Override
+			public void activateTool(Icon icon) {
+				command.setEnabled(!command.isEnabled());	
+			}
+		};
+		
+		icon = new Icon.DoubleImageIcon(GameBoardRing.TOOLBAR, 80, 80, "save.png", "rsave.png");
+		save.setToolIcon(icon);
+		circus.enterRing(save);
+
+		final CommandFunny loading = new CommandFunny("lod") {
+			@Override
+			public void activateTool(Icon icon) {
+				System.out.println("Loading activated :)");	
+			}
+		};
+		icon = new Icon.SpriteIcon(GameBoardRing.TOOLBAR, 80, 80, "loading.png", 4, 2, 320, 160);
+		loading.setToolIcon(icon);
+		circus.enterRing(loading);
 	}
 
 

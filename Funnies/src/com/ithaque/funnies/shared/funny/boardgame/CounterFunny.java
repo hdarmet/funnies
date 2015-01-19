@@ -279,6 +279,9 @@ public class CounterFunny extends DecoratedFunny implements DraggableFunny, Rota
 			
 		void stopTo(TargetFunny target) {
 			ItemHolder targetHolder = target.getTargetHolder();
+			if (targetHolder==counterStackItem) {
+				targetHolder=counterStackItem.getParent();
+			}
 			Location targetLocation = target.getTargetLocation(counterStackItem);
 			DropAnimation dropAnimation = new DropAnimation(new LinearEasing(1000), targetHolder, targetLocation);
 			dropAnimation.setItem(counterStackItem);

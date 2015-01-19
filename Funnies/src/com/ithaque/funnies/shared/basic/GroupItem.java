@@ -66,7 +66,6 @@ public class GroupItem extends Item implements ItemHolder {
 		dirty();
 	}
 	
-	@Override
 	public void setItem(int index, Item item) {
 		if (item.getParent()!=null) {
 			throw new AlreadyAttachedItemException();
@@ -77,7 +76,6 @@ public class GroupItem extends Item implements ItemHolder {
 		dirty();
 	}
 
-	@Override
 	public void addItem(int index, Item item) {
 		if (item.getParent()!=null) {
 			throw new AlreadyAttachedItemException();
@@ -102,7 +100,6 @@ public class GroupItem extends Item implements ItemHolder {
 		return items.contains(item);
 	}
 	
-	@Override
 	public Item getItem(int index) {
 		return items.get(index);
 	}
