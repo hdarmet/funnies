@@ -92,7 +92,7 @@ public class GameBoardRing extends AbstractRing implements TooledRing {
 		animationProcessor=new CircusRandomAnimationProcessor(this, 1000, RANDOM, 4);
 		toolProcessor=new ToolProcessor(this);
 		
-		toolbar = new ToolbarFunny(TOOLBAR);
+		toolbar = new ToolbarFunny(TOOLBAR, ToolbarFunny.BOTTOM_MIDDLE);
 		 
 		getBoard().addProcessor(dragProcessor);
 		getBoard().addProcessor(scalingProcessor);

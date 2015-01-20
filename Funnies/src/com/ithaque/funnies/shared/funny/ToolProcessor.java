@@ -25,7 +25,6 @@ public class ToolProcessor implements Processor {
 	
 	public void registerToolbar(ToolbarFunny toolbar) {
 		toolbars.add(toolbar);
-		toolbar.setLocation(ring.getWidth()/2.0f, -ring.getHeight()/2.0f);
 		toolbar.enterRing((AbstractRing)ring);
 	}
 

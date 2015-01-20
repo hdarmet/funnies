@@ -32,6 +32,22 @@ public class ToolbarFunny extends AbstractFunny implements FunnyObserver {
 	static final float MAX_SCALE = 1.2f;
 	static final long DURATION = 2000;
 	
+	public static final PositionManager LEFT_TOP = new LeftTopPositionManager();
+	public static final PositionManager LEFT_BOTTOM = new LeftBottomPositionManager();
+	public static final PositionManager LEFT_MIDDLE = new LeftMiddlePositionManager();
+
+	public static final PositionManager RIGHT_TOP = new RightTopPositionManager();
+	public static final PositionManager RIGHT_BOTTOM = new RightBottomPositionManager();
+	public static final PositionManager RIGHT_MIDDLE = new RightMiddlePositionManager();
+
+	public static final PositionManager TOP_LEFT = new TopLeftPositionManager();
+	public static final PositionManager TOP_RIGHT = new TopRightPositionManager();
+	public static final PositionManager TOP_MIDDLE = new TopMiddlePositionManager();
+
+	public static final PositionManager BOTTOM_LEFT = new BottomLeftPositionManager();
+	public static final PositionManager BOTTOM_RIGHT = new BottomRightPositionManager();
+	public static final PositionManager BOTTOM_MIDDLE = new BottomMiddlePositionManager();
+	
 	float minimize = MIN_SCALE;
 	float maximize = MAX_SCALE;
 	boolean hover = false;
@@ -39,6 +55,7 @@ public class ToolbarFunny extends AbstractFunny implements FunnyObserver {
 	boolean activated = false;
 	GroupItem toolbarItem;
 	List<ToolRecord> tools = new ArrayList<ToolRecord>();
+	PositionManager positionManager;
 
 	class ToolRecord {
 		TooledFunny tool;
@@ -52,11 +69,12 @@ public class ToolbarFunny extends AbstractFunny implements FunnyObserver {
 		}
 	}
 
-	public ToolbarFunny(String toolbarId) {
+	public ToolbarFunny(String toolbarId, PositionManager positionManager) {
 		super(toolbarId);
 		toolbarItem = new GroupItem();
 		toolbarItem.setScale(minimize);
 		toolbarItem.addEventType(Type.MOUSE_MOVE);
+		this.positionManager = positionManager;
 	}
 
 	public ToolbarFunny setMetrics(float minimize, float maximize) {
@@ -73,8 +91,7 @@ public class ToolbarFunny extends AbstractFunny implements FunnyObserver {
 			}
 			icon.getIconItem().addEventType(Type.MOUSE_MOVE);
 			tools.add(new ToolRecord(tool, icon));
-			Location location = new Location(-getWidth()/2.0f, getHeight(icon));
-			icon.getIconItem().setLocation(location);
+			setLayout();
 			tool.addObserver(this);
 			toolbarItem.addItem(icon.getIconItem());
 			return true;
@@ -105,41 +122,6 @@ public class ToolbarFunny extends AbstractFunny implements FunnyObserver {
 		return icons;
 	}
 	
-	protected float getHeight(Icon icon) {
-		float height = 0.0f;
-		for (ToolRecord record : tools) {
-			if (record.tool.isEnabled()) {
-				if (record.icon==icon) {
-					return height+icon.getHeight()/2.0f;
-				}
-				else {
-					height+=icon.getHeight();
-				}
-			}
-		}
-		return 0.0f;
-	}
-	
-	float getHeight() {
-		float height = 0.0f;
-		for (ToolRecord record : tools) {
-			if (record.tool.isEnabled()) {
-				height += record.icon.getHeight();
-			}
-		}
-		return height;
-	}
-
-	float getWidth() {
-		float width = 0.0f;
-		for (ToolRecord record : tools) {
-			if (record.tool.isEnabled() && record.icon.getWidth()>width) {
-				width = record.icon.getWidth();
-			}
-		}
-		return width;
-	}
-	
 	public Item getToolbarItem() {
 		return toolbarItem;
 	}
@@ -153,6 +135,9 @@ public class ToolbarFunny extends AbstractFunny implements FunnyObserver {
 		if (!(ring instanceof TooledRing)) {
 			throw new IllegalInvokeException();
 		}
+		setLocation(
+			positionManager.getAnchorX(ring.getWidth(), ring.getHeight(), tools), 
+			positionManager.getAnchorY(ring.getWidth(), ring.getHeight(), tools));
 		((TooledRing)ring).getToolSupport().addItem(toolbarItem);
 		super.enterRing(ring);
 	}
@@ -246,6 +231,7 @@ public class ToolbarFunny extends AbstractFunny implements FunnyObserver {
 			public void finish(long time) {
 				super.finish(time);
 				activated = false;
+				hover = false;
 			}
 		};
 		getBoard().launchAnimation(this.hoverAnimation);
@@ -273,14 +259,22 @@ public class ToolbarFunny extends AbstractFunny implements FunnyObserver {
 		}
 	}
 
-	void adjustLayout() {
-		ParallelAnimation animation = new ParallelAnimation();
-		float height = 0.0f;
-		float width = getWidth();
+	void setLayout() {
 		for (ToolRecord record : tools) {
 			Item item = record.icon.getIconItem();
 			if (record.tool.isEnabled()) {
-				Location newLocation = new Location(-width/2.0f, height+record.icon.getHeight()/2.0f);
+				Location location = new Location(positionManager.getX(record.icon, tools), positionManager.getY(record.icon, tools));
+				item.setLocation(location);
+			}
+		}
+	}
+	
+	void adjustLayout() {
+		ParallelAnimation animation = new ParallelAnimation();
+		for (ToolRecord record : tools) {
+			Item item = record.icon.getIconItem();
+			if (record.tool.isEnabled()) {
+				Location newLocation = new Location(positionManager.getX(record.icon, tools), positionManager.getY(record.icon, tools));
 				Location iconLocation = item.getLocation();
 				if (!iconLocation.equals(newLocation)) {
 					if (item.getOpacity()==0.0f) {
@@ -293,7 +287,6 @@ public class ToolbarFunny extends AbstractFunny implements FunnyObserver {
 				if (item.getOpacity()<1.0f) {
 					animation.addAnimation(new FadingAnimation(DURATION, 1.0f).setItem(item));
 				}
-				height+=record.icon.getHeight();
 			}
 			else {
 				if (item.getOpacity()>0.0f) {
@@ -303,5 +296,260 @@ public class ToolbarFunny extends AbstractFunny implements FunnyObserver {
 		}
 		getBoard().launchAnimation(animation);
 	}
+	
+	public interface PositionManager {
+		float getX(Icon icon, List<ToolRecord> tools);
+		float getAnchorX(float width, float height, List<ToolRecord> tools);
+		float getY(Icon icon, List<ToolRecord> tools);
+		float getAnchorY(float width, float height, List<ToolRecord> tools);
+		float getHeight(List<ToolRecord> tools);
+		float getWidth(List<ToolRecord> tools);
+	}
 
+	public static class LeftTopPositionManager implements PositionManager  {
+		
+		@Override
+		public float getX(Icon icon, List<ToolRecord> tools) {
+			return -getWidth(tools)/2.0f;
+		}
+		
+		@Override
+		public float getY(Icon icon, List<ToolRecord> tools) {
+			float height = 0.0f;
+			for (ToolRecord record : tools) {
+				if (record.tool.isEnabled()) {
+					if (record.icon==icon) {
+						return height+icon.getHeight()/2.0f;
+					}
+					else {
+						height+=icon.getHeight();
+					}
+				}
+			}
+			return height;
+		}
+		
+		@Override
+		public float getHeight(List<ToolRecord> tools) {
+			float height = 0.0f;
+			for (ToolRecord record : tools) {
+				if (record.tool.isEnabled()) {
+					height += record.icon.getHeight();
+				}
+			}
+			return height;
+		}
+
+		@Override
+		public float getWidth(List<ToolRecord> tools) {
+			float width = 0.0f;
+			for (ToolRecord record : tools) {
+				if (record.tool.isEnabled() && record.icon.getWidth()>width) {
+					width = record.icon.getWidth();
+				}
+			}
+			return width;
+		}
+
+		@Override
+		public float getAnchorX(float width, float height,
+				List<ToolRecord> tools) {
+			return width/2.0f;
+		}		
+
+		@Override
+		public float getAnchorY(float width, float height,
+				List<ToolRecord> tools) {
+			return -height/2.0f;
+		}
+	}
+	
+	public static class LeftBottomPositionManager extends LeftTopPositionManager  {
+		
+		@Override
+		public float getY(Icon icon, List<ToolRecord> tools) {
+			return -getHeight(tools)+super.getY(icon, tools);
+		}
+		
+		@Override
+		public float getAnchorY(float width, float height, List<ToolRecord> tools) {
+			return height/2.0f;
+		}
+	}
+
+	public static class LeftMiddlePositionManager extends LeftTopPositionManager  {
+		
+		@Override
+		public float getY(Icon icon, List<ToolRecord> tools) {
+			return -getHeight(tools)/2.0f+super.getY(icon, tools);
+		}
+		
+		@Override
+		public float getAnchorY(float width, float height, List<ToolRecord> tools) {
+			return 0.0f;
+		}
+	}
+	
+	public static class RightTopPositionManager extends LeftTopPositionManager  {
+		
+		@Override
+		public float getX(Icon icon, List<ToolRecord> tools) {
+			return getWidth(tools)/2.0f;
+		}
+		
+		@Override
+		public float getAnchorX(float width, float height, List<ToolRecord> tools) {
+			return -width/2.0f;
+		}
+	}
+
+	public static class RightBottomPositionManager extends LeftBottomPositionManager  {
+		
+		@Override
+		public float getX(Icon icon, List<ToolRecord> tools) {
+			return getWidth(tools)/2.0f;
+		}
+		
+		@Override
+		public float getAnchorX(float width, float height, List<ToolRecord> tools) {
+			return -width/2.0f;
+		}
+	}
+
+	public static class RightMiddlePositionManager extends LeftMiddlePositionManager  {
+		
+		@Override
+		public float getX(Icon icon, List<ToolRecord> tools) {
+			return getWidth(tools)/2.0f;
+		}
+		
+		@Override
+		public float getAnchorX(float width, float height, List<ToolRecord> tools) {
+			return -width/2.0f;
+		}
+	}
+	
+	public static class TopLeftPositionManager implements PositionManager  {
+		
+		@Override
+		public float getY(Icon icon, List<ToolRecord> tools) {
+			return getHeight(tools)/2.0f;
+		}
+		
+		@Override
+		public float getX(Icon icon, List<ToolRecord> tools) {
+			float width = 0.0f;
+			for (ToolRecord record : tools) {
+				if (record.tool.isEnabled()) {
+					if (record.icon==icon) {
+						return width+icon.getWidth()/2.0f;
+					}
+					else {
+						width+=icon.getWidth();
+					}
+				}
+			}
+			return width;
+		}
+		
+		@Override
+		public float getWidth(List<ToolRecord> tools) {
+			float width = 0.0f;
+			for (ToolRecord record : tools) {
+				if (record.tool.isEnabled()) {
+					width += record.icon.getWidth();
+				}
+			}
+			return width;
+		}
+
+		@Override
+		public float getHeight(List<ToolRecord> tools) {
+			float height = 0.0f;
+			for (ToolRecord record : tools) {
+				if (record.tool.isEnabled() && record.icon.getHeight()>height) {
+					height = record.icon.getHeight();
+				}
+			}
+			return height;
+		}
+
+		@Override
+		public float getAnchorX(float width, float height,
+				List<ToolRecord> tools) {
+			return -width/2.0f;
+		}		
+
+		@Override
+		public float getAnchorY(float width, float height,
+				List<ToolRecord> tools) {
+			return -height/2.0f;
+		}
+	}
+
+	public static class TopRightPositionManager extends TopLeftPositionManager  {
+		
+		@Override
+		public float getX(Icon icon, List<ToolRecord> tools) {
+			return -getWidth(tools)+super.getX(icon, tools);
+		}
+		
+		@Override
+		public float getAnchorX(float width, float height, List<ToolRecord> tools) {
+			return width/2.0f;
+		}
+	}
+
+	public static class TopMiddlePositionManager extends TopLeftPositionManager  {
+		
+		@Override
+		public float getX(Icon icon, List<ToolRecord> tools) {
+			return -getWidth(tools)/2.0f+super.getX(icon, tools);
+		}
+		
+		@Override
+		public float getAnchorX(float width, float height, List<ToolRecord> tools) {
+			return 0.0f;
+		}
+	}
+	
+	public static class BottomLeftPositionManager extends TopLeftPositionManager  {
+		
+		@Override
+		public float getY(Icon icon, List<ToolRecord> tools) {
+			return -getHeight(tools)/2.0f;
+		}
+		
+		@Override
+		public float getAnchorY(float width, float height, List<ToolRecord> tools) {
+			return height/2.0f;
+		}
+	}
+
+	public static class BottomRightPositionManager extends TopRightPositionManager  {
+		
+		@Override
+		public float getY(Icon icon, List<ToolRecord> tools) {
+			return -getHeight(tools)/2.0f;
+		}
+		
+		@Override
+		public float getAnchorY(float width, float height, List<ToolRecord> tools) {
+			return height/2.0f;
+		}
+	}
+
+	public static class BottomMiddlePositionManager extends TopMiddlePositionManager  {
+		
+		@Override
+		public float getY(Icon icon, List<ToolRecord> tools) {
+			return -getHeight(tools)/2.0f;
+		}
+		
+		@Override
+		public float getAnchorY(float width, float height, List<ToolRecord> tools) {
+			return height/2.0f;
+		}
+	}
+	
 }
