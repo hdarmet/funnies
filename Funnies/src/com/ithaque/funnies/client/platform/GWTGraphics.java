@@ -346,11 +346,13 @@ public class GWTGraphics implements Graphics {
 	}
 
 	void definePath(Context2d context2d, Location[] trShape) {
-		context2d.moveTo(trShape[0].getX(), trShape[0].getY());
-		for (int i=1; i<trShape.length; i++) {
-			context2d.lineTo(trShape[i].getX(), trShape[i].getY());
-		}		
-		context2d.lineTo(trShape[0].getX(), trShape[0].getY());
+		if (trShape.length>0) {
+			context2d.moveTo(trShape[0].getX(), trShape[0].getY());
+			for (int i=1; i<trShape.length; i++) {
+				context2d.lineTo(trShape[i].getX(), trShape[i].getY());
+			}		
+			context2d.lineTo(trShape[0].getX(), trShape[0].getY());
+		}
 	}
 
 
