@@ -19,4 +19,9 @@ public class AlarmEvent extends Event {
 	public String getAlarm() {
 		return alarm;
 	}
+	
+	@Override
+	public String[] getParams() {
+		return new String[] {""+getType(), ""+getTime(), getAlarm()};
+	}
 }

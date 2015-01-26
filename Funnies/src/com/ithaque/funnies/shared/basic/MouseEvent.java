@@ -55,4 +55,9 @@ public class MouseEvent extends Event {
 		return alt;
 	}
 
+	@Override
+	public String[] getParams() {
+		return new String[] {""+getType(), ""+getX(), ""+getY(), ""+getButton(), ""+isShift(), ""+isCtrl(), ""+isAlt()};
+	}
+
 }

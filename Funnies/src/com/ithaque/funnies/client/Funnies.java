@@ -15,7 +15,9 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.ithaque.funnies.client.platform.GWTPlatform;
+import com.ithaque.funnies.client.platform.gwt.impl.GWTPlatform;
+import com.ithaque.funnies.client.platform.gwt.test.GWTTestPlatform;
+import com.ithaque.funnies.client.platform.gwt.test.TestRegistry;
 import com.ithaque.funnies.shared.FieldVerifier;
 import com.ithaque.funnies.shared.basic.Animation.Factory;
 import com.ithaque.funnies.shared.basic.Board;
@@ -70,7 +72,7 @@ public class Funnies implements EntryPoint {
 			.create(GreetingService.class);
 
 	public void onModuleLoad() {
-		GameBoardCircus gbc = new GameBoardCircus(new GWTPlatform(), 1000.0f, 500.0f);
+		GameBoardCircus gbc = new GameBoardCircus(new GWTTestPlatform(10), 1000.0f, 500.0f);
 		FunnyManager funnyManager = new FunnyManager(gbc);
 		gbc.init(funnyManager);
 		funnyManager.init();

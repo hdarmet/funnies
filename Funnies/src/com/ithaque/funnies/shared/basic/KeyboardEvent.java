@@ -31,5 +31,9 @@ public class KeyboardEvent extends Event {
 	public boolean isAlt() {
 		return alt;
 	}
-
+	
+	@Override
+	public String[] getParams() {
+		return new String[] {""+getType(), ""+getKey(), ""+isShift(), ""+isCtrl(), ""+isAlt()};
+	}
 }

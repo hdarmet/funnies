@@ -27,5 +27,9 @@ public class Event {
 	public Type getType() {
 		return type;
 	}
+
+	public String[] getParams() {
+		return new String[] {""+type};
+	}
 	
 }

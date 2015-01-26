@@ -1,115 +1,45 @@
-package com.ithaque.funnies.client.platform;
+package com.ithaque.funnies.client.platform.gwt;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gwt.canvas.client.Canvas;
-import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.canvas.dom.client.Context2d.LineJoin;
-import com.google.gwt.canvas.dom.client.Context2d.TextBaseline;
-import com.google.gwt.canvas.dom.client.CssColor;
-import com.google.gwt.canvas.dom.client.FillStrokeStyle;
-import com.google.gwt.dom.client.ImageElement;
-import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.DoubleClickEvent;
-import com.google.gwt.event.dom.client.DoubleClickHandler;
-import com.google.gwt.event.dom.client.LoadEvent;
-import com.google.gwt.event.dom.client.LoadHandler;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.event.dom.client.MouseMoveEvent;
-import com.google.gwt.event.dom.client.MouseMoveHandler;
-import com.google.gwt.event.dom.client.MouseUpEvent;
-import com.google.gwt.event.dom.client.MouseUpHandler;
-import com.google.gwt.event.dom.client.MouseWheelEvent;
-import com.google.gwt.event.dom.client.MouseWheelHandler;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.ithaque.funnies.shared.Trace;
 import com.ithaque.funnies.shared.Transform;
 import com.ithaque.funnies.shared.basic.Color;
-import com.ithaque.funnies.shared.basic.Event.Type;
 import com.ithaque.funnies.shared.basic.Font;
 import com.ithaque.funnies.shared.basic.Graphics;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.Location;
-import com.ithaque.funnies.shared.basic.MouseEvent;
-import com.ithaque.funnies.shared.basic.MouseEvent.Button;
 import com.ithaque.funnies.shared.basic.Token;
 import com.ithaque.funnies.shared.basic.TransformUtil;
 import com.ithaque.funnies.shared.basic.items.AbstractImageItem;
 
 public class GWTGraphics implements Graphics {
 
-	GWTPlatform platform;
+	AbstractGWTPlatform platform;
 	int tokenCount = 0;
-	Canvas mouseCanvas;
-	Context2d context2d;
+	Context2D context2d;
 	Map<String, Token> imageTokens = new HashMap<String, Token>();
 	Map<Token, ImageElementRecord> imageElements = new HashMap<Token, ImageElementRecord>();
 	GWTLayer currentLayer;
 	Map<Token, GWTLayer> layerMap = new HashMap<Token, GWTLayer>();
 	int layerTokenGenerator = 0;
 	
-	boolean drag = false;
 	boolean debug = false;
 	
-	public GWTGraphics(GWTPlatform platform) {
+	public GWTGraphics(AbstractGWTPlatform platform) {
 		this.platform = platform;
 		Graphics.Singleton.setGraphics(this);
 	}
 	
-	ClickHandler clickHandler = new ClickHandler() {
-		@Override
-		public void onClick(ClickEvent event) {
-			processClick(event);
-		}
-	};
-
-	DoubleClickHandler doubleClickHandler = new DoubleClickHandler() {
-		@Override
-		public void onDoubleClick(DoubleClickEvent event) {
-			processDoubleClick(event);
-		}
-	};
 	
-	MouseDownHandler mouseDownHandler = new MouseDownHandler() {
-		@Override
-		public void onMouseDown(MouseDownEvent event) {
-			processMouseDown(event);
-		}
-	};
-	
-	MouseUpHandler mouseUpHandler = new MouseUpHandler() {
-		@Override
-		public void onMouseUp(MouseUpEvent event) {
-			processMouseUp(event);
-		}
-	};
-	
-	MouseMoveHandler mouseMoveHandler = new MouseMoveHandler() {
-		@Override
-		public void onMouseMove(MouseMoveEvent event) {
-			processMouseMove(event);
-		}
-	};
-	
-	MouseWheelHandler mouseWheelHandler = new MouseWheelHandler() {
-		@Override
-		public void onMouseWheel(MouseWheelEvent event) {
-			processMouseWheel(event);
-		}
-	};
-	
-	static class ImageElementRecord {
+	public static class ImageElementRecord {
 		int count = 1;
 		String url;
 		boolean ready = false;
-		ImageElement image = null;
+		ImageInterface image = null;
 		List<DrawImageRequest> requests = null;
 		
 		public ImageElementRecord(String url) {
@@ -136,7 +66,7 @@ public class GWTGraphics implements Graphics {
 			return imageItem;
 		}
 		
-		public void draw(Context2d context2d, ImageElement image, float opacity, int x, int y, int width, int height) {
+		public void draw(Context2D context2d, ImageInterface image, float opacity, int x, int y, int width, int height) {
 			if (opacity>0.0f) {
 				//drawShape(imageItem, imageItem.getShape());
 				Transform transform = TransformUtil.transform(imageItem);
@@ -203,82 +133,29 @@ public class GWTGraphics implements Graphics {
 		final ImageElementRecord record = new ImageElementRecord(url);
 		imageElements.put(token, record);
 		imageTokens.put(url, token);
-	    final Image img = new Image(url);
-	    record.image = ImageElement.as(img.getElement());
-	    img.addLoadHandler(new LoadHandler() {
-	        @Override
-	        public void onLoad(LoadEvent event) {
-	        	if (Trace.debug) {
-	        		Trace.debug("loaded : "+url);
-	        	}
-	        	RootPanel.get("images").remove(img);
-	        	record.ready = true;
-	        	for (DrawImageRequest request : new ArrayList<DrawImageRequest>(record.requests)) {
-	        		request.getImageItem().dirty();
-	        	}
-	        }
-	    });
-	    img.setVisible(false);
-	    RootPanel.get("images").add(img);
+		record.image = platform.createImage(url, record);
 	    return token;
 	}
-	
-	void processDoubleClick(DoubleClickEvent event) {
-		platform.sendEvent(new MouseEvent(Type.MOUSE_DOUBLE_CLICK, event.getX(), event.getY(), 
-			getButton(event.getNativeButton()), 
-			event.isShiftKeyDown(), event.isControlKeyDown(), event.isAltKeyDown()));
-	}
-	
-	void processClick(ClickEvent event) {
-		platform.sendEvent(new MouseEvent(Type.MOUSE_CLICK, event.getX(), event.getY(), 
-			getButton(event.getNativeButton()), 
-			event.isShiftKeyDown(), event.isControlKeyDown(), event.isAltKeyDown()));
-	}
 
-	void processMouseDown(MouseDownEvent event) {
-		drag = true;
-		platform.sendEvent(new MouseEvent(Type.MOUSE_DOWN, event.getX(), event.getY(), 
-			getButton(event.getNativeButton()), 
-			event.isShiftKeyDown(), event.isControlKeyDown(), event.isAltKeyDown()));
+	public void drawPendingImages(final String url, final ImageElementRecord record) {
+		if (Trace.debug) {
+    		Trace.debug("loaded : "+url);
+    	}
+    	record.ready = true;
+    	for (DrawImageRequest request : new ArrayList<DrawImageRequest>(record.requests)) {
+    		request.getImageItem().dirty();
+    	}
 	}
 	
-	void processMouseUp(MouseUpEvent event) {
-		drag = false;
-		platform.sendEvent(new MouseEvent(Type.MOUSE_UP, event.getX(), event.getY(), 
-			getButton(event.getNativeButton()), 
-			event.isShiftKeyDown(), event.isControlKeyDown(), event.isAltKeyDown()));
-	}
-	
-	void processMouseMove(MouseMoveEvent event) {
-		platform.sendEvent(new MouseEvent(drag?Type.MOUSE_DRAG:Type.MOUSE_MOVE, event.getX(), event.getY(), 
-			getButton(event.getNativeButton()), 
-			event.isShiftKeyDown(), event.isControlKeyDown(), event.isAltKeyDown()));
-	}
-	
-	void processMouseWheel(MouseWheelEvent event) {
-		platform.sendEvent(new MouseEvent(Type.MOUSE_WHEEL, event.getX(), event.getY(), 
-			event.isNorth()?Button.WHEEL_NORTH:Button.WHEEL_SOUTH, 
-			event.isShiftKeyDown(), event.isControlKeyDown(), event.isAltKeyDown()));
-	}
-	
-	Button getButton(int nativeButton) {
-		switch (nativeButton) {
-		case NativeEvent.BUTTON_RIGHT : return Button.RIGHT;
-		case NativeEvent.BUTTON_LEFT : return Button.LEFT;
-		case NativeEvent.BUTTON_MIDDLE : return Button.MIDDLE;
-		default : return Button.NONE;
-		}
-	}
-
 	@Override
 	public void drawPolygon(Item item, Color fillColor, Color lineColor, float lineWidth, float opacity) {
 		Location[] trShape = TransformUtil.transformShape(item, item.getShape());
 		resetContext2d();
 		context2d.setGlobalAlpha(opacity);
 		context2d.setLineWidth(lineWidth);
-		context2d.setLineJoin(LineJoin.ROUND);
-		context2d.setStrokeStyle(getColor(lineColor));
-		context2d.setFillStyle(getColor(fillColor));
+		context2d.setLineJoin("round");
+		context2d.setStrokeStyle(lineColor);
+		context2d.setFillStyle(fillColor);
 		
 		definePath(context2d, trShape);
 		context2d.fill();
@@ -289,8 +166,8 @@ public class GWTGraphics implements Graphics {
 	public void drawText(Item item, String text, Color color, Font font, float opacity) {
 		//drawShape(item, item.getShape());
 		context2d.setFont(font.getSize()+"pt "+font.getFontName());
-		context2d.setTextBaseline(TextBaseline.TOP);
-		context2d.setFillStyle(getColor(color));
+		context2d.setTextBaseline("top");
+		context2d.setFillStyle(color);
 		float width = getTextWidth(font, text);
 		float height = getTextHeight(font, text);
 		Transform transform = TransformUtil.transform(item);
@@ -310,7 +187,7 @@ public class GWTGraphics implements Graphics {
 		context2d.setFont(font.getSize()+"pt "+font.getFontName());
 		double width=0;
 		for (String line : text.split("\n")) {
-			double lineWidth = context2d.measureText(line).getWidth();
+			double lineWidth = context2d.measureTextWidth(line);
 			if (lineWidth>width) {
 				width = lineWidth;
 			}
@@ -325,16 +202,12 @@ public class GWTGraphics implements Graphics {
 		return rowCount*font.getSize()+font.getMargin();
 	}
 	
-	FillStrokeStyle getColor(Color color) {
-		return CssColor.make(color.getRed(), color.getGreen(), color.getBlue());
-	}
-
 	void drawShape(Item item, Location[] shape) {
 		Location[] trShape = TransformUtil.transformShape(item, shape);
 		resetContext2d();
 		
 		context2d.setLineWidth(0.0f);
-		context2d.setLineJoin(LineJoin.ROUND);
+		context2d.setLineJoin("round");
 		
 //		context2d.setShadowBlur(8);
 //		context2d.setShadowColor("#000000");
@@ -345,7 +218,7 @@ public class GWTGraphics implements Graphics {
 		context2d.stroke();
 	}
 
-	void definePath(Context2d context2d, Location[] trShape) {
+	void definePath(Context2D context2d, Location[] trShape) {
 		if (trShape.length>0) {
 			context2d.moveTo(trShape[0].getX(), trShape[0].getY());
 			for (int i=1; i<trShape.length; i++) {
@@ -383,13 +256,13 @@ public class GWTGraphics implements Graphics {
 	
 	@Override
 	public void clear() {
-		context2d = currentLayer.clear();
+		currentLayer.clear();
+		context2d = currentLayer.getContext();
 		resetContext2d();
 		context2d.clearRect(0, 0, getDisplayWidth(), getDisplayHeight());
 	}
 
 	public Token start() {
-	    mouseCanvas = createMouseCanvas();
 	    Token token = createLayer();
 	    return token;
 	}	
@@ -411,7 +284,7 @@ public class GWTGraphics implements Graphics {
 	@Override
 	public Token createLayer() {
 		Token token = new Token(layerTokenGenerator++);
-		GWTLayer layer = new GWTLayer(this);
+		GWTLayer layer = new GWTLayer(platform);
 		layerMap.put(token, layer);
 		if (currentLayer==null) {
 			currentLayer = layer;
@@ -439,26 +312,8 @@ public class GWTGraphics implements Graphics {
 	}
 	
 	public void resetContext2d() {
-		context2d.restore();
-		context2d.save();
+		currentLayer.resetContext();
 		context2d.beginPath();
-	}
-	
-	Canvas createMouseCanvas() {
-	    Canvas canvas = Canvas.createIfSupported();
-	    canvas.getElement().setAttribute("style", "position:absolute;left:0px;top:0px;z-index:100;");
-	    canvas.setVisible(true);
-	    canvas.setCoordinateSpaceWidth(1000);
-	    canvas.setCoordinateSpaceHeight(500);
-	    canvas.addClickHandler(clickHandler);
-	    canvas.addDoubleClickHandler(doubleClickHandler);
-	    canvas.addMouseDownHandler(mouseDownHandler);
-	    canvas.addMouseUpHandler(mouseUpHandler);
-	    canvas.addMouseMoveHandler(mouseMoveHandler);
-	    canvas.addMouseWheelHandler(mouseWheelHandler);
-	    canvas.getContext2d().save();
-	    RootPanel.get("board").add(canvas);
-		return canvas;
 	}
 
 }

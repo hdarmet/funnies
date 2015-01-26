@@ -16,4 +16,10 @@ public class GestureEvent extends Event {
 	public Gesture getGesture() {
 		return gesture;
 	}
+	
+	
+	@Override
+	public String[] getParams() {
+		return new String[] {""+getType()};
+	}
 }
