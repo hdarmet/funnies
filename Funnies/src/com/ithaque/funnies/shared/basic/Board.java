@@ -171,9 +171,9 @@ public class Board implements BaseDevice, LayoutDevice {
 	
 	public void processEvent(Event event) {
 		for (Processor processor : processors) {
-			long time = platform.getTime();
 			boolean processed = processor.process(event, this);
 			if (Trace.debug) {
+				long time = platform.getTime();
 				Trace.debug("Processing of "+event.getType()+" done in "+(platform.getTime()-time)+" ms.\n");
 			}
 			if (processed) {

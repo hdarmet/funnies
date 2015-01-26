@@ -57,7 +57,15 @@ public class TestRegistry {
 	
 	public static void dump() {
 		for (TestRecord record : records) {
-			System.out.println(record);
+			System.out.println("expect(\""+record+"\");");
 		}
+	}
+
+	public static String next() {
+		return records.remove(0).toString();
+	}
+
+	public static boolean isEmpty() {
+		return records.isEmpty();
 	}
 }

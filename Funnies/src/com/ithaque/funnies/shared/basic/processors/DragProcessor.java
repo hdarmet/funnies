@@ -85,11 +85,5 @@ public class DragProcessor implements Processor {
 			newLocation.getX()-anchor.getX(), 
 			newLocation.getY()-anchor.getY());
 	}
-	
-	public static Location movetoTarget(Item dragged, Item target) {
-		Location targetLocation = target.getLocation();
-		Location absLocation = TransformUtil.transformLocation(target.getParent(), targetLocation);
-		return TransformUtil.invertTransformLocation(dragged.getParent(), absLocation);
-	}
 		
 }

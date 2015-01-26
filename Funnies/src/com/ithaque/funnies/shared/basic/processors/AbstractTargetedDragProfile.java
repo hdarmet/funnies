@@ -31,18 +31,30 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 	}
 	
 	public void addDraggeable(Item draggeable) {
+		if (draggeable==null) {
+			throw new NullPointerException();
+		}
 		draggeables.add(draggeable);
 	}
 	
 	public void removeDraggeable(Item draggeable) {
+		if (draggeable==null) {
+			throw new NullPointerException();
+		}		
 		draggeables.remove(draggeable);
 	}
 	
 	public void addTarget(Item target) {
+		if (target==null) {
+			throw new NullPointerException();
+		}
 		targets.add(target);
 	}
 	
 	public void removeTarget(Item target) {
+		if (target==null) {
+			throw new NullPointerException();
+		}
 		targets.remove(target);
 	}
 
@@ -92,7 +104,7 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 	}
 	
 	protected ItemHolder getDropItemHolder(Item dragged, Item target) {
-		return initialHolder;
+		return initialHolder!=null ? initialHolder : target.getParent();
 	}
 	
 	protected Location getDropLocation(Item dragged, Item target) {
@@ -147,8 +159,9 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 	void showAllowedTargets(Item dragged) {
 		for (Item target : targets) {
 			if (acceptTarget(dragged, target)) {
-				Animation targetAnimation = getShowAllowedTargetAnimation(target).create();
-				if (targetAnimation != null) {
+				Animation.Factory targetAnimationFactory = getShowAllowedTargetAnimation(target);
+				if (targetAnimationFactory != null) {
+					Animation targetAnimation = targetAnimationFactory.create();
 					otherTarget = getHilightItem(target);
 					targetAnimation.setContext(retrieveAnimationContext());
 					getBoard().launchAnimation(targetAnimation);

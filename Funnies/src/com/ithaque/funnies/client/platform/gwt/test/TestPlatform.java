@@ -19,13 +19,17 @@ public class TestPlatform extends AbstractGWTPlatform {
 
 	long now = 0;
 	int canvasCount = 0;
-	List<Long> times = new ArrayList<Long>();
 	List<Float> randoms = new ArrayList<Float>();
 
 	@Override
+	public void process(long time) {
+		now = time;
+		super.process(time);
+	}
+	
+	@Override
 	public long getTime() {
 		TestRegistry.addCall("Platform", "0", "getTime");
-		now += times.remove(0);
 		return now;
 	}
 	

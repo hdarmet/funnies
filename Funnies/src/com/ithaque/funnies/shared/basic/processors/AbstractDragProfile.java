@@ -67,8 +67,9 @@ public abstract class AbstractDragProfile implements DragProfile {
 	}
 
 	protected void launchDragAnimation(Item dragged) {
-		Animation animation = getBeginDragAnimation(dragged).create();
-		if (animation!=null) {
+		Animation.Factory animationFactory = getBeginDragAnimation(dragged);
+		if (animationFactory!=null) {
+			Animation animation = animationFactory.create();
 			animation.setContext(retrieveAnimationContext());
 			board.launchAnimation(animation);
 		}

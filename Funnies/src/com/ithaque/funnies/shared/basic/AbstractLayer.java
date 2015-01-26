@@ -57,9 +57,9 @@ public abstract class AbstractLayer extends GroupItem implements LayoutDevice {
 	public void render(Graphics graphics, int currentLevel, int level) {
 		if (dirty && currentLevel <= level) {
 			setLayout(graphics);
-			long time = getBoard().getTime();
 			super.render(graphics, currentLevel, level);
 			if (Trace.debug) {
+				long time = getBoard().getTime();
 				Trace.debug("Render layer content : "+this+". "+getItemCount()+" items rendered in "+(getBoard().getTime()-time)+" ms.\n");
 			}
 		}
@@ -70,9 +70,9 @@ public abstract class AbstractLayer extends GroupItem implements LayoutDevice {
 		if (dirty) {
 			setLayout(graphics);
 			graphics.clear();
-			long time = getBoard().getTime();
 			super.render(graphics);
 			if (Trace.debug) {
+				long time = getBoard().getTime();
 				Trace.debug("Render layer : "+this+" in "+(getBoard().getTime()-time)+" ms.\n");
 			}
 		}
