@@ -72,7 +72,7 @@ public class StackItem extends GroupItem {
 
 	public Location computeStackLocation(ItemHolder parent) {
 		Location location = new Location(MARGIN, -MARGIN);
-		float angle = parent.getAbsoluteRotation(); 
+		float angle = parent.getDisplayRotation(); 
 		if (angle!=0.0) {
 			location = new Transform().rotate(-angle).transformPoint(location);
 		}

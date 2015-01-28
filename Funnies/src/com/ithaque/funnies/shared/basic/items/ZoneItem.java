@@ -11,7 +11,7 @@ public class ZoneItem extends DecoratedItem {
 	}
 
 	public void render(Graphics graphics, int currentLevel, int level) {
-		Location[] shape = getAbsoluteShape();
+		Location[] shape = getDisplayShape();
 		graphics.clip(this, shape);
 		super.render(graphics, currentLevel, level);
 	}

@@ -99,7 +99,7 @@ public class Board implements BaseDevice, LayoutDevice {
 			throw new AlreadyAttachedItemException();
 		}
 		items.add(item);
-		item.setParent(this);
+		item.doSetParent(this);
 		dirty();
 	}
 	
@@ -109,7 +109,7 @@ public class Board implements BaseDevice, LayoutDevice {
 		}
 		items.get(index).free();
 		items.add(index, item);
-		item.setParent(this);
+		item.doSetParent(this);
 		dirty();
 	}
 
@@ -118,7 +118,7 @@ public class Board implements BaseDevice, LayoutDevice {
 			throw new AlreadyAttachedItemException();
 		}
 		items.add(index, item);
-		item.setParent(this);
+		item.doSetParent(this);
 		dirty();
 	}
 	
@@ -128,7 +128,7 @@ public class Board implements BaseDevice, LayoutDevice {
 			throw new ItemNotAttachedException();
 		}
 		items.remove(item);
-		item.setParent(this);
+		item.doSetParent(this);
 		dirty();
 	}
 
@@ -264,12 +264,12 @@ public class Board implements BaseDevice, LayoutDevice {
 	}
 
 	@Override
-	public float getAbsoluteRotation() {
+	public float getDisplayRotation() {
 		return getRotation();
 	}
 	
 	@Override
-	public float getAbsoluteScale() {
+	public float getDisplayScale() {
 		return getScale();
 	}
 	

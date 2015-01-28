@@ -11,6 +11,15 @@ import com.ithaque.funnies.shared.basic.ItemObserver.ChangeType;
 
 public class Item implements Moveable {
 
+	static long updateSerial = 0;
+	
+	long parentSerial = 0;
+	long locationSerial = 0;
+	long scaleSerial = 0;
+	long rotationSerial = 0;
+	long opacitySerial = 0;
+	long shapeSerial = 0;
+	
 	ItemHolder parent = null;
 	Location location = Location.ORIGIN;
 	float scale = ItemHolder.STANDARD_SCALE;
@@ -33,7 +42,7 @@ public class Item implements Moveable {
 		dirty();		
 	}
 	
-	public void setParent(ItemHolder parent) {
+	public void doSetParent(ItemHolder parent) {
 		if (parent==null || getParent()!=null) {
 			throw new IllegalInvokeException();
 		}
@@ -46,14 +55,21 @@ public class Item implements Moveable {
 		dirty();
 	}
 	
-	public void changeParent(ItemHolder newParent) {
-		ItemHolder currentParent = getParent();
-		Location location = getLocation();
-		if (newParent!=currentParent) {
-			currentParent.removeItem(this);
-			newParent.addItem(this);
-			location = TransformUtil.transformLocation(currentParent, getParent(), location);
-			setLocation(location);
+	public void setParent(ItemHolder newParent) {
+		setParent(newParent, getUpdateSerial());
+	}
+	
+	public void setParent(ItemHolder newParent, long serial) {
+		if (parentSerial<=serial) {
+			parentSerial = serial;
+			ItemHolder currentParent = getParent();
+			Location location = getLocation();
+			if (newParent!=currentParent) {
+				currentParent.removeItem(this);
+				newParent.addItem(this);
+				location = TransformUtil.transformLocation(currentParent, getParent(), location);
+				setLocation(location, serial);
+			}
 		}
 	}
 	
@@ -105,8 +121,16 @@ public class Item implements Moveable {
 	}
 	
 	public void setOpacity(float opacity) {
-		this.opacity = opacity;
-		dirty();
+		setOpacity(opacity, getUpdateSerial());
+	}
+
+	public void setOpacity(float opacity, long serial) {
+		if (opacitySerial<=serial) {
+			opacitySerial = serial;
+			this.opacity = opacity;
+			fire(ChangeType.OPACITY);
+			dirty();
+		}
 	}
 
 	@Override
@@ -115,14 +139,24 @@ public class Item implements Moveable {
 	}
 	
 	public void setLocation(float x, float y) {
-		setLocation(new Location(x, y));
-		dirty();
+		setLocation(new Location(x, y), getUpdateSerial());
 	}
 	
 	public void setLocation(Location location) {
-		this.location = location;
-		fire(ChangeType.LOCATION);
-		dirty();
+		setLocation(location, getUpdateSerial());
+	}
+	
+	public void setLocation(float x, float y, long serial) {
+		setLocation(new Location(x, y), serial);
+	}
+	
+	public void setLocation(Location location, long serial) {
+		if (locationSerial<=serial) {
+			locationSerial = serial;
+			this.location = location;
+			fire(ChangeType.LOCATION);
+			dirty();
+		}
 	}
 	
 	@Override
@@ -131,9 +165,16 @@ public class Item implements Moveable {
 	}
 
 	public void setScale(float scale) {
-		this.scale = scale;
-		fire(ChangeType.SCALE);
-		dirty();
+		setScale(scale, getUpdateSerial());
+	}
+
+	public void setScale(float scale, long serial) {
+		if (scaleSerial<=serial) {
+			scaleSerial = serial;
+			this.scale = scale;
+			fire(ChangeType.SCALE);
+			dirty();
+		}
 	}
 
 	@Override
@@ -142,9 +183,16 @@ public class Item implements Moveable {
 	}
 
 	public void setRotation(float rotation) {
-		this.rotation = Geometric.adjustAngle(rotation);
-		fire(ChangeType.ROTATION);
-		dirty();
+		this.setRotation(rotation, getUpdateSerial());
+	}
+	
+	public void setRotation(float rotation, long serial) {
+		if (rotationSerial<=serial) {
+			rotationSerial = serial;
+			this.rotation = Geometric.adjustAngle(rotation);
+			fire(ChangeType.ROTATION);
+			dirty();
+		}
 	}
 	
 	public void fire(ChangeType changeType) {
@@ -246,15 +294,15 @@ public class Item implements Moveable {
 		}
 	}
 
-	public Location getAbsoluteLocation() {
+	public Location getDisplayLocation() {
 		return TransformUtil.transformLocation(getParent(), getLocation());
 	}
 	
-	public Location[] getAbsoluteShape() {
+	public Location[] getDisplayShape() {
 		return TransformUtil.transformShape(getParent(), getShape());
 	}
 	
-	public float getAbsoluteRotation() {
+	public float getDisplayRotation() {
 		ItemHolder parent = this.getParent();
 		float angle = getRotation();
 		while (parent!=null && (parent instanceof Item)) {
@@ -264,7 +312,7 @@ public class Item implements Moveable {
 		return angle;
 	}
 	
-	public float getAbsoluteScale() {
+	public float getDisplayScale() {
 		ItemHolder parent = this.getParent();
 		float scale = getScale();
 		while (parent!=null && (parent instanceof Item)) {
@@ -282,5 +330,9 @@ public class Item implements Moveable {
 			return (LayoutDevice)getParent();
 		}
 		return getParent().getLayout();
+	}
+	
+	public static long getUpdateSerial() {
+		return updateSerial++;
 	}
 }

@@ -41,19 +41,23 @@ public class ScalingAnimation extends SoftenAnimation {
 		this.scaleFinder = scaleFinder;
 	}
 	
+	public void setScaling(float scale) {
+		this.newScale = scale;
+	}
+	
 	public Float getScale() {
 		return newScale==null ? scaleFinder.find(getContext()) : newScale;
 	}
 	
 	@Override
 	public boolean executeAnimation(long time) {
-		getItem().setScale(easing.getValue(baseScale, getScale()));
+		getItem().setScale(easing.getValue(baseScale, getScale()), getUpdateSerial());
 		return true;
 	}
 
 	@Override
 	public void finish(long time) {
-		getItem().setScale(newScale);
+		getItem().setScale(newScale, getUpdateSerial());
 		super.finish(time);
 	}
 

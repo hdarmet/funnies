@@ -13,7 +13,7 @@ public class FrameLayer extends AbstractLayer {
 	}
 	
 	@Override
-	public void setLocation(Location location) {
+	public void setLocation(Location location, long serial) {
 	}
 	
 	@Override
@@ -22,11 +22,11 @@ public class FrameLayer extends AbstractLayer {
 	}
 
 	@Override
-	public void setRotation(float rotation) {	
+	public void setRotation(float rotation, long serial) {	
 	}
 	
 	@Override
-	public void setScale(float scale) {	
+	public void setScale(float scale, long serial) {	
 	}
 		
 }

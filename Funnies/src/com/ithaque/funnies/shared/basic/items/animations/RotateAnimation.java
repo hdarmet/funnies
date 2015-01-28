@@ -49,6 +49,10 @@ public class RotateAnimation extends SoftenAnimation {
 	public void setRotation(FactorFinder rotationFinder) {
 		this.rotationFinder = rotationFinder;
 	}
+
+	public void setRotation(float angle) {
+		this.newAngle = angle;
+	}
 	
 	public Float getRotation() {
 		return newAngle==null ? rotationFinder.find(getContext()) : newAngle;
@@ -56,13 +60,13 @@ public class RotateAnimation extends SoftenAnimation {
 	
 	@Override
 	public boolean executeAnimation(long time) {
-		getItem().setRotation(easing.getValue(baseAngle, targetAngle));
+		getItem().setRotation(easing.getValue(baseAngle, targetAngle), getUpdateSerial());
 		return true;
 	}
 
 	@Override
 	public void finish(long time) {
-		getItem().setRotation(getRotation());
+		getItem().setRotation(getRotation(), getUpdateSerial());
 		super.finish(time);
 	}
 

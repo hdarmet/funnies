@@ -40,14 +40,15 @@ public class MoveAnimation extends SoftenAnimation {
 		if (location!=null && getLocation()!=null) {
 			getItem().setLocation(
 				getEasing().getValue(baseLocation.getX(), destLocation.getX()),
-				getEasing().getValue(baseLocation.getY(), destLocation.getY()));
+				getEasing().getValue(baseLocation.getY(), destLocation.getY()), 
+				getUpdateSerial());
 		}
 		return true;
 	}
 
 	@Override
 	public void finish(long time) {
-		getItem().setLocation(getLocation());
+		getItem().setLocation(getLocation(), getUpdateSerial());
 		super.finish(time);
 	}
 	

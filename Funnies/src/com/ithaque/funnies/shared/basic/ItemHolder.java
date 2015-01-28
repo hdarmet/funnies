@@ -13,7 +13,7 @@ public interface ItemHolder extends Moveable {
 	void removeItem(Item item);
 	boolean contains(Item item);
 	int indexOfItem(Item item);
-	float getAbsoluteRotation();
-	float getAbsoluteScale();
+	float getDisplayRotation();
+	float getDisplayScale();
 	LayoutDevice getLayout();
 }

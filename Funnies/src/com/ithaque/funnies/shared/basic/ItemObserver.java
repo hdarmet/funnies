@@ -5,6 +5,7 @@ public interface ItemObserver {
 		LOCATION,
 		SCALE,
 		ROTATION,
+		OPACITY,
 		SHAPE,
 		PARENT,
 		ANCESTOR

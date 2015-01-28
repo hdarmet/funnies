@@ -40,13 +40,13 @@ public class DragAnimation extends SoftenAnimation {
 		if (result) {
 			if (getDragHolder() != null && getDragHolder()!=getItem().getParent()) {
 				float rotation = TransformUtil.transformRotation(getItem().getParent(), getDragHolder(), getItem().getRotation());
-				getItem().setRotation(rotation);
+				getItem().setRotation(rotation, getUpdateSerial());
 				float scale = TransformUtil.transformScale(getItem().getParent(), getDragHolder(), getItem().getScale());
-				getItem().setScale(scale);
-				getItem().changeParent(getDragHolder());
+				getItem().setScale(scale, getUpdateSerial());
+				getItem().setParent(getDragHolder(), getUpdateSerial());
 			}
 			this.baseLocation = TransformUtil.transformLocation(getItem().getParent(), getDragHolder(), getItem().getLocation());
-			getItem().setLocation(baseLocation);		
+			getItem().setLocation(baseLocation, getUpdateSerial());		
 			destLocation = getLocation();
 		}
 		return result;
@@ -65,14 +65,15 @@ public class DragAnimation extends SoftenAnimation {
 		if (location!=null && destLocation!=null) {
 			getItem().setLocation(
 				getEasing().getValue(baseLocation.getX(), destLocation.getX()),
-				getEasing().getValue(baseLocation.getY(), destLocation.getY()));
+				getEasing().getValue(baseLocation.getY(), destLocation.getY()),
+				getUpdateSerial());
 		}
 		return true;
 	}
 
 	@Override
 	public void finish(long time) {
-		getItem().setLocation(getLocation());
+		getItem().setLocation(getLocation(), getUpdateSerial());
 		super.finish(time);
 	}
 		

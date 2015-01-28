@@ -28,47 +28,47 @@ public class MultiLayered extends GroupItem implements BaseDevice {
 		}
 		
 		@Override
-		public void setScale(float scale) {
+		public void setScale(float scale, long serial) {
 			for (int i=0; i<MultiLayered.this.getItemCount(); i++) {
 				MultiLayer layer = (MultiLayer)MultiLayered.this.getItem(i);
-				layer.doSetScale(scale);
+				layer.doSetScale(scale, serial);
 			}
 		}
 
 		@Override
-		public void setRotation(float angle) {
+		public void setRotation(float angle, long serial) {
 			for (int i=0; i<MultiLayered.this.getItemCount(); i++) {
 				MultiLayer layer = (MultiLayer)MultiLayered.this.getItem(i);
-				layer.doSetRotation(angle);
+				layer.doSetRotation(angle, serial);
 			}
 		}
 
 		@Override
-		public void setLocation(Location location) {
+		public void setLocation(Location location, long serial) {
 			for (int i=0; i<MultiLayered.this.getItemCount(); i++) {
 				MultiLayer layer = (MultiLayer)MultiLayered.this.getItem(i);
-				layer.doSetLocation(location);
+				layer.doSetLocation(location, serial);
 			}
 		}
 		
 		@Override
-		public void setParent(ItemHolder itemHolder) {
+		public void doSetParent(ItemHolder itemHolder) {
 			if (!(itemHolder instanceof BaseDevice)) {
 				throw new IllegalInvokeException();
 			}
-			super.setParent(itemHolder);
+			super.doSetParent(itemHolder);
 		}
 		
-		void doSetScale(float scale) {
-			super.setScale(scale);
+		void doSetScale(float scale, long serial) {
+			super.setScale(scale, serial);
 		}
 
-		void doSetRotation(float angle) {
-			super.setRotation(angle);
+		void doSetRotation(float angle, long serial) {
+			super.setRotation(angle, serial);
 		}
 		
-		void doSetLocation(Location location) {
-			super.setLocation(location);
+		void doSetLocation(Location location, long serial) {
+			super.setLocation(location, serial);
 		}
 	};
 	

@@ -59,7 +59,7 @@ public abstract class AbstractDragProfile implements DragProfile {
 				dragged.setRotation(dragLayerRotation);
 				float dragLayerScale = TransformUtil.transformScale(dragged.getParent(), dragLayer, dragged.getScale());
 				dragged.setScale(dragLayerScale);
-				this.dragged.changeParent(dragLayer);
+				this.dragged.setParent(dragLayer);
 			}
 			launchDragAnimation(dragged);
 		}
@@ -145,7 +145,7 @@ public abstract class AbstractDragProfile implements DragProfile {
 			if (draggedHolder!=null) {
 				dragged.setRotation(draggedRotation);
 				dragged.setScale(draggedScale);
-				dragged.changeParent(draggedHolder);
+				dragged.setParent(draggedHolder);
 			}
 			dragged.setLocation(draggedLocation);
 		}
@@ -161,7 +161,7 @@ public abstract class AbstractDragProfile implements DragProfile {
 
 	protected boolean resolveDrop(MouseEvent event, Board board, ParallelAnimation animation) {
 		if (initialHolder!=null) {
-			dragged.changeParent(initialHolder);
+			dragged.setParent(initialHolder);
 		}
 		Location mouseLocation = DragProcessor.followMouse(event, dragged, anchor);
 		dragged.setLocation(mouseLocation);

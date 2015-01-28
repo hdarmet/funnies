@@ -9,8 +9,8 @@ public class Layer extends AbstractLayer implements LayoutDevice {
 	}
 	
 	@Override
-	public void setLocation(Location location) {
-		super.setLocation(location);
+	public void setLocation(Location location, long serial) {
+		super.setLocation(location, serial);
 		adjusted = false;
 	}
 

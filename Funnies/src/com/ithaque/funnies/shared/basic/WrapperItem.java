@@ -78,7 +78,7 @@ public class WrapperItem extends Item implements ItemHolder {
 			throw new IllegalInvokeException();
 		}
 		wrapped = item;
-		wrapped.setParent(this);
+		wrapped.doSetParent(this);
 		dirty();
 	}
 

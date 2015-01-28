@@ -41,7 +41,8 @@ public class DropAnimation extends SoftenAnimation {
 			if (getLocation()!=null) {
 				getItem().setLocation(
 					getEasing().getValue(baseLocation.getX(), destLocation.getX()),
-					getEasing().getValue(baseLocation.getY(), destLocation.getY()));
+					getEasing().getValue(baseLocation.getY(), destLocation.getY()), 
+					getUpdateSerial());
 			}
 		}
 		return true;
@@ -51,12 +52,12 @@ public class DropAnimation extends SoftenAnimation {
 	public void finish(long time) {
 		if (getDestinationHolder() != null && getDestinationHolder()!=getItem().getParent()) {
 			float rotation = getRotation();
-			getItem().setRotation(rotation);
+			getItem().setRotation(rotation, getUpdateSerial());
 			float scale = getScale();
-			getItem().setScale(scale);
-			getItem().changeParent(getDestinationHolder());
+			getItem().setScale(scale, getUpdateSerial());
+			getItem().setParent(getDestinationHolder(), getUpdateSerial());
 		}
-		getItem().setLocation(getLocation());
+		getItem().setLocation(getLocation(), getUpdateSerial());
 		super.finish(time);
 	}
 	

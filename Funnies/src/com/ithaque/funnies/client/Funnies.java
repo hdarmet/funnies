@@ -38,6 +38,7 @@ import com.ithaque.funnies.shared.basic.items.animations.FaceFadingAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.MoveAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.RotateAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.ScalingAnimation;
+import com.ithaque.funnies.shared.basic.items.animations.easing.LinearEasing;
 import com.ithaque.funnies.shared.basic.items.animations.easing.OutBackEasing;
 import com.ithaque.funnies.shared.basic.processors.AbstractDragProfile;
 import com.ithaque.funnies.shared.basic.processors.AbstractTargetedDragProfile;
@@ -71,7 +72,7 @@ public class Funnies implements EntryPoint {
 	private final GreetingServiceAsync greetingService = GWT
 			.create(GreetingService.class);
 
-	public void onxModuleLoad() {
+	public void onModuleLoad() {
 		GameBoardCircus gbc = new GameBoardCircus(new GWTTestPlatform(10), 1000.0f, 500.0f);
 		FunnyManager funnyManager = new FunnyManager(gbc);
 		gbc.init(funnyManager);
@@ -80,23 +81,20 @@ public class Funnies implements EntryPoint {
 	
 	Board board;
 	
-	public void onModuleLoad() {
+	public void onxModuleLoad() {
 		board = new Board(new GWTPlatform());
 		board.start();
 		
 		Layer layer = new Layer("layer", -500, -300, 500, 300);
 		board.addItem(layer);
 
-		ImageItem iitem = new ImageItem("hexagon.png");
-		layer.addItem(iitem);
-		iitem.addEventType(Type.MOUSE_DOWN);
-		
-		DragProcessor dragProcessor = new DragProcessor();
-		SimpleTargetedDragProfile profile = new SimpleTargetedDragProfile(board);
-//		profile.setDragLayer(dragLayer);
-		profile.addDraggeable(iitem);
-		dragProcessor.addDragProfile(profile);
-		board.addProcessor(dragProcessor);
+		ImageItem item = new ImageItem("hexagon.png");
+		layer.addItem(item);
+
+		MoveAnimation animation = new MoveAnimation(new LinearEasing(1000));
+		animation.setLocation(new Location(100, 100));
+		animation.setItem(item);
+		board.launchAnimation(animation);
 
 /*
 		iitem.addEventType(Type.MOUSE_CLICK);

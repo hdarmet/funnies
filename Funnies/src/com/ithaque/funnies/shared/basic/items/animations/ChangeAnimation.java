@@ -77,14 +77,14 @@ public class ChangeAnimation extends SoftenAnimation {
 		if (getLocation()!=null) {
 			getItem().setLocation(
 				getEasing().getValue(baseLocation.getX(), targetLocation.getX()),
-				getEasing().getValue(baseLocation.getY(), targetLocation.getY()));
+				getEasing().getValue(baseLocation.getY(), targetLocation.getY()), 
+				getUpdateSerial());
 		}
 		if (getRotation()!=null) {
-			System.out.println("rotate : "+(getEasing().getValue(baseRotation, targetRotation)));
-			getItem().setRotation(getEasing().getValue(baseRotation, targetRotation));
+			getItem().setRotation(getEasing().getValue(baseRotation, targetRotation), getUpdateSerial());
 		}
 		if (getScale()!=null) {
-			getItem().setScale(getEasing().getValue(baseScale, targetScale));
+			getItem().setScale(getEasing().getValue(baseScale, targetScale), getUpdateSerial());
 		}
 		return true;
 	}
@@ -92,16 +92,16 @@ public class ChangeAnimation extends SoftenAnimation {
 	@Override
 	public void finish(long time) {
 		if (getDestinationHolder() != null && getDestinationHolder()!=getItem().getParent()) {
-			getItem().changeParent(getDestinationHolder());
+			getItem().setParent(getDestinationHolder(), getUpdateSerial());
 		}
 		if (getLocation()!=null) {
-			getItem().setLocation(getLocation());
+			getItem().setLocation(getLocation(), getUpdateSerial());
 		}
 		if (getRotation()!=null) {
-			getItem().setRotation(getRotation());
+			getItem().setRotation(getRotation(), getUpdateSerial());
 		}
 		if (getScale()!=null) {
-			getItem().setScale(getScale());
+			getItem().setScale(getScale(), getUpdateSerial());
 		}
 		super.finish(time);
 	}

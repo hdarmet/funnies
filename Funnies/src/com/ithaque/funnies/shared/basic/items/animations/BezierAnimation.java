@@ -21,7 +21,7 @@ public class BezierAnimation extends MoveAnimation {
 	@Override
 	public boolean executeAnimation(long time) {
 		float pos = getEasing().getValue(0.0f, 1.0f);
-		getItem().setLocation(Geometric.getBezier(pos, baseLocation, points[0], getLocation()));
+		getItem().setLocation(Geometric.getBezier(pos, baseLocation, points[0], getLocation()), getUpdateSerial());
 		return true;
 	}
 

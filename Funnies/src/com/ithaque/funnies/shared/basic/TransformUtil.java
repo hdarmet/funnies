@@ -115,26 +115,27 @@ public class TransformUtil {
 	}
 
 	public static Float transformRotation(ItemHolder source, ItemHolder destination, Float rotation) {
-		return source.getAbsoluteRotation()-destination.getAbsoluteRotation()+rotation;
+		System.out.println(source.getDisplayRotation()+" "+destination.getDisplayRotation()+" "+rotation);
+		return source.getDisplayRotation()-destination.getDisplayRotation()+rotation;
 	}
 
 	public static Float transformScale(ItemHolder source, ItemHolder destination, Float scale) {
-		return source.getAbsoluteScale()/destination.getAbsoluteScale()*scale;
+		return source.getDisplayScale()/destination.getDisplayScale()*scale;
 	}
 
 	public static Float transformRotation(ItemHolder source, Float rotation) {
-		return source.getAbsoluteRotation()+rotation;
+		return source.getDisplayRotation()+rotation;
 	}
 
 	public static Float transformScale(ItemHolder source, Float scale) {
-		return source.getAbsoluteScale()*scale;
+		return source.getDisplayScale()*scale;
 	}
 	
 	public static Float transformAbsoluteRotation(ItemHolder destination, Float rotation) {
-		return rotation-destination.getAbsoluteRotation();
+		return rotation-destination.getDisplayRotation();
 	}
 
 	public static Float transformAbsoluteScale(ItemHolder destination, Float scale) {
-		return scale/destination.getAbsoluteScale();
+		return scale/destination.getDisplayScale();
 	}
 }

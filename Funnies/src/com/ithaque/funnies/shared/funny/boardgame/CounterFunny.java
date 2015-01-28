@@ -238,7 +238,7 @@ public class CounterFunny extends DecoratedFunny implements DraggableFunny, Rota
 
 	@Override
 	public Location getLocation() {
-		return counterStackItem.getAbsoluteLocation();
+		return counterStackItem.getDisplayLocation();
 	}
 
 	@Override

@@ -32,11 +32,11 @@ public abstract class AbstractLayer extends GroupItem implements LayoutDevice {
 	}
 	
 	@Override
-	public void setParent(ItemHolder itemHolder) {
+	public void doSetParent(ItemHolder itemHolder) {
 		if (!(itemHolder instanceof BaseDevice)) {
 			throw new IllegalInvokeException();
 		}
-		super.setParent(itemHolder);
+		super.doSetParent(itemHolder);
 	}
 	
 	@Override

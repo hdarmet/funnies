@@ -62,7 +62,7 @@ public class GroupItem extends Item implements ItemHolder {
 			throw new AlreadyAttachedItemException();
 		}
 		items.add(item);
-		item.setParent(this);
+		item.doSetParent(this);
 		dirty();
 	}
 	
@@ -72,7 +72,7 @@ public class GroupItem extends Item implements ItemHolder {
 		}
 		items.get(index).free();
 		items.add(index, item);
-		item.setParent(this);
+		item.doSetParent(this);
 		dirty();
 	}
 
@@ -81,7 +81,7 @@ public class GroupItem extends Item implements ItemHolder {
 			throw new AlreadyAttachedItemException();
 		}
 		items.add(index, item);
-		item.setParent(this);
+		item.doSetParent(this);
 		dirty();
 	}
 	

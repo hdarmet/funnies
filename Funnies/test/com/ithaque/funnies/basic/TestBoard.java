@@ -1,7 +1,5 @@
 package com.ithaque.funnies.basic;
 
-import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.ithaque.funnies.client.platform.gwt.test.TestImage;

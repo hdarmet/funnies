@@ -13,7 +13,7 @@ public class DecoratedItem extends GroupItem {
 	
 	public DecoratedItem(Item baseItem) {
 		this.baseItem = baseItem;
-		this.baseItem.setParent(this);
+		this.baseItem.doSetParent(this);
 	}
 	
 	@Override

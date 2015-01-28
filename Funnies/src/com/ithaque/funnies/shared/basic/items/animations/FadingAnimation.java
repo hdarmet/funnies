@@ -48,7 +48,7 @@ public class FadingAnimation extends SoftenAnimation {
 	}
 	
 	void setOpacity(float opacity) {
-		getItem().setOpacity(opacity);
+		getItem().setOpacity(opacity, getUpdateSerial());
 	}
 
 	public static class Builder extends SoftenAnimation.Builder {

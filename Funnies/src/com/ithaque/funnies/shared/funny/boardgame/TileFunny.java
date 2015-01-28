@@ -293,7 +293,7 @@ public class TileFunny extends DecoratedFunny implements DropTargetFunny, Tracka
 
 	@Override
 	public Location getLocation() {
-		return tileItem.getAbsoluteLocation();
+		return tileItem.getDisplayLocation();
 	}
 
 	@Override

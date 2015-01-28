@@ -4,8 +4,13 @@ public abstract class AbstractAnimation implements Animation {
 	
 	AnimationContext context;
 	boolean finished = false;
+	long updateSerial = Item.getUpdateSerial();
 	
 	public AbstractAnimation() {
+	}
+	
+	public long getUpdateSerial() {
+		return updateSerial;
 	}
 	
 	@Override
