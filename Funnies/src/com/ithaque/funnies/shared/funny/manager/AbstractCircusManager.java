@@ -5,13 +5,13 @@ import java.util.Map;
 
 import com.ithaque.funnies.shared.funny.Sketch;
 
-public abstract class AbstracCircusManager implements CircusManager {
+public abstract class AbstractCircusManager implements CircusManager {
 
 	Map<Class<? extends Notification>, Handler<? extends Notification>> handlers = 
 			new HashMap<Class<? extends Notification>, Handler<? extends Notification>>();
 		
 	public static abstract class Handler<T extends Notification> {
-		public Handler(Class<T> notificationClass, AbstracCircusManager manager) {
+		public Handler(Class<T> notificationClass, AbstractCircusManager manager) {
 			manager.handlers.put(notificationClass, this);
 		}
 

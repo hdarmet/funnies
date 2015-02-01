@@ -3,6 +3,7 @@ package com.ithaque.funnies.shared.basic.processors;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ithaque.funnies.shared.IllegalInvokeException;
 import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Event;
 import com.ithaque.funnies.shared.basic.Event.Type;
@@ -68,6 +69,9 @@ public class DragProcessor implements Processor {
 	}
 
 	public void removeDragProfile(DragProfile dragProfile) {
+		if (inDrag!=null) {
+			throw new IllegalInvokeException();
+		}
 		dragProfiles.remove(dragProfile);
 	}
 	

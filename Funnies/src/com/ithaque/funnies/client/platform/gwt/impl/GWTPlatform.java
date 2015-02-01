@@ -7,8 +7,8 @@ import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.Timer;
 import com.ithaque.funnies.client.platform.gwt.AbstractGWTPlatform;
 import com.ithaque.funnies.client.platform.gwt.CanvasInterface;
-import com.ithaque.funnies.client.platform.gwt.GWTGraphics;
-import com.ithaque.funnies.client.platform.gwt.GWTGraphics.ImageElementRecord;
+import com.ithaque.funnies.client.platform.gwt.GraphicsImpl;
+import com.ithaque.funnies.client.platform.gwt.GraphicsImpl.ImageElementRecord;
 import com.ithaque.funnies.client.platform.gwt.ImageInterface;
 import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.Board;
@@ -49,7 +49,7 @@ public class GWTPlatform extends AbstractGWTPlatform {
 
 	@Override
 	public ImageInterface createImage(final String url, final ImageElementRecord record) {
-		return new GWTImage(url, (GWTGraphics)getGraphics(), record);
+		return new GWTImage(url, (GraphicsImpl)getGraphics(), record);
 	}
 	
 

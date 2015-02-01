@@ -174,12 +174,12 @@ public class ToolbarFunny extends AbstractFunny implements FunnyObserver {
 			positionManager.getAnchorY(this));
 		((TooledRing)ring).getToolSupport().addItem(background);
 		((TooledRing)ring).getToolSupport().addItem(toolbarItem);
-		setBackgroundLayout(currentFactor);
+		setBackgroundLayout(currentFactor, Item.getUpdateSerial());
 	}
 
-	private void setBackgroundLayout(float factor) {
+	private void setBackgroundLayout(float factor, long serial) {
 		background.setLocation(getBackgroundLocation(factor));
-		background.setShape(getBackgroundShape(factor));
+		background.setShape(serial, getBackgroundShape(factor));
 	}
 	
 	@Override
@@ -326,7 +326,7 @@ public class ToolbarFunny extends AbstractFunny implements FunnyObserver {
 				item.setLocation(location);
 			}
 		}
-		setBackgroundLayout(currentFactor);
+		setBackgroundLayout(currentFactor, Item.getUpdateSerial());
 	}
 	
 	void adjustLayout() {
@@ -691,7 +691,7 @@ public class ToolbarFunny extends AbstractFunny implements FunnyObserver {
 		@Override
 		protected boolean executeAnimation(long time) {
 			toolbar.currentFactor = getEasing().getValue(base, target);
-			toolbar.setBackgroundLayout(toolbar.currentFactor);
+			toolbar.setBackgroundLayout(toolbar.currentFactor, getUpdateSerial());
 			return true;
 		}
 		

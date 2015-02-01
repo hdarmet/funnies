@@ -58,19 +58,9 @@ import com.ithaque.funnies.shared.funny.boardgame.GameBoardCircus;
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class Funnies implements EntryPoint {
-	/**
-	 * The message displayed to the user when the server cannot be reached or
-	 * returns an error.
-	 */
-	private static final String SERVER_ERROR = "An error occurred while "
-			+ "attempting to contact the server. Please check your network "
-			+ "connection and try again.";
 
-	/**
-	 * Create a remote service proxy to talk to the server-side Greeting service.
-	 */
-	private final GreetingServiceAsync greetingService = GWT
-			.create(GreetingService.class);
+	private final FunnyServiceAsync greetingService = GWT
+			.create(FunnyService.class);
 
 	public void onModuleLoad() {
 		GameBoardCircus gbc = new GameBoardCircus(new GWTTestPlatform(10), 1000.0f, 500.0f);
@@ -446,26 +436,14 @@ public class Funnies implements EntryPoint {
 				sendButton.setEnabled(false);
 				textToServerLabel.setText(textToServer);
 				serverResponseLabel.setText("");
-				greetingService.greetServer(textToServer,
-						new AsyncCallback<String>() {
+				greetingService.invoke(null,
+						new AsyncCallback<Response>() {
 							public void onFailure(Throwable caught) {
-								// Show the RPC error message to the user
-								dialogBox
-										.setText("Remote Procedure Call - Failure");
-								serverResponseLabel
-										.addStyleName("serverResponseLabelError");
-								serverResponseLabel.setHTML(SERVER_ERROR);
-								dialogBox.center();
-								closeButton.setFocus(true);
+								
 							}
 
-							public void onSuccess(String result) {
-								dialogBox.setText("Remote Procedure Call");
-								serverResponseLabel
-										.removeStyleName("serverResponseLabelError");
-								serverResponseLabel.setHTML(result);
-								dialogBox.center();
-								closeButton.setFocus(true);
+							public void onSuccess(Response result) {
+								
 							}
 						});
 			}

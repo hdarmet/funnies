@@ -142,12 +142,12 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 			if (acceptTarget(dragged, aTarget)) {
 				Animation.Factory aTargetAnimation = getHideAllowedTargetAnimation(aTarget);
 				if (aTargetAnimation != null) {
-					if (getHilightItem(aTarget)==target && targetAnimation!=null) {
+					if (getHighlightItem(aTarget)==target && targetAnimation!=null) {
 						targetAnimation.addAnimation(aTargetAnimation.create());
 					}
 					else {
 						Animation animation = aTargetAnimation.create();
-						otherTarget = getHilightItem(aTarget);
+						otherTarget = getHighlightItem(aTarget);
 						animation.setContext(retrieveAnimationContext());
 						getBoard().launchAnimation(animation);
 					}
@@ -162,7 +162,7 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 				Animation.Factory targetAnimationFactory = getShowAllowedTargetAnimation(target);
 				if (targetAnimationFactory != null) {
 					Animation targetAnimation = targetAnimationFactory.create();
-					otherTarget = getHilightItem(target);
+					otherTarget = getHighlightItem(target);
 					targetAnimation.setContext(retrieveAnimationContext());
 					getBoard().launchAnimation(targetAnimation);
 				}
@@ -170,7 +170,7 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 		}
 	}
 	
-	protected Item getHilightItem(Item target) {
+	protected Item getHighlightItem(Item target) {
 		return target;
 	}
 	

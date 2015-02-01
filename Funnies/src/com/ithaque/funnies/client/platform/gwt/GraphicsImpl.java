@@ -16,20 +16,20 @@ import com.ithaque.funnies.shared.basic.Token;
 import com.ithaque.funnies.shared.basic.TransformUtil;
 import com.ithaque.funnies.shared.basic.items.AbstractImageItem;
 
-public class GWTGraphics implements Graphics {
+public class GraphicsImpl implements Graphics {
 
 	AbstractGWTPlatform platform;
 	int tokenCount = 0;
 	Context2D context2d;
 	Map<String, Token> imageTokens = new HashMap<String, Token>();
 	Map<Token, ImageElementRecord> imageElements = new HashMap<Token, ImageElementRecord>();
-	GWTLayer currentLayer;
-	Map<Token, GWTLayer> layerMap = new HashMap<Token, GWTLayer>();
+	LayerImpl currentLayer;
+	Map<Token, LayerImpl> layerMap = new HashMap<Token, LayerImpl>();
 	int layerTokenGenerator = 0;
 	
 	boolean debug = false;
 	
-	public GWTGraphics(AbstractGWTPlatform platform) {
+	public GraphicsImpl(AbstractGWTPlatform platform) {
 		this.platform = platform;
 		Graphics.Singleton.setGraphics(this);
 	}
@@ -142,9 +142,11 @@ public class GWTGraphics implements Graphics {
     		Trace.debug("loaded : "+url);
     	}
     	record.ready = true;
-    	for (DrawImageRequest request : new ArrayList<DrawImageRequest>(record.requests)) {
-    		request.getImageItem().dirty();
-    	}
+    	if (record.requests!=null) {
+	    	for (DrawImageRequest request : new ArrayList<DrawImageRequest>(record.requests)) {
+	    		request.getImageItem().dirty();
+	    	}
+	    }
 	}
 	
 	@Override
@@ -284,7 +286,7 @@ public class GWTGraphics implements Graphics {
 	@Override
 	public Token createLayer() {
 		Token token = new Token(layerTokenGenerator++);
-		GWTLayer layer = new GWTLayer(platform);
+		LayerImpl layer = new LayerImpl(platform);
 		layerMap.put(token, layer);
 		if (currentLayer==null) {
 			currentLayer = layer;
@@ -306,7 +308,7 @@ public class GWTGraphics implements Graphics {
 
 	@Override
 	public void show() { 
-		for (GWTLayer layer : layerMap.values()) {
+		for (LayerImpl layer : layerMap.values()) {
 			layer.show();
 		}
 	}

@@ -1,6 +1,6 @@
 package com.ithaque.funnies.client.platform.gwt;
 
-import com.ithaque.funnies.client.platform.gwt.GWTGraphics.ImageElementRecord;
+import com.ithaque.funnies.client.platform.gwt.GraphicsImpl.ImageElementRecord;
 import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Event;
 import com.ithaque.funnies.shared.basic.Graphics;
@@ -9,7 +9,7 @@ import com.ithaque.funnies.shared.basic.Token;
 
 public abstract class AbstractGWTPlatform implements Platform {
 
-	GWTGraphics graphics = new GWTGraphics(this);
+	GraphicsImpl graphics = new GraphicsImpl(this);
 	Board board;
 	
 	@Override
@@ -24,10 +24,12 @@ public abstract class AbstractGWTPlatform implements Platform {
 	    return token;
 	}
 
-	public void process(long time) {
+	public boolean process(long time) {
     	board.alarm(time);
     	board.animate(time);
+    	boolean dirty = board.isDirty();
     	board.render();
+    	return dirty;
 	}
 	
 	public void sendEvent(Event event) {

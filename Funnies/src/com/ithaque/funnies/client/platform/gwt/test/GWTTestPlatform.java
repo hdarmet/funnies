@@ -5,8 +5,8 @@ import java.util.Date;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.user.client.Random;
 import com.ithaque.funnies.client.platform.gwt.CanvasInterface;
-import com.ithaque.funnies.client.platform.gwt.GWTGraphics;
-import com.ithaque.funnies.client.platform.gwt.GWTGraphics.ImageElementRecord;
+import com.ithaque.funnies.client.platform.gwt.GraphicsImpl;
+import com.ithaque.funnies.client.platform.gwt.GraphicsImpl.ImageElementRecord;
 import com.ithaque.funnies.client.platform.gwt.ImageInterface;
 import com.ithaque.funnies.client.platform.gwt.impl.GWTPlatform;
 import com.ithaque.funnies.shared.basic.Board;
@@ -38,16 +38,17 @@ public class GWTTestPlatform extends GWTPlatform {
 	}
 	
 	@Override
-	public void process(long time) 
+	public boolean process(long time) 
 	{
 		if (frameNumber==currentFrameNumber) {
 			TestRegistry.reset();
 		}
-		super.process(time);
+		boolean dirty = super.process(time);
 		if (frameNumber==currentFrameNumber) {
 			TestRegistry.dump();
 		}
 		currentFrameNumber++;
+		return dirty;
 	};
 	
 	@Override
@@ -72,7 +73,7 @@ public class GWTTestPlatform extends GWTPlatform {
 
 	@Override
 	public ImageInterface createImage(final String url, final ImageElementRecord record) {
-		return new GWTTestImage(url, (GWTGraphics)getGraphics(), record);
+		return new GWTTestImage(url, (GraphicsImpl)getGraphics(), record);
 	}
 	
 

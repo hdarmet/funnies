@@ -59,7 +59,7 @@ public class CircusDnDProfile extends AbstractTargetedDragProfile {
 	}
 	
 	@Override
-	protected Item getHilightItem(Item target) {
+	protected Item getHighlightItem(Item target) {
 		DropTargetFunny funny = getDropTargetFunny(target);
 		return funny.getHilightItem(target);
 	}

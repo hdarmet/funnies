@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.ithaque.funnies.client.platform.gwt.AbstractGWTPlatform;
 import com.ithaque.funnies.client.platform.gwt.CanvasInterface;
-import com.ithaque.funnies.client.platform.gwt.GWTGraphics;
-import com.ithaque.funnies.client.platform.gwt.GWTGraphics.ImageElementRecord;
+import com.ithaque.funnies.client.platform.gwt.GraphicsImpl;
+import com.ithaque.funnies.client.platform.gwt.GraphicsImpl.ImageElementRecord;
 import com.ithaque.funnies.client.platform.gwt.ImageInterface;
 import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Event;
@@ -22,9 +22,9 @@ public class TestPlatform extends AbstractGWTPlatform {
 	List<Float> randoms = new ArrayList<Float>();
 
 	@Override
-	public void process(long time) {
+	public boolean process(long time) {
 		now = time;
-		super.process(time);
+		return super.process(time);
 	}
 	
 	@Override
@@ -61,7 +61,7 @@ public class TestPlatform extends AbstractGWTPlatform {
 	@Override
 	public ImageInterface createImage(final String url, final ImageElementRecord record) {
 		TestRegistry.addCall("Platform", "0", "createImage", url);
-		return new TestImage(url, (GWTGraphics)getGraphics(), record);
+		return new TestImage(url, (GraphicsImpl)getGraphics(), record);
 	}
 	
 	public void click(int x, int y, Button button, boolean shiftKey, boolean ctrlKey, boolean altKey) {

@@ -19,7 +19,7 @@ public class TestContext2D implements Context2D {
 
 	@Override
 	public void setTransform(float m11, float m12, float m21, float m22, float dx, float dy) {
-		TestRegistry.addCall("Context2D", id, "setTrandform", ""+m11, ""+m12, ""+m21, ""+m22, ""+dx, ""+dy);
+		TestRegistry.addCall("Context2D", id, "setTransform", ""+m11, ""+m12, ""+m21, ""+m22, ""+dx, ""+dy);
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class TestContext2D implements Context2D {
 			int sx, int sy, int sw, int sh, 
 			int dx, int dy, int dw, int dh) 
 	{
-		TestRegistry.addCall("Context2D", id, "drawImage", ""+sx, ""+sy, ""+sw, ""+sh, ""+dx, ""+dy, ""+dw, ""+dh);
+		TestRegistry.addCall("Context2D", id, "drawImage", ((TestImage)image).getUrl(), ""+sx, ""+sy, ""+sw, ""+sh, ""+dx, ""+dy, ""+dw, ""+dh);
 	}
 
 	@Override

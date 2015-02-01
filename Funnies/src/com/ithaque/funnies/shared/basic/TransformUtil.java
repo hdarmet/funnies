@@ -115,7 +115,6 @@ public class TransformUtil {
 	}
 
 	public static Float transformRotation(ItemHolder source, ItemHolder destination, Float rotation) {
-		System.out.println(source.getDisplayRotation()+" "+destination.getDisplayRotation()+" "+rotation);
 		return source.getDisplayRotation()-destination.getDisplayRotation()+rotation;
 	}
 

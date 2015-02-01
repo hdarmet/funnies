@@ -28,6 +28,10 @@ public class Board implements BaseDevice, LayoutDevice {
 		this.dirty = true;
 	}
 	
+	public boolean isDirty() {
+		return this.dirty;
+	}
+	
 	public Graphics getGraphics() {
 		return platform.getGraphics();
 	}
@@ -128,7 +132,7 @@ public class Board implements BaseDevice, LayoutDevice {
 			throw new ItemNotAttachedException();
 		}
 		items.remove(item);
-		item.doSetParent(this);
+		item.removeFromParent();
 		dirty();
 	}
 

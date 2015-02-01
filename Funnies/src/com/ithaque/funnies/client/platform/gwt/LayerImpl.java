@@ -1,13 +1,11 @@
 package com.ithaque.funnies.client.platform.gwt;
 
-
-
-public class GWTLayer {
+public class LayerImpl {
 	CanvasInterface canvas;
 	CanvasInterface flipCanvas;
 	CanvasInterface flopCanvas;
 	
-	public GWTLayer(AbstractGWTPlatform platform) {
+	public LayerImpl(AbstractGWTPlatform platform) {
 	    canvas = flipCanvas = platform.createCanvas(true);
 	    flopCanvas = platform.createCanvas(false);
 	}

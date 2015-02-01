@@ -136,5 +136,23 @@ public class Geometric {
 		}
 		return targetAngle;
 	}
+
+	public static boolean compareShape(Location[] shape1, Location[] shape2) {
+		if (shape1==shape2) {
+			return true;
+		}
+		if (shape1==null || shape2==null) {
+			return false;
+		}
+		if (shape1.length != shape2.length) {
+			return false;
+		}
+		for (int index=0; index<shape1.length; index++) {
+			if (!shape1[index].equals(shape2[index])) {
+				return false;
+			}
+		}
+		return true;
+	}
 	
 }

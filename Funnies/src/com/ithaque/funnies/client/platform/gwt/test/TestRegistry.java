@@ -37,7 +37,7 @@ public class TestRegistry {
 					params.append(parameters[index]);
 				}
 			}
-			return rank+":"+clazz+"["+id+"]."+method+"("+params+")";
+			return clazz+"["+id+"]."+method+"("+params+")";
 		}
 		
 	}

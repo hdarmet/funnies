@@ -68,19 +68,27 @@ public class ScalingAnimation extends SoftenAnimation {
 	}
 	
 	public static class Builder extends SoftenAnimation.Builder {
-		Float newScale;
-		FactorFinder scaleFinder;
+		Float newScale = null;
+		FactorFinder scaleFinder = null;
 		
 		public Builder(Easing.Factory easing, Float newScale) {
 			super(easing);
 			this.newScale = newScale;
 		}
 
+		public Builder(Easing.Factory easing) {
+			super(easing);
+		}
+
+		public Builder(long duration) {
+			this(new SineInOutEasing.Builder(duration));
+		}
+
 		public Builder(long duration, Float newScale) {
 			this(new SineInOutEasing.Builder(duration), newScale);
 		}
 		
-		public Builder setScale(FactorFinder scaleFinder) {
+		public Builder setScaling(FactorFinder scaleFinder) {
 			this.scaleFinder = scaleFinder;
 			return this;
 		}

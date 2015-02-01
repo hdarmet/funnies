@@ -40,13 +40,12 @@ public class Location {
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof Location))
 			return false;
 		Location other = (Location) obj;
-		if (Float.floatToIntBits(x) != Float.floatToIntBits(other.x))
+		if (other.x!=x || other.y!=y) {
 			return false;
-		if (Float.floatToIntBits(y) != Float.floatToIntBits(other.y))
-			return false;
+		}
 		return true;
 	}
 	

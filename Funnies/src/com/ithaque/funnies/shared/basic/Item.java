@@ -127,9 +127,11 @@ public class Item implements Moveable {
 	public void setOpacity(float opacity, long serial) {
 		if (opacitySerial<=serial) {
 			opacitySerial = serial;
-			this.opacity = opacity;
-			fire(ChangeType.OPACITY);
-			dirty();
+			if (opacity!=this.opacity) {
+				this.opacity = opacity;
+				fire(ChangeType.OPACITY);
+				dirty();
+			}
 		}
 	}
 
@@ -153,9 +155,11 @@ public class Item implements Moveable {
 	public void setLocation(Location location, long serial) {
 		if (locationSerial<=serial) {
 			locationSerial = serial;
-			this.location = location;
-			fire(ChangeType.LOCATION);
-			dirty();
+			if (!location.equals(this.location)) {
+				this.location = location;
+				fire(ChangeType.LOCATION);
+				dirty();
+			}
 		}
 	}
 	
@@ -171,9 +175,11 @@ public class Item implements Moveable {
 	public void setScale(float scale, long serial) {
 		if (scaleSerial<=serial) {
 			scaleSerial = serial;
-			this.scale = scale;
-			fire(ChangeType.SCALE);
-			dirty();
+			if (scale!=this.scale) {
+				this.scale = scale;
+				fire(ChangeType.SCALE);
+				dirty();
+			}
 		}
 	}
 
@@ -189,9 +195,11 @@ public class Item implements Moveable {
 	public void setRotation(float rotation, long serial) {
 		if (rotationSerial<=serial) {
 			rotationSerial = serial;
-			this.rotation = Geometric.adjustAngle(rotation);
-			fire(ChangeType.ROTATION);
-			dirty();
+			if (rotation!=this.rotation) {
+				this.rotation = Geometric.adjustAngle(rotation);
+				fire(ChangeType.ROTATION);
+				dirty();
+			}
 		}
 	}
 	
@@ -270,13 +278,26 @@ public class Item implements Moveable {
 	}
 	
 	public void setShape(Location ... shape) {
-		this.shape = shape;
-		fire(ChangeType.SHAPE);
-		dirty();
+		setShape(Item.getUpdateSerial(), shape);
+	}
+
+	public void setShape(long serial, Location ... shape) {
+		if (shapeSerial<=serial) {
+			shapeSerial = serial;
+			if (!Geometric.compareShape(shape, this.shape)) {
+				this.shape = shape;
+				fire(ChangeType.SHAPE);
+				dirty();
+			}
+		}
 	}
 	
 	public void setShape(float ... coords) {
-		setShape(buildShape(coords));
+		setShape(Item.getUpdateSerial(), coords);
+	}
+
+	public void setShape(long serial, float ... coords) {
+		setShape(serial, buildShape(coords));
 	}
 
 	public static Location[] buildShape(float... coords) {

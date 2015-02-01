@@ -16,7 +16,7 @@ import com.ithaque.funnies.shared.funny.boardgame.EphemeralFunny;
 import com.ithaque.funnies.shared.funny.boardgame.GameBoardRing;
 import com.ithaque.funnies.shared.funny.boardgame.MessageFunny;
 import com.ithaque.funnies.shared.funny.boardgame.TileFunny;
-import com.ithaque.funnies.shared.funny.manager.AbstracCircusManager;
+import com.ithaque.funnies.shared.funny.manager.AbstractCircusManager;
 import com.ithaque.funnies.shared.funny.notifications.AcceptDropTargetQuestion;
 import com.ithaque.funnies.shared.funny.notifications.AcceptRotatableQuestion;
 import com.ithaque.funnies.shared.funny.notifications.AcceptRotationQuestion;
@@ -25,7 +25,7 @@ import com.ithaque.funnies.shared.funny.notifications.DropEvent;
 import com.ithaque.funnies.shared.funny.standard.CommandFunny;
 import com.ithaque.funnies.shared.funny.standard.PanelFunny;
 
-public class FunnyManager extends AbstracCircusManager {
+public class FunnyManager extends AbstractCircusManager {
 
 	TileFunny lastTarget = null;
 	Circus circus;
@@ -36,7 +36,7 @@ public class FunnyManager extends AbstracCircusManager {
 	CounterFunny counter1;
 	CounterFunny counter2;
 	
-	AbstracCircusManager.Handler<DropEvent> dropHandler = 
+	AbstractCircusManager.Handler<DropEvent> dropHandler = 
 		new Handler<DropEvent>(DropEvent.class, this) {
 		@Override
 		public Sketch process(DropEvent dropRequest) {
@@ -54,7 +54,7 @@ public class FunnyManager extends AbstracCircusManager {
 
 	int tryCount = 0;
 	
-	AbstracCircusManager.Handler<ActivateEvent> activateHandler = 
+	AbstractCircusManager.Handler<ActivateEvent> activateHandler = 
 		new Handler<ActivateEvent>(ActivateEvent.class, this) {
 		@Override
 		public Sketch process(ActivateEvent activateRequest) {
@@ -70,7 +70,7 @@ public class FunnyManager extends AbstracCircusManager {
 		}
 	};
 		
-	AbstracCircusManager.Handler<AcceptDropTargetQuestion> acceptDropTargetHandler = 
+	AbstractCircusManager.Handler<AcceptDropTargetQuestion> acceptDropTargetHandler = 
 		new Handler<AcceptDropTargetQuestion>(AcceptDropTargetQuestion.class, this) {
 		@Override
 		public Sketch process(AcceptDropTargetQuestion adtQuestion) {
@@ -81,7 +81,7 @@ public class FunnyManager extends AbstracCircusManager {
 		}
 	};
 
-	AbstracCircusManager.Handler<AcceptRotatableQuestion> acceptRotatableHandler = 
+	AbstractCircusManager.Handler<AcceptRotatableQuestion> acceptRotatableHandler = 
 		new Handler<AcceptRotatableQuestion>(AcceptRotatableQuestion.class, this) {
 		@Override
 		public Sketch process(AcceptRotatableQuestion arQuestion) {
@@ -90,7 +90,7 @@ public class FunnyManager extends AbstracCircusManager {
 		}
 	};
 
-	AbstracCircusManager.Handler<AcceptRotationQuestion> acceptRotationHandler = 
+	AbstractCircusManager.Handler<AcceptRotationQuestion> acceptRotationHandler = 
 		new Handler<AcceptRotationQuestion>(AcceptRotationQuestion.class, this) {
 		@Override
 		public Sketch process(AcceptRotationQuestion arQuestion) {
