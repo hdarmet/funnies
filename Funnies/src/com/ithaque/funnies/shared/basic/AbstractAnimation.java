@@ -14,7 +14,7 @@ public abstract class AbstractAnimation implements Animation {
 	}
 	
 	@Override
-	public final boolean animate(long time) {
+	public boolean animate(long time) {
 		if (!isFinished()) {
 			if (time+Animation.INTERVAL>=getEndTime()) {
 				return false;
@@ -25,7 +25,7 @@ public abstract class AbstractAnimation implements Animation {
 		}
 		return false;
 	}
-
+	
 	protected abstract boolean executeAnimation(long time);
 
 	@Override
@@ -55,6 +55,7 @@ public abstract class AbstractAnimation implements Animation {
 	@Override
 	public void reset() {
 		finished = false;
+		updateSerial = Item.getUpdateSerial();
 	}
 	
 	public abstract long getEndTime();

@@ -8,7 +8,6 @@ import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
-import java.awt.image.BufferedImage;
 import java.awt.image.VolatileImage;
 
 import com.ithaque.funnies.client.platform.gwt.Context2D;

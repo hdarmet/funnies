@@ -5,4 +5,6 @@ import com.ithaque.funnies.shared.basic.Item;
 public interface ActivableFunny extends Funny {
 
 	Item[] getActivableItems();
+	
+	void activate(Item activated);
 }

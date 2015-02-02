@@ -1,36 +1,28 @@
 package com.ithaque.funnies.shared.basic.items.animations;
 
-import com.ithaque.funnies.shared.Trace;
-import com.ithaque.funnies.shared.basic.AbstractAnimation;
-import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.AnimationContext.MoveableFinder;
+import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.items.animations.easing.LinearEasing;
 
-public abstract class SoftenAnimation extends AbstractAnimation {
+public abstract class SoftenAnimation extends ItemAnimation {
 
 	public static final long INTERVAL = 40;
-	
-	Item item;
+
 	Easing easing;
-	MoveableFinder itemFinder = null;
 
 	public SoftenAnimation(Easing easing) {
 		this.easing = easing;
-	}
-	
-	public void setItem(MoveableFinder itemFinder) {
-		this.itemFinder = itemFinder;
 	}
 
 	@Override
 	public boolean start(long time) {
 		if (super.start(time)) {
-			if (Trace.debug) {
-				Trace.debug("Item : "+getItem()+" "+itemFinder+" "+item+" "+this);
+			Board board = getItem().getBoard();
+			if (board!=null) {
+				this.easing.launch(board);
+				return true;
 			}
-			this.easing.launch(getItem().getBoard());
-			return true;
 		}
 		return false;
 	}
@@ -40,12 +32,7 @@ public abstract class SoftenAnimation extends AbstractAnimation {
 	}
 	
 	public SoftenAnimation setItem(Item item) {
-		this.item = item;
-		return this;
-	}
-	
-	public Item getItem() {
-		return item==null ? (Item)itemFinder.find(getContext()) : item;
+		return (SoftenAnimation)super.setItem(item);
 	}
 
 	public long getDuration() {
@@ -56,32 +43,24 @@ public abstract class SoftenAnimation extends AbstractAnimation {
 		return getEasing().getEndTime();
 	}
 	
-	public static abstract class Builder implements Animation.Factory {
+	public static abstract class Builder extends ItemAnimation.Builder {
 		Easing.Factory easing;
-		MoveableFinder itemFinder;
 		
 		public Builder(Easing.Factory easing) {
 			super();
 			this.easing = easing;
 		}
 
-		public Builder setItem(MoveableFinder itemFinder) {
-			this.itemFinder = itemFinder;
-			return this;
-		}
-
 		public Builder(long duration) {
 			this(new LinearEasing.Builder(duration));
 		}
 
-		protected void prepare(SoftenAnimation animation) {
-			if (itemFinder!=null) {
-				animation.setItem(itemFinder);
-			}
-		}
-
 		protected Easing.Factory getEasing() {
 			return easing;
+		}
+
+		public Builder setItem(MoveableFinder finder) {
+			return (Builder)super.setItem(finder);
 		}
 		
 		public abstract SoftenAnimation create();

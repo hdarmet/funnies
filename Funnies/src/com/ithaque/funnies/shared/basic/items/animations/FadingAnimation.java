@@ -1,5 +1,6 @@
 package com.ithaque.funnies.shared.basic.items.animations;
 
+import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.items.animations.easing.SineInOutEasing;
 
 public class FadingAnimation extends SoftenAnimation {
@@ -14,6 +15,10 @@ public class FadingAnimation extends SoftenAnimation {
 	
 	public FadingAnimation(long duration, Float targetOpacity) {
 		this(new SineInOutEasing(duration), targetOpacity);
+	}
+	
+	public FadingAnimation setItem(Item item) {
+		return (FadingAnimation)super.setItem(item);
 	}
 	
 	@Override

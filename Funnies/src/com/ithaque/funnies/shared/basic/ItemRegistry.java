@@ -1,6 +1,7 @@
 package com.ithaque.funnies.shared.basic;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -12,6 +13,7 @@ import com.ithaque.funnies.shared.basic.Event.Type;
 public class ItemRegistry {
 	LayoutDevice layoutDevice;
 	Map<Event.Type, Set<Item>> events = new HashMap<Event.Type, Set<Item>>();
+	boolean enabled = true;
 
 	public ItemRegistry(LayoutDevice device) {
 		this.layoutDevice = device;
@@ -44,6 +46,9 @@ public class ItemRegistry {
 	}
 
 	public Item getMouseTarget(MouseEvent event) {
+		if (!enabled) {
+			return null;
+		}
 		ItemComparator itemComparator = new ItemComparator();
 		Item target = null;
 		for (Item item : getTargetItems(event.getType())) {
@@ -62,6 +67,9 @@ public class ItemRegistry {
 	}
 	
 	public Collection<Item> getMouseTargets(MouseEvent event) {
+		if (!enabled) {
+			return Collections.emptyList();
+		}
 		Set<Item> targets = new HashSet<Item>();
 		for (Item item : getTargetItems(event.getType())) {
 			if (item.acceptEvent(event)) {
@@ -87,4 +95,15 @@ public class ItemRegistry {
 		return registry;
 	}
 
+	public void enable() {
+		enabled = true;
+	}
+	
+	public void disable() {
+		enabled = false;
+	}
+	
+	public boolean isEnabled() {
+		return enabled;
+	}
 }

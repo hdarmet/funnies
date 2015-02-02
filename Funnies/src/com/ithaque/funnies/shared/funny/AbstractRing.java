@@ -1,5 +1,6 @@
 package com.ithaque.funnies.shared.funny;
 
+import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.Layer;
@@ -26,7 +27,7 @@ public abstract class AbstractRing implements Ring {
 		circus.board.addItem(layer);
 	}
 	
-	protected Board getBoard() {
+	public Board getBoard() {
 		return circus.board;
 	}
 	
@@ -59,5 +60,10 @@ public abstract class AbstractRing implements Ring {
 	@Override
 	public float getHeight() {
 		return height;
+	}
+	
+	@Override
+	public void launch(Animation animation) {
+		getBoard().launchAnimation(animation);
 	}
 }

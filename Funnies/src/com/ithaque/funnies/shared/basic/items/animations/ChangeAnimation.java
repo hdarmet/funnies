@@ -226,7 +226,7 @@ public class ChangeAnimation extends SoftenAnimation {
 		}
 
 		@Override
-		protected void prepare(SoftenAnimation animation) {
+		protected void prepare(ItemAnimation animation) {
 			super.prepare(animation);
 			ChangeAnimation changeAnim = (ChangeAnimation)animation;
 			if (location!=null) {

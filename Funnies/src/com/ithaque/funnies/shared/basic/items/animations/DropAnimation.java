@@ -155,7 +155,7 @@ public class DropAnimation extends SoftenAnimation {
 		}
 
 		@Override
-		protected void prepare(SoftenAnimation animation) {
+		protected void prepare(ItemAnimation animation) {
 			DropAnimation dropAnimation = (DropAnimation)animation;
 			super.prepare(animation);
 			if (location!=null) {

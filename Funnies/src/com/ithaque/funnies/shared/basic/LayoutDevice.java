@@ -12,5 +12,11 @@ public interface LayoutDevice extends ItemHolder, Device {
 
 	void unregisterEvent(Item item, Event.Type eventType);
 	
-	public Item getMouseTarget(MouseEvent event);
+	void enable();
+	
+	void disable();
+	
+	boolean isEnabled();
+	
+	Item getMouseTarget(MouseEvent event);
 }

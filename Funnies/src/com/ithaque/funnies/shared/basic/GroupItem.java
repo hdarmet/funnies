@@ -113,7 +113,7 @@ public class GroupItem extends Item implements ItemHolder {
 	public void registerOnLayout(LayoutDevice newLayout) {
 		super.registerOnLayout(newLayout);
 		for (Item item : items) {
-			item.registerOnLayout(newLayout);
+			item.registerOnLayout(getChildrenLayout(newLayout));
 		}
 	}
 
@@ -121,10 +121,14 @@ public class GroupItem extends Item implements ItemHolder {
 	public void unregisterOnLayout(LayoutDevice oldLayout) {
 		super.unregisterOnLayout(oldLayout);
 		for (Item item : items) {
-			item.unregisterOnLayout(oldLayout);
+			item.unregisterOnLayout(getChildrenLayout(oldLayout));
 		}
 	}
 	
+	protected LayoutDevice getChildrenLayout(LayoutDevice layout) {
+		return layout;
+	}
+
 	@Override
 	public int indexOfItem(Item item) {
 		return items.indexOf(item);

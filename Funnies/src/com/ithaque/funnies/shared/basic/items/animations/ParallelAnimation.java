@@ -42,8 +42,8 @@ public class ParallelAnimation extends AbstractAnimation implements CompositeAni
 	@Override
 	public long getDuration() {
 		if (duration==null) {
+			duration = 0L;
 			for (Animation child : animations) {
-				duration = 0L;
 				if (child.getDuration()>duration) {
 					duration = child.getDuration();
 				}
@@ -54,19 +54,26 @@ public class ParallelAnimation extends AbstractAnimation implements CompositeAni
 	
 	@Override
 	protected boolean executeAnimation(long time) {
+		boolean result = false;
 		for (Animation child : new ArrayList<Animation>(animations)) {
-			if (!child.animate(time)) {
-				child.finish(time);
-				animations.remove(child);
+			if (!child.isFinished()) {
+				if (!child.animate(time)) {
+					child.finish(time);
+				}
+				else {
+					result = true;
+				}
 			}
 		}
-		return true;
+		return result;
 	}
 	
 	@Override
 	public void finish(long time) {
 		for (Animation child : animations) {
-			child.finish(time);
+			if (!child.isFinished()) {
+				child.finish(time);
+			}
 		}		
 		super.finish(time);
 	}
@@ -107,6 +114,5 @@ public class ParallelAnimation extends AbstractAnimation implements CompositeAni
 		}	
 
 	}
-
 
 }

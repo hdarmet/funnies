@@ -10,7 +10,6 @@ import com.ithaque.funnies.shared.basic.Event.Type;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.MouseEvent;
 import com.ithaque.funnies.shared.basic.Processor;
-import com.ithaque.funnies.shared.funny.notifications.ActivateEvent;
 
 public class ActivationProcessor implements Processor {
 
@@ -23,12 +22,12 @@ public class ActivationProcessor implements Processor {
 	
 	@Override
 	public boolean process(Event event, Board board) {
-		if (event instanceof MouseEvent && event.getType()==Type.MOUSE_DOUBLE_CLICK) {
+		if (event instanceof MouseEvent && event.getType()==Type.MOUSE_CLICK) {
 			Item activable = getActivable((MouseEvent)event);
 			if (activable!=null) {
 				Funny activableFunny = getActivableFunny(activable);
 				if (activableFunny!=null) {
-					ring.notify(new ActivateEvent(activableFunny));
+					((ActivableFunny)activableFunny).activate(activable);
 				}
 			}
 		}
@@ -40,7 +39,8 @@ public class ActivationProcessor implements Processor {
 	}
 
 	protected Item getActivable(MouseEvent event) {
-		for (Item activable : new ArrayList<Item>(activables.keySet())) {
+		Item activable = ring.getBoard().getMouseTarget(event);
+		if (activables.keySet().contains(activable)) {
 			if (activable.acceptEvent(event)) {
 				return activable;
 			}

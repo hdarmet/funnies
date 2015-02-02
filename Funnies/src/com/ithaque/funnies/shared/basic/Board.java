@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.ithaque.funnies.shared.Trace;
+import com.ithaque.funnies.shared.basic.items.PolygonItem;
 
 public class Board implements BaseDevice, LayoutDevice {
 
@@ -207,6 +208,9 @@ public class Board implements BaseDevice, LayoutDevice {
 
 	@Override
 	public void register(Item item) {
+		if (item instanceof PolygonItem) {
+			System.out.println("Item registrered : "+item);
+		}
 		eventRegistry.register(item);
 	}
 
@@ -316,5 +320,19 @@ public class Board implements BaseDevice, LayoutDevice {
 			}
 		}
 	}
+	
+	@Override
+	public void enable() {
+		eventRegistry.enable();
+	}
 
+	@Override
+	public void disable() {
+		eventRegistry.disable();
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return eventRegistry.isEnabled();
+	}
 }

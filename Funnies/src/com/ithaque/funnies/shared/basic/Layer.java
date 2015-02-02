@@ -1,6 +1,6 @@
 package com.ithaque.funnies.shared.basic;
 
-public class Layer extends AbstractLayer implements LayoutDevice {
+public class Layer extends AbstractLayer {
 			
 	boolean adjusted = false;
 	
@@ -61,5 +61,6 @@ public class Layer extends AbstractLayer implements LayoutDevice {
 			}
 		}
 	}
+
 	
 }

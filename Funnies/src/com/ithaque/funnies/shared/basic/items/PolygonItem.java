@@ -33,4 +33,12 @@ public class PolygonItem extends Item {
 		graphics.drawPolygon(this, fillColor, lineColor, lineWidth, getDisplayOpacity());
 	}
 	
+	public static PolygonItem createRect(Color fillColor, Color lineColor, float lineWidth, float opacity, float width, float height) {
+		Location[] shape = new Location[] {
+			new Location(-width/2.0f, -height/2.0f), 
+			new Location(width/2.0f, -height/2.0f), 
+			new Location(width/2.0f, height/2.0f), 
+			new Location(-width/2.0f, height/2.0f)};
+		return new PolygonItem(fillColor, lineColor, lineWidth, opacity, shape);
+	}
 }

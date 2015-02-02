@@ -66,4 +66,9 @@ public class DecoratedItem extends GroupItem {
 	public Location[] getShape() {
 		return baseItem.getShape();
 	}
+
+	public void addItem(Item item, float x, float y) {
+		item.setLocation(x, y);
+		super.addItem(item);
+	}
 }

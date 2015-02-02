@@ -1,7 +1,6 @@
 package com.ithaque.funnies.server;
 
 import com.ithaque.funnies.client.FunnyManager;
-import com.ithaque.funnies.client.platform.gwt.test.GWTTestPlatform;
 import com.ithaque.funnies.shared.funny.boardgame.GameBoardCircus;
 
 public class Jave2DFunnies {

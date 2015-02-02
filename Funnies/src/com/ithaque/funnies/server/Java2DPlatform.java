@@ -15,7 +15,6 @@ import java.util.Random;
 
 import javax.swing.JFrame;
 
-import com.google.gwt.dom.client.NativeEvent;
 import com.ithaque.funnies.client.platform.gwt.AbstractGWTPlatform;
 import com.ithaque.funnies.client.platform.gwt.CanvasInterface;
 import com.ithaque.funnies.client.platform.gwt.GraphicsImpl;
@@ -23,9 +22,9 @@ import com.ithaque.funnies.client.platform.gwt.GraphicsImpl.ImageElementRecord;
 import com.ithaque.funnies.client.platform.gwt.ImageInterface;
 import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.Board;
-import com.ithaque.funnies.shared.basic.Token;
 import com.ithaque.funnies.shared.basic.Event.Type;
 import com.ithaque.funnies.shared.basic.MouseEvent.Button;
+import com.ithaque.funnies.shared.basic.Token;
 
 public class Java2DPlatform extends AbstractGWTPlatform {
 

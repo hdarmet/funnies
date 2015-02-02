@@ -30,24 +30,30 @@ public class MultiLayered extends GroupItem implements BaseDevice {
 		@Override
 		public void setScale(float scale, long serial) {
 			for (int i=0; i<MultiLayered.this.getItemCount(); i++) {
-				MultiLayer layer = (MultiLayer)MultiLayered.this.getItem(i);
-				layer.doSetScale(scale, serial);
+				Item brother = MultiLayered.this.getItem(i);
+				if (brother instanceof MultiLayer) {
+					((MultiLayer)brother).doSetScale(scale, serial);
+				}
 			}
 		}
 
 		@Override
 		public void setRotation(float angle, long serial) {
 			for (int i=0; i<MultiLayered.this.getItemCount(); i++) {
-				MultiLayer layer = (MultiLayer)MultiLayered.this.getItem(i);
-				layer.doSetRotation(angle, serial);
+				Item brother = MultiLayered.this.getItem(i);
+				if (brother instanceof MultiLayer) {
+					((MultiLayer)brother).doSetRotation(angle, serial);
+				}
 			}
 		}
 
 		@Override
 		public void setLocation(Location location, long serial) {
 			for (int i=0; i<MultiLayered.this.getItemCount(); i++) {
-				MultiLayer layer = (MultiLayer)MultiLayered.this.getItem(i);
-				layer.doSetLocation(location, serial);
+				Item brother = MultiLayered.this.getItem(i);
+				if (brother instanceof MultiLayer) {
+					((MultiLayer)brother).doSetLocation(location, serial);
+				}
 			}
 		}
 		

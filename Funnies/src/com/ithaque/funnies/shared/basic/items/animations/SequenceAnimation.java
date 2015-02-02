@@ -68,7 +68,9 @@ public class SequenceAnimation extends AbstractAnimation implements CompositeAni
 			currentChild.finish(time);
 		}
 		for (Animation child : animations) {
-			child.finish(time);
+			if (!child.isFinished()) {
+				child.finish(time);
+			}
 		}		
 		super.finish(time);
 	}

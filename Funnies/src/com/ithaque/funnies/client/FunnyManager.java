@@ -179,7 +179,7 @@ public class FunnyManager extends AbstractCircusManager {
 		circus.enterRing(createArrow());
 		circus.enterRing(message=createMessage());
 		
-		PanelFunny panel = new PanelFunny("sel");
+		PanelFunny panel = new PanelFunny("sel", 500.0f, 400.0f, new Color(200, 200, 200), new Color(100, 100, 100), 2.0f);
 		Icon icon = new Icon.SingleImageIcon(GameBoardRing.TOOLBAR, 80, 80, "load.png"/*, "rload.png"*/);
 		panel.setToolIcon(icon);
 		circus.enterRing(panel);

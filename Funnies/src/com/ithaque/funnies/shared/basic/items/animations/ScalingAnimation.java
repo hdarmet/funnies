@@ -1,5 +1,7 @@
 package com.ithaque.funnies.shared.basic.items.animations;
 
+import com.ithaque.funnies.shared.basic.Animation;
+import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.AnimationContext.FactorFinder;
 import com.ithaque.funnies.shared.basic.AnimationContext.MoveableFinder;
 import com.ithaque.funnies.shared.basic.items.animations.easing.SineInOutEasing;
@@ -37,6 +39,10 @@ public class ScalingAnimation extends SoftenAnimation {
 		return result;
 	}
 	
+	public ScalingAnimation setItem(Item item) {
+		return (ScalingAnimation)super.setItem(item);
+	}
+	
 	public void setScaling(FactorFinder scaleFinder) {
 		this.scaleFinder = scaleFinder;
 	}
@@ -47,6 +53,19 @@ public class ScalingAnimation extends SoftenAnimation {
 	
 	public Float getScale() {
 		return newScale==null ? scaleFinder.find(getContext()) : newScale;
+	}
+	
+	@Override
+	public boolean animate(long time) { 
+		if (!isFinished()) {
+			if (time+Animation.INTERVAL>=getEndTime()) {
+				return false;
+			}
+			else {
+				return executeAnimation(time);
+			}
+		}
+		return false;
 	}
 	
 	@Override

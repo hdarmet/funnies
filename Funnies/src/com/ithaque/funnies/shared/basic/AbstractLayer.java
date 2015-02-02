@@ -78,6 +78,10 @@ public abstract class AbstractLayer extends GroupItem implements LayoutDevice {
 		}
 	}
 
+	protected LayoutDevice getChildrenLayout(LayoutDevice layout) {
+		return this;
+	}
+
 	private void setLayout(Graphics graphics) {
 		if (token==null) {
 			token = graphics.createLayer();
@@ -121,4 +125,18 @@ public abstract class AbstractLayer extends GroupItem implements LayoutDevice {
 		super.unsetDirty();
 	}
 	
+	@Override
+	public void enable() {
+		eventRegistry.enable();
+	}
+
+	@Override
+	public void disable() {
+		eventRegistry.disable();
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return eventRegistry.isEnabled();
+	}
 }

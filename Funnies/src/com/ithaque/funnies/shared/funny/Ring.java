@@ -1,5 +1,6 @@
 package com.ithaque.funnies.shared.funny;
 
+import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.funny.manager.Notification;
 
 public interface Ring {
@@ -16,4 +17,5 @@ public interface Ring {
 	
 	float getHeight();
 
+	void launch(Animation animation);
 }

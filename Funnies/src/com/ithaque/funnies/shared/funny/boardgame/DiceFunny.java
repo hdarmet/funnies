@@ -15,6 +15,7 @@ import com.ithaque.funnies.shared.funny.AbstractFunny;
 import com.ithaque.funnies.shared.funny.ActivableFunny;
 import com.ithaque.funnies.shared.funny.IncompatibleRingException;
 import com.ithaque.funnies.shared.funny.AbstractRing;
+import com.ithaque.funnies.shared.funny.notifications.ActivateEvent;
 
 public class DiceFunny extends AbstractFunny implements ActivableFunny {
 
@@ -181,6 +182,11 @@ public class DiceFunny extends AbstractFunny implements ActivableFunny {
 		changeFace.setItem(diceItem);
 		aggregate.addAnimation(changeFace);
 		animation.addAnimation(aggregate);
+	}
+
+	@Override
+	public void activate(Item activated) {
+		getRing().notify(new ActivateEvent(this));
 	}
 
 }
