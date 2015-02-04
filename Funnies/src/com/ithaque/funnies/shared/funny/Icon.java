@@ -1,8 +1,8 @@
 package com.ithaque.funnies.shared.funny;
 
 import com.ithaque.funnies.shared.basic.Animation;
-import com.ithaque.funnies.shared.basic.AnimationContext;
 import com.ithaque.funnies.shared.basic.AnimationContext.MoveableFinder;
+import com.ithaque.funnies.shared.basic.AnimationContext;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.Moveable;
 import com.ithaque.funnies.shared.basic.WrapperItem;
@@ -83,32 +83,14 @@ public class Icon {
 	public void setHoverAnimation(Animation.Factory hoverAnimation) {
 		this.hoverAnimation = hoverAnimation;
 	}
-	
-	public static class IconAnimationContext implements AnimationContext {
-		Item item;
-		
-		public IconAnimationContext(Item item) {
-			this.item = item;
-		}
-		
-	}
-
-	public static MoveableFinder item() {
-		return new MoveableFinder() {
-			@Override
-			public Moveable find(AnimationContext context) {
-				return ((IconAnimationContext)context).item;
-			}		
-		};
-	}
 
 	public static class SingleImageIcon extends Icon {
 		public SingleImageIcon(String toolSupportId, float width, float height, String url) {
 			super(toolSupportId, width, height, url);
 			setHoverAnimation(
 				new SequenceAnimation.Builder()
-					.addAnimation(new ScalingAnimation.Builder(2000, 1.2f).setItem(Icon.item()))
-					.addAnimation(new ScalingAnimation.Builder(2000, 1.0f).setItem(Icon.item()))
+					.addAnimation(new ScalingAnimation.Builder(2000, 1.2f).setItem(item()))
+					.addAnimation(new ScalingAnimation.Builder(2000, 1.0f).setItem(item()))
 				);
 		}
 	}
@@ -118,8 +100,8 @@ public class Icon {
 			super(toolSupportId, width, height, url1, url2);
 			setHoverAnimation(
 				new SequenceAnimation.Builder()
-					.addAnimation(new ChangeFaceAnimation.Builder(2000, 1).setItem(Icon.item()))
-					.addAnimation(new ChangeFaceAnimation.Builder(2000, 0).setItem(Icon.item()))
+					.addAnimation(new ChangeFaceAnimation.Builder(2000, 1).setItem(item()))
+					.addAnimation(new ChangeFaceAnimation.Builder(2000, 0).setItem(item()))
 				);
 		}
 		
@@ -129,10 +111,20 @@ public class Icon {
 		public SpriteIcon(String toolSupportId, float width, float height, String url, int colCount, int rowCount, int imageWidth, int imageHeight) {
 			super(toolSupportId, width, height, new SpriteImageItem(url, colCount, rowCount, imageWidth, imageHeight));
 			setHoverAnimation(
-				SpriteImageItem.play(4000, colCount*rowCount, Icon.item())
+				SpriteImageItem.play(4000, colCount*rowCount, item())
 			);
 		}
 		
 	}
 
+	public static MoveableFinder item() {
+		return new MoveableFinder() {
+			MoveableFinder finder = HoverProcessor.item();
+			@Override
+			public Moveable find(AnimationContext context) {
+				IconItem iconItem = (IconItem)finder.find(context);
+				return iconItem==null ? null : iconItem.getWrapped();
+			}
+		};
+	}
 }

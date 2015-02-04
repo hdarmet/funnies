@@ -1,9 +1,7 @@
 package com.ithaque.funnies.shared.funny;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import com.ithaque.funnies.shared.basic.Animation;
@@ -21,22 +19,32 @@ import com.ithaque.funnies.shared.basic.items.animations.RepeatableAnimation;
 public class HoverProcessor implements Processor {
 
 	Ring ring;
-	Map<Item, HoverRecord> hoverables = new HashMap<Item, HoverRecord>();
+	FunnyRegistry<HoverFunny> hoverables = new FunnyRegistry<HoverFunny>(
+			new FunnyRegistry.ItemsFinder<HoverFunny>() {
+				@Override
+				public Item[] getItems(HoverFunny funny) {
+					return funny.getHoverables();
+				}
+			}
+		) {
+		@Override
+		protected Record<HoverFunny> createRecord(Item item, HoverFunny funny) {
+			return new HoverRecord(funny, item);
+		}		
+	};
 	Set<HoverRecord> actives = new HashSet<HoverRecord>();
 	
 	public HoverProcessor(Ring ring) {
 		this.ring = ring;
 	}
 	
-	class HoverRecord implements AnimationContext {
+	class HoverRecord extends FunnyRegistry.Record<HoverFunny> implements AnimationContext {
 		public HoverRecord(HoverFunny funny, Item item) {
-			this.funny = funny;
-			this.item = item;
+			super(funny, item);
 		}
 		
-		Item item;
-		HoverFunny funny;
 		RepeatableAnimation hoverAnimation = null;
+		boolean moveOn = false;
 	}
 	
 	@Override
@@ -59,8 +67,12 @@ public class HoverProcessor implements Processor {
 	}
 
 	void processHover(Item hover) {
-		HoverRecord hoverRecord = hoverables.get(hover);
+		HoverRecord hoverRecord = (HoverRecord)hoverables.getRecord(hover);
 		if (hoverRecord!=null) {
+			if (!hoverRecord.moveOn) {
+				hoverRecord.moveOn = true;
+				hoverRecord.funny.moveOn(hover);
+			}
 			if (hoverRecord.hoverAnimation==null) {
 				Animation animation = createHoverAnimation(hoverRecord);
 				if (animation!=null) {
@@ -93,21 +105,21 @@ public class HoverProcessor implements Processor {
 	}
 	
 	void processExitHover(HoverRecord hoverRecord) {
+		if (hoverRecord.moveOn) {
+			hoverRecord.moveOn = false;
+			hoverRecord.funny.moveOut(hoverRecord.item);
+		}
 		if (hoverRecord.hoverAnimation!=null && !hoverRecord.hoverAnimation.isFinished()) {
 			hoverRecord.hoverAnimation.stop();
 		}
 	}
 	
 	public void registerHoverableFunny(HoverFunny funny) {
-		for (Item item : ((HoverFunny)funny).getHoverables()) {
-			hoverables.put(item, new HoverRecord(funny, item));
-		}
+		hoverables.registerFunny(funny);
 	}
 
 	public void unregisterHoverableFunny(HoverFunny funny) {
-		for (Item item : ((HoverFunny)funny).getHoverables()) {
-			hoverables.remove(item);
-		}
+		hoverables.unregisterFunny(funny);
 	}
 
 	public static MoveableFinder item() {

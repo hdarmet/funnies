@@ -1,7 +1,6 @@
 package com.ithaque.funnies.shared.funny;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import com.ithaque.funnies.shared.IllegalInvokeException;
@@ -25,12 +24,12 @@ public class ToolProcessor implements Processor {
 	
 	public void registerToolbar(ToolbarFunny toolbar) {
 		toolbars.add(toolbar);
-		toolbar.enterRing((AbstractRing)ring);
+		ring.enterRing(toolbar);
 	}
 
 	public void unregisterToolbar(ToolbarFunny toolbar) {
 		toolbars.remove(toolbar);
-		toolbar.exitRing((AbstractRing)ring);
+		ring.exitRing(toolbar);
 	}
 	
 	@Override
@@ -43,13 +42,6 @@ public class ToolProcessor implements Processor {
 				ToolbarFunny toolbar = icon.getToolbar();
 				toolbar.activateTool(funny, icon);
 				return true;
-			}
-		}
-		else if (event.getType()==Type.MOUSE_MOVE) {
-			Collection<Item> hoveredItems = 
-				board.getMouseTargets((MouseEvent)event);
-			for (ToolbarFunny toolbar : toolbars) {
-				toolbar.hover(hoveredItems);
 			}
 		}
 		return false;

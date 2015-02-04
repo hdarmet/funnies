@@ -124,5 +124,13 @@ public class PanelFunny extends AbstractFunny implements TooledFunny, ActivableF
 		builder.addAnimation(new ScalingAnimation.Builder(500, 1.0f).setItem(HoverProcessor.item()));
 		return builder;
 	}
+
+	@Override
+	public void moveOn(Item item) {
+	}
+
+	@Override
+	public void moveOut(Item item) {
+	}
 	
 }

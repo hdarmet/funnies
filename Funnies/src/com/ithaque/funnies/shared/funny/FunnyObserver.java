@@ -5,6 +5,7 @@ public interface FunnyObserver {
 	public enum ChangeType {
 		ENTER_RING,
 		EXIT_RING,
+		REGISTERING,
 		LOCATION,
 		ENABLING
 	}

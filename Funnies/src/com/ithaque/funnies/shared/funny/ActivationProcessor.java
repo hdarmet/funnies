@@ -1,6 +1,5 @@
 package com.ithaque.funnies.shared.funny;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 

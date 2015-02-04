@@ -110,11 +110,7 @@ public class GameBoardRing extends AbstractRing implements TooledRing, PanelRing
 		activationProcessor= new ActivationProcessor(this);
 		animationProcessor=new CircusRandomAnimationProcessor(this, 1000, RANDOM, 4);
 		toolProcessor=new ToolProcessor(this);
-		
-		toolbar = new ToolbarFunny(TOOLBAR, ToolbarFunny.BOTTOM_LEFT, ToolbarFunny.RIBBON_BACKGROUND);
-		modalGlass = PolygonItem.createRect(MODAL_GREY, MODAL_GREY, 1.0f, 0.0f, width, height);
-		panelLayer.addItem(modalGlass);
-		 
+				 
 		getBoard().addProcessor(dragProcessor);
 		getBoard().addProcessor(scalingProcessor);
 		getBoard().addProcessor(activationProcessor);
@@ -122,6 +118,9 @@ public class GameBoardRing extends AbstractRing implements TooledRing, PanelRing
 		getBoard().addProcessor(animationProcessor);
 		getBoard().addProcessor(toolProcessor);
 		
+		toolbar = new ToolbarFunny(TOOLBAR, ToolbarFunny.BOTTOM_LEFT, ToolbarFunny.GLASS_BACKGROUND/*RIBBON_BACKGROUND*/);
+		modalGlass = PolygonItem.createRect(MODAL_GREY, MODAL_GREY, 1.0f, 0.0f, width, height);
+		panelLayer.addItem(modalGlass);
 		toolProcessor.registerToolbar(toolbar);
 		return baseLayer;
 	}

@@ -1,12 +1,11 @@
 package com.ithaque.funnies.shared.funny.standard;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import com.ithaque.funnies.shared.IllegalInvokeException;
 import com.ithaque.funnies.shared.basic.Animation;
-import com.ithaque.funnies.shared.basic.AnimationContext;
+import com.ithaque.funnies.shared.basic.Animation.Factory;
 import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Color;
 import com.ithaque.funnies.shared.basic.Event.Type;
@@ -18,7 +17,6 @@ import com.ithaque.funnies.shared.basic.items.animations.CancelableAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.FadingAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.MoveAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.ParallelAnimation;
-import com.ithaque.funnies.shared.basic.items.animations.RepeatableAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.ScalingAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.SoftenAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.easing.SineInOutEasing;
@@ -26,11 +24,13 @@ import com.ithaque.funnies.shared.funny.AbstractFunny;
 import com.ithaque.funnies.shared.funny.AbstractRing;
 import com.ithaque.funnies.shared.funny.Funny;
 import com.ithaque.funnies.shared.funny.FunnyObserver;
+import com.ithaque.funnies.shared.funny.HoverFunny;
 import com.ithaque.funnies.shared.funny.Icon;
+import com.ithaque.funnies.shared.funny.Icon.IconItem;
 import com.ithaque.funnies.shared.funny.TooledFunny;
 import com.ithaque.funnies.shared.funny.TooledRing;
 
-public class ToolbarFunny extends AbstractFunny implements FunnyObserver {
+public class ToolbarFunny extends AbstractFunny implements HoverFunny, FunnyObserver {
 
 	static final float MIN_SCALE = 0.8f;
 	static final float MAX_SCALE = 1.2f;
@@ -57,7 +57,6 @@ public class ToolbarFunny extends AbstractFunny implements FunnyObserver {
 	
 	float minimize = MIN_SCALE;
 	float maximize = MAX_SCALE;
-	boolean hover = false;
 	CancelableAnimation hoverAnimation = null;
 	boolean activated = false;
 	PolygonItem background;
@@ -70,12 +69,10 @@ public class ToolbarFunny extends AbstractFunny implements FunnyObserver {
 	class ToolRecord {
 		TooledFunny tool;
 		Icon icon;
-		RepeatableAnimation hoverAnimation = null;
 		
 		ToolRecord(TooledFunny tool, Icon icon) {
 			this.tool = tool;
 			this.icon = icon;
-			this.hoverAnimation = null;
 		}
 	}
 
@@ -83,7 +80,6 @@ public class ToolbarFunny extends AbstractFunny implements FunnyObserver {
 		super(toolbarId);
 		this.toolbarItem = new GroupItem();
 		this.toolbarItem.setScale(minimize);
-		this.toolbarItem.addEventType(Type.MOUSE_MOVE);
 		this.background = new PolygonItem(Color.BLACK, Color.BLACK, 1, 0.0f, new Location[0]);
 		this.positionManager = positionManager;
 		this.backgroundManager = backgroundManager;
@@ -127,6 +123,7 @@ public class ToolbarFunny extends AbstractFunny implements FunnyObserver {
 			setLayout();
 			tool.addObserver(this);
 			toolbarItem.addItem(icon.getIconItem());
+			fire(ChangeType.REGISTERING);
 			return true;
 		}
 		return false;
@@ -141,6 +138,7 @@ public class ToolbarFunny extends AbstractFunny implements FunnyObserver {
 				tools.remove(record);
 				record.tool.removeObserver(this);
 				toolbarItem.removeItem(record.icon.getIconItem());
+				fire(ChangeType.REGISTERING);
 				return true;
 			}
 		}
@@ -192,38 +190,6 @@ public class ToolbarFunny extends AbstractFunny implements FunnyObserver {
 		super.exitRing(ring);
 	}
 
-	public void hover(Collection<Item> hoveredItems) {
-		hoverToolbar(hoveredItems);
-		for (ToolRecord toolRecord : tools) {
-			if (toolRecord.tool.isEnabled()) {
-				hoverTool(toolRecord, hoveredItems);
-			}
-		}
-	}
-
-	void hoverTool(ToolRecord toolRecord, Collection<Item> hoveredItems) {
-		if (hoveredItems.contains(toolRecord.icon.getIconItem())) {
-			if (toolRecord.hoverAnimation==null) {
-				Animation animation = createToolAnimation(toolRecord);
-				if (animation!=null) {
-					toolRecord.hoverAnimation = new RepeatableAnimation(animation);
-					getBoard().launchAnimation(toolRecord.hoverAnimation);
-				}
-			}
-			else if (toolRecord.hoverAnimation.isFinished()) {
-				toolRecord.hoverAnimation.reset();
-				if (toolRecord.hoverAnimation!=null) {
-					getBoard().launchAnimation(toolRecord.hoverAnimation);
-				}
-			}
-		}
-		else {
-			if (toolRecord.hoverAnimation!=null && !toolRecord.hoverAnimation.isFinished()) {
-				toolRecord.hoverAnimation.stop();
-			}
-		}
-	}
-
 	public void activateTool(TooledFunny funny, Icon icon) {
 		if (!activated) {
 			this.activated = true;
@@ -232,28 +198,33 @@ public class ToolbarFunny extends AbstractFunny implements FunnyObserver {
 		}
 	}
 
-	Animation createToolAnimation(ToolRecord record) {
-		Animation.Factory factory = record.icon.getHoverAnimation();
-		if (factory!=null) {
-			AnimationContext context = new Icon.IconAnimationContext(record.icon.getIconItem().getWrapped());
-			Animation animation = factory.create();
-			animation.setContext(context);
-			return animation;
+	@Override
+	public Item[] getHoverables() {
+		Item[] hoverables = new Item[tools.size()];
+		int index=0;
+		for (ToolRecord tool : tools) {
+			hoverables[index++] = tool.icon.getIconItem();
+		}
+		return hoverables;
+	}
+
+	@Override
+	public Factory getHoverAnimation(Item item) {
+		if (item instanceof IconItem) {
+			Icon icon = ((IconItem)item).getIcon();
+			return icon.getHoverAnimation();
 		}
 		return null;
 	}
-
-	void hoverToolbar(Collection<Item> hoveredItems) {
-		boolean hover = hoveredItems.contains(this.toolbarItem);
-		if (this.hover!=hover && (this.hoverAnimation==null || this.hoverAnimation.isFinished()) && !activated) {
-			this.hover = hover;
-			if (hover) {
-				maximizeToolbar();
-			}
-			else {
-				minimizeToolbar();
-			}
-		}
+	
+	@Override
+	public void moveOn(Item item) {
+		maximizeToolbar();
+	}
+	
+	@Override
+	public void moveOut(Item item) {
+		minimizeToolbar();
 	}
 
 	void maximizeToolbar() {
@@ -272,7 +243,6 @@ public class ToolbarFunny extends AbstractFunny implements FunnyObserver {
 			public void finish(long time) {
 				super.finish(time);
 				activated = false;
-				hover = false;
 			}
 		};
 		getBoard().launchAnimation(this.hoverAnimation);

@@ -10,4 +10,8 @@ public interface HoverFunny extends Funny {
 	Item[] getHoverables();
 
 	Factory getHoverAnimation(Item item);
+	
+	void moveOn(Item item);
+	
+	void moveOut(Item item);
 }
