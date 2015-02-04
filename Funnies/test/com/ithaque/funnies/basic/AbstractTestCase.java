@@ -4,10 +4,13 @@ import org.junit.Assert;
 import org.junit.Before;
 
 import com.ithaque.funnies.client.platform.gwt.test.TestImage;
+import com.ithaque.funnies.client.platform.gwt.test.TestPlatform;
 import com.ithaque.funnies.client.platform.gwt.test.TestRegistry;
 
 public class AbstractTestCase {
 
+	protected TestPlatform platform = new TestPlatform();
+	
 	@Before
 	public void setup() {
 		TestRegistry.reset();
@@ -43,7 +46,17 @@ public class AbstractTestCase {
 		TestRegistry.reset();
 	}
 	
+	public void process(long time) {
+		TestRegistry.reset();
+		platform.process(time);
+	}
+	
 	public void nothingExpected() {
 		Assert.assertTrue(TestRegistry.isEmpty());
 	}
+	
+	public void load(String url, int w, int h) {
+		TestImage.getImage(url).loaded(w, h);
+	}
+
 }

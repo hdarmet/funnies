@@ -74,7 +74,9 @@ public class Circus {
 	}
 	
 	void register(Funny funny) {
-		Trace.debug("Register funny : "+funny.getId()+"\n");
+		if (Trace.debug) {
+			Trace.debug("Register funny : "+funny.getId()+"\n");
+		}
 		if (funnies.get(funny.getId())!=null) {
 			throw new IllegalInvokeException();
 		}

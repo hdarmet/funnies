@@ -30,7 +30,10 @@ public class PolygonItem extends Item {
 
 	@Override
 	public void render(Graphics graphics) {
-		graphics.drawPolygon(this, fillColor, lineColor, lineWidth, getDisplayOpacity());
+		float displayOpacity = getDisplayOpacity();
+		if (displayOpacity>0.0f) {
+			graphics.drawPolygon(this, fillColor, lineColor, lineWidth, displayOpacity);
+		}
 	}
 	
 	public static PolygonItem createRect(Color fillColor, Color lineColor, float lineWidth, float opacity, float width, float height) {
