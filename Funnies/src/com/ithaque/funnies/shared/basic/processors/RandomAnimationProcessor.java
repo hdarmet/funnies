@@ -1,6 +1,5 @@
 package com.ithaque.funnies.shared.basic.processors;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.ithaque.funnies.shared.basic.AlarmEvent;
@@ -20,8 +19,6 @@ public abstract class RandomAnimationProcessor implements Processor {
 	int segIndex=0;
 	String alarmId;
 	
-	List<Item> animated = new ArrayList<Item>();
-	
 	public RandomAnimationProcessor(Board board, long timeout, String alarmId, int segCount) {
 		this.board = board;
 		this.segCount = segCount;
@@ -36,8 +33,9 @@ public abstract class RandomAnimationProcessor implements Processor {
 	@Override
 	public boolean process(Event event, Board board) {
 		if (event instanceof AlarmEvent && ((AlarmEvent)event).getAlarm().equals(alarmId)) {
-			for (int index=segIndex; index<animated.size(); index+=segCount) {
-				animate(animated.get(index));
+			List<Item> items = getAnimatedItems();
+			for (int index=segIndex; index<items.size(); index+=segCount) {
+				animate(items.get(index));
 			}
 			segIndex = (segIndex+1)%segCount;
 			return true;
@@ -47,6 +45,8 @@ public abstract class RandomAnimationProcessor implements Processor {
 		}
 	}
 
+	protected abstract List<Item> getAnimatedItems();
+	
 	protected void animate(Item item) {
 		Animation.Factory animationFactory = getAnimation(item);
 		if (animationFactory!=null) {
@@ -57,14 +57,6 @@ public abstract class RandomAnimationProcessor implements Processor {
 	}
 	
 	protected abstract Animation.Factory getAnimation(Item item);
-	
-	public void addAnimated(Item item) {
-		animated.add(item);
-	}
-	
-	public void removeAnimated(Item item) {
-		animated.remove(item);
-	}
 
 	public static class RandomAnimationContext implements AnimationContext {
 

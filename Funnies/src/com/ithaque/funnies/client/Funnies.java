@@ -202,21 +202,6 @@ public class Funnies implements EntryPoint {
 			.setRotation(TargetedRotateProfile.rotation()));
 		rotateProfile.addRotatable(iitem2);
 		
-		RandomAnimationProcessor animProcessor = new RandomAnimationProcessor(board, 2000, "alarm", 2) {
-			@Override
-			protected void animate(Item item) {
-				System.out.println("animate item : "+item);
-			}
-
-			@Override
-			protected Factory getAnimation(Item item) {
-				return null;
-			}	
-		};
-		animProcessor.addAnimated(sitem);
-		animProcessor.addAnimated(pitem);
-		board.addProcessor(animProcessor);
-		
 		MatchHandler dMatch = new MatchHandler() {
 			@Override
 			public int matches(Gesture gesture) {

@@ -1,7 +1,6 @@
 package com.ithaque.funnies.shared.funny;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collection;
 
 import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.Item;
@@ -13,8 +12,32 @@ import com.ithaque.funnies.shared.funny.notifications.DropEvent;
 
 public class CircusDnDProfile extends AbstractTargetedDragProfile {
 
-	Map<Item, DraggableFunny> draggableFunnies = new HashMap<Item, DraggableFunny>();
-	Map<Item, DropTargetFunny> targetFunnies = new HashMap<Item, DropTargetFunny>();
+	FunnyRegistry<DraggableFunny> draggableFunnies = new FunnyRegistry<DraggableFunny>(
+			new FunnyRegistry.ItemsFinder<DraggableFunny>() {
+				@Override
+				public Item[] getItems(DraggableFunny funny) {
+					return funny.getDraggableItems();
+				}
+			}
+		) {
+		@Override
+		protected Record<DraggableFunny> createRecord(Item item, DraggableFunny funny) {
+			return new Record<DraggableFunny>(funny, item);
+		}
+	};
+	FunnyRegistry<DropTargetFunny> targetFunnies = new FunnyRegistry<DropTargetFunny>(
+			new FunnyRegistry.ItemsFinder<DropTargetFunny>() {
+				@Override
+				public Item[] getItems(DropTargetFunny funny) {
+					return funny.getDropTargetItems();
+				}
+			}
+		) {
+		@Override
+		protected Record<DropTargetFunny> createRecord(Item item, DropTargetFunny funny) {
+			return new Record<DropTargetFunny>(funny, item);
+		}
+	};
 	AbstractRing ring;
 	
 	public CircusDnDProfile(AbstractRing ring) {
@@ -23,39 +46,27 @@ public class CircusDnDProfile extends AbstractTargetedDragProfile {
 	}
 	
 	public void registerDraggableFunny(DraggableFunny funny) {
-		for (Item item : funny.getDraggableItems()) {
-			draggableFunnies.put(item, funny);
-			addDraggeable(item);
-		}
+		draggableFunnies.registerFunny(funny);
 	}
 	
 	public void unregisterDraggableFunny(DraggableFunny funny) {
-		for (Item item : funny.getDraggableItems()) {
-			draggableFunnies.remove(item);
-			removeDraggeable(item);
-		}
+		draggableFunnies.unregisterFunny(funny);
 	}
 	
 	protected DraggableFunny getDraggableFunny(Item item) {
-		return draggableFunnies.get(item);
+		return draggableFunnies.getFunny(item);
 	}
 
 	public void registerDroppableFunny(DropTargetFunny funny) {
-		for (Item item : funny.getDropTargetItems()) {
-			targetFunnies.put(item, funny);
-			addTarget(item);
-		}
+		targetFunnies.registerFunny(funny);
 	}
 	
 	public void unregisterDroppableFunny(DropTargetFunny funny) {
-		for (Item item : funny.getDropTargetItems()) {
-			targetFunnies.remove(item);
-			removeTarget(item);
-		}
+		targetFunnies.unregisterFunny(funny);
 	}
 	
 	protected DropTargetFunny getDropTargetFunny(Item item) {
-		return targetFunnies.get(item);
+		return targetFunnies.getFunny(item);
 	}
 	
 	@Override
@@ -152,6 +163,16 @@ public class CircusDnDProfile extends AbstractTargetedDragProfile {
 	protected ItemHolder getDropItemHolder(Item dragged, Item target) {
 		DropTargetFunny targetFunny = getDropTargetFunny(target);
 		return targetFunny.getDropHolder(dragged, target);
+	}
+
+	@Override
+	protected Collection<Item> getTargets() {
+		return targetFunnies.getItems();
+	}
+	
+	@Override
+	protected boolean acceptDraggeable(Item draggeable) {
+		return draggableFunnies.containsItem(draggeable);
 	}
 	
 }

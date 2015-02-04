@@ -1,17 +1,26 @@
 package com.ithaque.funnies.shared.funny;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.Location;
-import com.ithaque.funnies.shared.basic.processors.TargetedRotateProfile;
+import com.ithaque.funnies.shared.basic.processors.RotateProfile;
 import com.ithaque.funnies.shared.funny.notifications.AcceptRotatableQuestion;
 import com.ithaque.funnies.shared.funny.notifications.AcceptRotationQuestion;
 
-public class CircusRotateProfile extends TargetedRotateProfile {
-	Map<Item, RotatableFunny> rotatableFunnies = new HashMap<Item, RotatableFunny>();
+public class CircusRotateProfile extends RotateProfile {
+	FunnyRegistry<RotatableFunny> rotatableFunnies = new FunnyRegistry<RotatableFunny>(
+			new FunnyRegistry.ItemsFinder<RotatableFunny>() {
+				@Override
+				public Item[] getItems(RotatableFunny funny) {
+					return funny.getRotatableItems();
+				}
+			}
+		) {
+		@Override
+		protected Record<RotatableFunny> createRecord(Item item, RotatableFunny funny) {
+			return new Record<RotatableFunny>(funny, item);
+		}
+	};
 
 	AbstractRing ring;
 	
@@ -21,21 +30,15 @@ public class CircusRotateProfile extends TargetedRotateProfile {
 	}
 	
 	public void registerRotatableFunny(RotatableFunny funny) {
-		for (Item item : funny.getRotatableItems()) {
-			rotatableFunnies.put(item, funny);
-			addRotatable(item);
-		}
+		rotatableFunnies.registerFunny(funny);
 	}
 	
 	public void unregisterRotatableFunny(RotatableFunny funny) {
-		for (Item item : funny.getRotatableItems()) {
-			rotatableFunnies.remove(item);
-			removeRotatable(item);
-		}
+		rotatableFunnies.unregisterFunny(funny);
 	}
 	
 	protected RotatableFunny getRotatableFunny(Item item) {
-		return rotatableFunnies.get(item);
+		return rotatableFunnies.getFunny(item);
 	}
 
 	@Override
@@ -46,7 +49,9 @@ public class CircusRotateProfile extends TargetedRotateProfile {
 
 	@Override
 	protected boolean acceptRotatable(Item rotatable, Location mouseLocation) {
-		if (!super.acceptRotatable(rotatable, mouseLocation)) {
+		if (!rotatableFunnies.containsItem(rotatable) || 
+			!super.acceptRotatable(rotatable, mouseLocation)) 
+		{
 			return false;
 		}
 		else {

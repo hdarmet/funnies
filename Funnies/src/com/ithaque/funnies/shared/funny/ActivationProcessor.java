@@ -1,8 +1,5 @@
 package com.ithaque.funnies.shared.funny;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Event;
 import com.ithaque.funnies.shared.basic.Event.Type;
@@ -12,7 +9,19 @@ import com.ithaque.funnies.shared.basic.Processor;
 
 public class ActivationProcessor implements Processor {
 
-	Map<Item, ActivableFunny> activables = new HashMap<Item, ActivableFunny>();
+	FunnyRegistry<ActivableFunny> activables = new FunnyRegistry<ActivableFunny>(
+			new FunnyRegistry.ItemsFinder<ActivableFunny>() {
+				@Override
+				public Item[] getItems(ActivableFunny funny) {
+					return funny.getActivableItems();
+				}
+			}
+		) {
+		@Override
+		protected Record<ActivableFunny> createRecord(Item item, ActivableFunny funny) {
+			return new Record<ActivableFunny>(funny, item);
+		}
+	};
 	AbstractRing ring;
 	
 	public ActivationProcessor(AbstractRing ring) {
@@ -34,12 +43,12 @@ public class ActivationProcessor implements Processor {
 	}
 	
 	Funny getActivableFunny(Item activable) {
-		return activables.get(activable);
+		return activables.getFunny(activable);
 	}
 
 	protected Item getActivable(MouseEvent event) {
 		Item activable = ring.getBoard().getMouseTarget(event);
-		if (activables.keySet().contains(activable)) {
+		if (activables.containsItem(activable)) {
 			if (activable.acceptEvent(event)) {
 				return activable;
 			}
@@ -48,14 +57,10 @@ public class ActivationProcessor implements Processor {
 	}
 
 	public void registerActivableFunny(ActivableFunny funny) {
-		for (Item item : funny.getActivableItems()) {
-			activables.put(item, funny);
-		}
+		activables.registerFunny(funny);
 	}
 	
 	public void unregisterActivableFunny(ActivableFunny funny) {
-		for (Item item : funny.getActivableItems()) {
-			activables.remove(item);
-		}
+		activables.unregisterFunny(funny);
 	}
 }

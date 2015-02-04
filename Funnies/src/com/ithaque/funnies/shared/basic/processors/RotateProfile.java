@@ -10,17 +10,25 @@ import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.MouseEvent;
 import com.ithaque.funnies.shared.basic.Moveable;
+import com.ithaque.funnies.shared.basic.TransformUtil;
 import com.ithaque.funnies.shared.basic.processors.DragProcessor.DragProfile;
 
-public class RotateProfile implements DragProfile {
+public abstract class RotateProfile implements DragProfile {
+
+	private static final float DEFAULT_ANCHOR_DISTANCE = 10.0f;
 
 	Item rotatable = null;
 	float rotatableAngle = 0.0f;
 	float anchorAngle = 0.0f;
-	
+	float distance = DEFAULT_ANCHOR_DISTANCE;
+
 	public RotateProfile() {
 	}
 	
+	public void setAnchorDistance(float distance) {
+		this.distance = distance;
+	}
+
 	@Override
 	public boolean beginDrag(MouseEvent event, Board board) {
 		Item rotatable = board.getMouseTarget(event);
@@ -40,7 +48,13 @@ public class RotateProfile implements DragProfile {
 	}
 	
 	protected boolean acceptRotatable(Item rotatable, Location mouseLocation) {
-		return true;
+		Location anchor = TransformUtil.invertTransformLocation(rotatable, mouseLocation);
+		for (Location location : rotatable.getShape()) {
+			if (Geometric.computeDistance(location, anchor)<distance) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override

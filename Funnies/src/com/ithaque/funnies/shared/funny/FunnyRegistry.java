@@ -1,5 +1,6 @@
 package com.ithaque.funnies.shared.funny;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +23,14 @@ public class FunnyRegistry<F extends Funny> implements FunnyObserver {
 		
 		Item item;
 		F funny;
+		
+		public F getFunny() {
+			return funny;
+		}
+		
+		public Item getItem() {
+			return item;
+		}
 	}
 
 	Map<F, Item[]> funnyToItems = new HashMap<F, Item[]>();
@@ -70,8 +79,21 @@ public class FunnyRegistry<F extends Funny> implements FunnyObserver {
 		}
 	}
 
-	public Record<F> getRecord(Item hover) {
-		return itemToFunnies.get(hover);
+	public Record<F> getRecord(Item item) {
+		return itemToFunnies.get(item);
+	}
+
+	public boolean containsItem(Item item) {
+		return itemToFunnies.containsKey(item);
+	}
+
+	public F getFunny(Item item) {
+		Record<F> record = getRecord(item);
+		return record==null ? null : record.getFunny();
+	}
+
+	public Collection<Item> getItems() {
+		return itemToFunnies.keySet();
 	}
 	
 }

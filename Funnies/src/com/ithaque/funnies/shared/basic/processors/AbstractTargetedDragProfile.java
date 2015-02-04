@@ -1,7 +1,7 @@
 package com.ithaque.funnies.shared.basic.processors;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.AnimationContext;
@@ -16,8 +16,6 @@ import com.ithaque.funnies.shared.basic.items.animations.ParallelAnimation;
 
 public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 	
-	List<Item> draggeables = new ArrayList<Item>();
-	List<Item> targets = new ArrayList<Item>();
 	Item currentTarget = null;
 	Item newTarget = null;
 	Item otherTarget = null;
@@ -26,38 +24,8 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 		super(board);
 	}
 	
-	protected boolean acceptDraggeable(Item draggeable) {
-		return draggeables.contains(draggeable);
-	}
+	protected abstract Collection<Item> getTargets();
 	
-	public void addDraggeable(Item draggeable) {
-		if (draggeable==null) {
-			throw new NullPointerException();
-		}
-		draggeables.add(draggeable);
-	}
-	
-	public void removeDraggeable(Item draggeable) {
-		if (draggeable==null) {
-			throw new NullPointerException();
-		}		
-		draggeables.remove(draggeable);
-	}
-	
-	public void addTarget(Item target) {
-		if (target==null) {
-			throw new NullPointerException();
-		}
-		targets.add(target);
-	}
-	
-	public void removeTarget(Item target) {
-		if (target==null) {
-			throw new NullPointerException();
-		}
-		targets.remove(target);
-	}
-
 	@Override
 	protected void processDrag(MouseEvent event, Board board) {
 		Item target = getTarget(dragged, event);
@@ -138,7 +106,7 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 	void hideAllowedTargets(Item dragged, Item target,
 			ParallelAnimation targetAnimation) 
 	{
-		for (Item aTarget : targets) {
+		for (Item aTarget : getTargets()) {
 			if (acceptTarget(dragged, aTarget)) {
 				Animation.Factory aTargetAnimation = getHideAllowedTargetAnimation(aTarget);
 				if (aTargetAnimation != null) {
@@ -157,7 +125,7 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 	}
 
 	void showAllowedTargets(Item dragged) {
-		for (Item target : targets) {
+		for (Item target : getTargets()) {
 			if (acceptTarget(dragged, target)) {
 				Animation.Factory targetAnimationFactory = getShowAllowedTargetAnimation(target);
 				if (targetAnimationFactory != null) {
@@ -188,7 +156,7 @@ public abstract class AbstractTargetedDragProfile extends AbstractDragProfile {
 	}
 
 	protected Item getTarget(Item dragged, MouseEvent event) {
-		for (Item target : new ArrayList<Item>(targets)) {
+		for (Item target : new ArrayList<Item>(getTargets())) {
 			if (target.acceptEvent(event) && acceptTarget(dragged, target)) {
 				return target;
 			}

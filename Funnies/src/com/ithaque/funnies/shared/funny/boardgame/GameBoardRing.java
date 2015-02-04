@@ -131,11 +131,11 @@ public class GameBoardRing extends AbstractRing implements TooledRing, PanelRing
 		if (funny instanceof DraggableFunny) {
 			dragCounterProfile.registerDraggableFunny((DraggableFunny)funny);
 		}
-		if (funny instanceof RotatableFunny) {
-			rotateCounterProfile.registerRotatableFunny((RotatableFunny)funny);
-		}
 		if (funny instanceof DropTargetFunny) {
 			dragCounterProfile.registerDroppableFunny((DropTargetFunny)funny);
+		}
+		if (funny instanceof RotatableFunny) {
+			rotateCounterProfile.registerRotatableFunny((RotatableFunny)funny);
 		}
 		if (funny instanceof HoverFunny) {
 			hoverProcessor.registerHoverableFunny((HoverFunny)funny);
