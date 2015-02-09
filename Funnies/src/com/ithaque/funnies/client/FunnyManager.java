@@ -1,11 +1,12 @@
 package com.ithaque.funnies.client;
 
+import com.ithaque.funnies.shared.Location;
 import com.ithaque.funnies.shared.basic.Color;
 import com.ithaque.funnies.shared.basic.Font;
-import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
 import com.ithaque.funnies.shared.basic.items.StatusItem;
 import com.ithaque.funnies.shared.funny.Circus;
+import com.ithaque.funnies.shared.funny.FunnySpy;
 import com.ithaque.funnies.shared.funny.Icon;
 import com.ithaque.funnies.shared.funny.SimpleSketch;
 import com.ithaque.funnies.shared.funny.Sketch;
@@ -172,6 +173,7 @@ public class FunnyManager extends AbstractCircusManager {
 		circus.enterRing(createCounter(4, "u2", "u1", 400, -50));
 		circus.enterRing(createCounter(5, "u2", "u1", 400, 0));
 		circus.enterRing(counter2 = createCounter(6, "u2", "u1", 400, 50));
+//		counter2.addSpy(new FunnySpy());
 		
 		circus.enterRing(dice=createDiceFunny());
 		circus.enterRing(boom=createExplosion());

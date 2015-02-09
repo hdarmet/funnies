@@ -1,9 +1,9 @@
 package com.ithaque.funnies.shared.funny.boardgame;
 
 import com.ithaque.funnies.shared.IllegalInvokeException;
+import com.ithaque.funnies.shared.Location;
 import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.LayoutDevice;
-import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.items.AbstractImageItem;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
 import com.ithaque.funnies.shared.basic.items.SpriteImageItem;
@@ -12,6 +12,7 @@ import com.ithaque.funnies.shared.basic.items.animations.FaceFadingAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.SequenceAnimation;
 import com.ithaque.funnies.shared.funny.AbstractFunny;
 import com.ithaque.funnies.shared.funny.Funny;
+import com.ithaque.funnies.shared.funny.FunnySpy;
 import com.ithaque.funnies.shared.funny.IncompatibleRingException;
 import com.ithaque.funnies.shared.funny.AbstractRing;
 
@@ -76,4 +77,15 @@ public class EphemeralFunny extends AbstractFunny implements Funny {
 	protected LayoutDevice getEphemeralSupport() {
 		return getRing().infoLayer;
 	}
+	
+	@Override
+	public void addSpy(FunnySpy spy) {
+		item.addObserver(spy);
+	}
+
+	@Override
+	public void removeSpy(FunnySpy spy) {
+		item.removeObserver(spy);
+	}
+
 }

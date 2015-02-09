@@ -15,7 +15,7 @@ import java.util.Random;
 
 import javax.swing.JFrame;
 
-import com.ithaque.funnies.client.platform.gwt.AbstractGWTPlatform;
+import com.ithaque.funnies.client.platform.gwt.AbstractPlatform;
 import com.ithaque.funnies.client.platform.gwt.CanvasInterface;
 import com.ithaque.funnies.client.platform.gwt.GraphicsImpl;
 import com.ithaque.funnies.client.platform.gwt.GraphicsImpl.ImageElementRecord;
@@ -26,7 +26,7 @@ import com.ithaque.funnies.shared.basic.Event.Type;
 import com.ithaque.funnies.shared.basic.MouseEvent.Button;
 import com.ithaque.funnies.shared.basic.Token;
 
-public class Java2DPlatform extends AbstractGWTPlatform {
+public class Java2DPlatform extends AbstractPlatform {
 
 	Random random = new Random();
 	int frameWidth = 100;

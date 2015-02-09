@@ -17,17 +17,13 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.ithaque.funnies.client.platform.gwt.impl.GWTPlatform;
 import com.ithaque.funnies.client.platform.gwt.test.GWTTestPlatform;
-import com.ithaque.funnies.client.platform.gwt.test.TestRegistry;
-import com.ithaque.funnies.shared.FieldVerifier;
-import com.ithaque.funnies.shared.basic.Animation.Factory;
+import com.ithaque.funnies.shared.Location;
 import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Color;
 import com.ithaque.funnies.shared.basic.Event;
 import com.ithaque.funnies.shared.basic.Event.Type;
 import com.ithaque.funnies.shared.basic.Font;
-import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.Layer;
-import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.MultiLayered;
 import com.ithaque.funnies.shared.basic.Processor;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
@@ -47,7 +43,6 @@ import com.ithaque.funnies.shared.basic.processors.GestureEvent;
 import com.ithaque.funnies.shared.basic.processors.GestureProfile;
 import com.ithaque.funnies.shared.basic.processors.GestureRecognition.Gesture;
 import com.ithaque.funnies.shared.basic.processors.GestureRecognition.MatchHandler;
-import com.ithaque.funnies.shared.basic.processors.RandomAnimationProcessor;
 import com.ithaque.funnies.shared.basic.processors.ScalingProcessor;
 import com.ithaque.funnies.shared.basic.processors.ScrollProfile;
 import com.ithaque.funnies.shared.basic.processors.SimpleTargetedDragProfile;
@@ -63,7 +58,7 @@ public class Funnies implements EntryPoint {
 			.create(FunnyService.class);
 
 	public void onModuleLoad() {
-		GameBoardCircus gbc = new GameBoardCircus(new GWTTestPlatform(10), 1000.0f, 500.0f);
+		GameBoardCircus gbc = new GameBoardCircus(new GWTPlatform(), 1000.0f, 500.0f);
 		FunnyManager funnyManager = new FunnyManager(gbc);
 		gbc.init(funnyManager);
 		funnyManager.init();
@@ -411,15 +406,10 @@ public class Funnies implements EntryPoint {
 			private void sendNameToServer() {
 				// First, we validate the input.
 				errorLabel.setText("");
-				String textToServer = nameField.getText();
-				if (!FieldVerifier.isValidName(textToServer)) {
-					errorLabel.setText("Please enter at least four characters");
-					return;
-				}
 
 				// Then, we send the input to the server.
 				sendButton.setEnabled(false);
-				textToServerLabel.setText(textToServer);
+				textToServerLabel.setText("");
 				serverResponseLabel.setText("");
 				greetingService.invoke(null,
 						new AsyncCallback<Response>() {

@@ -3,11 +3,12 @@ package com.ithaque.funnies.shared.basic.processors;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ithaque.funnies.shared.Location;
+import com.ithaque.funnies.shared.Shape;
 import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Event;
 import com.ithaque.funnies.shared.basic.Event.Type;
 import com.ithaque.funnies.shared.basic.Item;
-import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.MouseEvent;
 import com.ithaque.funnies.shared.basic.MouseEvent.Button;
 import com.ithaque.funnies.shared.basic.Processor;
@@ -77,23 +78,23 @@ public class ScalingProcessor implements Processor {
 
 	protected float getMinScale(Item scaled) {
 		Board board = scaled.getBoard();
-		Location[] absShape = TransformUtil.transformShape(scaled, scaled.getShape());
-		float minX = absShape[0].getX();
-		float maxX = absShape[0].getX();
-		float minY = absShape[0].getY();
-		float maxY = absShape[0].getY();
-		for (int i=1; i<absShape.length; i++) {
-			if (minX>absShape[i].getX()) {
-				minX=absShape[i].getX();
+		Shape absShape = TransformUtil.transformShape(scaled, scaled.getShape());
+		float minX = absShape.getX(0);
+		float maxX = absShape.getX(0);
+		float minY = absShape.getY(0);
+		float maxY = absShape.getY(0);
+		for (int i=1; i<absShape.size(); i++) {
+			if (minX>absShape.getX(i)) {
+				minX=absShape.getX(i);
 			}
-			if (maxX<absShape[i].getX()) {
-				maxX=absShape[i].getX();
+			if (maxX<absShape.getX(i)) {
+				maxX=absShape.getX(i);
 			}
-			if (minY>absShape[i].getY()) {
-				minY=absShape[i].getY();
+			if (minY>absShape.getY(i)) {
+				minY=absShape.getY(i);
 			}
-			if (maxY<absShape[i].getY()) {
-				maxY=absShape[i].getY();
+			if (maxY<absShape.getY(i)) {
+				maxY=absShape.getY(i);
 			}
 		}
 		float scaleX = board.getGraphics().getDisplayWidth()/(maxX - minX);

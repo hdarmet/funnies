@@ -2,13 +2,13 @@ package com.ithaque.funnies.shared.funny.boardgame;
 
 import com.ithaque.funnies.shared.Geometric;
 import com.ithaque.funnies.shared.IllegalInvokeException;
+import com.ithaque.funnies.shared.Location;
 import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.Animation.Factory;
 import com.ithaque.funnies.shared.basic.Event.Type;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.ItemHolder;
 import com.ithaque.funnies.shared.basic.ItemObserver;
-import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.TransformUtil;
 import com.ithaque.funnies.shared.basic.items.DecoratedItem;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
@@ -30,6 +30,7 @@ import com.ithaque.funnies.shared.funny.AnimatedFunny;
 import com.ithaque.funnies.shared.funny.DecoratedFunny;
 import com.ithaque.funnies.shared.funny.DraggableFunny;
 import com.ithaque.funnies.shared.funny.FunnyObserver;
+import com.ithaque.funnies.shared.funny.FunnySpy;
 import com.ithaque.funnies.shared.funny.IncompatibleRingException;
 import com.ithaque.funnies.shared.funny.AbstractRing;
 import com.ithaque.funnies.shared.funny.RotatableFunny;
@@ -309,4 +310,16 @@ public class CounterFunny extends DecoratedFunny implements DraggableFunny, Rota
 		return new Item[] {counterItem};
 	}
 	
+	@Override
+	public void addSpy(FunnySpy spy) {
+		counterItem.addObserver(spy);
+		counterStackItem.addObserver(spy);
+	}
+
+	@Override
+	public void removeSpy(FunnySpy spy) {
+		counterItem.removeObserver(spy);
+		counterStackItem.addObserver(spy);
+	}
+
 }

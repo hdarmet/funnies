@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ithaque.funnies.shared.IllegalInvokeException;
+import com.ithaque.funnies.shared.Location;
 import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Event;
 import com.ithaque.funnies.shared.basic.Event.Type;
 import com.ithaque.funnies.shared.basic.Item;
-import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.MouseEvent;
 import com.ithaque.funnies.shared.basic.Processor;
 import com.ithaque.funnies.shared.basic.TransformUtil;

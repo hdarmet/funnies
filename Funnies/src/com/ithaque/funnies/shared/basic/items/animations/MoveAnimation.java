@@ -1,8 +1,8 @@
 package com.ithaque.funnies.shared.basic.items.animations;
 
+import com.ithaque.funnies.shared.Location;
 import com.ithaque.funnies.shared.basic.AnimationContext.LocationFinder;
 import com.ithaque.funnies.shared.basic.AnimationContext.MoveableFinder;
-import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.items.animations.easing.LinearEasing;
 import com.ithaque.funnies.shared.basic.items.animations.easing.SineInOutEasing;
 

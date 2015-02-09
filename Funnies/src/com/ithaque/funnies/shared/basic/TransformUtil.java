@@ -1,6 +1,8 @@
 package com.ithaque.funnies.shared.basic;
 
 import com.ithaque.funnies.shared.Geometric;
+import com.ithaque.funnies.shared.Location;
+import com.ithaque.funnies.shared.Shape;
 import com.ithaque.funnies.shared.Transform;
 
 public class TransformUtil {
@@ -50,7 +52,7 @@ public class TransformUtil {
 		return transform;
 	}
 	
-	static public boolean isTarget(Item item, Location point, Location[] shape) {
+	static public boolean isTarget(Item item, Location point, Shape shape) {
 		Transform transform = transform(item).invert();
 		Location trPoint = transform.transformPoint(point);
 		Location[] area = Geometric.getArea(shape);
@@ -63,25 +65,25 @@ public class TransformUtil {
 		}
 	}
 
-	static public Location[] transformShape(Moveable item, Location[] shape) {
+	static public Shape transformShape(Moveable item, Shape shape) {
 		Transform transform = transform(item);
-		Location[] trShape = transformShape(shape, transform);
+		Shape trShape = transformShape(shape, transform);
 		return trShape; 
 	}
 
-	static public Location[] invertTransformShape(Moveable item, Location[] shape) {
+	static public Shape invertTransformShape(Moveable item, Shape shape) {
 		Transform transform = transform(item).invert();
-		Location[] trShape = transformShape(shape, transform);
+		Shape trShape = transformShape(shape, transform);
 		return trShape; 
 	}
 
-	static Location[] transformShape(Location[] shape,
+	static Shape transformShape(Shape shape,
 			Transform transform) {
-		Location[] trShape = new Location[shape.length];
-		for (int i=0; i<shape.length; i++) {
-			trShape[i] = transform.transformPoint(shape[i]);
+		Location[] content = new Location[shape.size()];
+		for (int i=0; i<shape.size(); i++) {
+			content[i] = transform.transformPoint(shape.getLocation(i));
 		}
-		return trShape;
+		return new Shape(content);
 	}
 
 	static public Location transformLocation(Moveable sourceItem, Moveable destItem, Location location) {
@@ -89,8 +91,8 @@ public class TransformUtil {
 		return invertTransformLocation(destItem, result);
 	}
 
-	static public Location[] transformShape(Moveable sourceItem, Moveable destItem, Location[] shape) {
-		Location[] result = transformShape(sourceItem, shape);
+	static public Shape transformShape(Moveable sourceItem, Moveable destItem, Shape shape) {
+		Shape result = transformShape(sourceItem, shape);
 		return invertTransformShape(destItem, result);
 	}
 

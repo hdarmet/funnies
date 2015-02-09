@@ -1,8 +1,8 @@
 package com.ithaque.funnies.shared.funny;
 
+import com.ithaque.funnies.shared.Location;
 import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.Item;
-import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.processors.RotateProfile;
 import com.ithaque.funnies.shared.funny.notifications.AcceptRotatableQuestion;
 import com.ithaque.funnies.shared.funny.notifications.AcceptRotationQuestion;

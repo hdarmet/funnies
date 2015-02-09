@@ -3,9 +3,9 @@ package com.ithaque.funnies.shared.basic.processors;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ithaque.funnies.shared.Location;
 import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.Item;
-import com.ithaque.funnies.shared.basic.Location;
 
 public class TargetedRotateProfile extends RotateProfile {
 

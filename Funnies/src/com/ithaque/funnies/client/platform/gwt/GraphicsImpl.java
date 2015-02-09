@@ -5,20 +5,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ithaque.funnies.shared.Shape;
 import com.ithaque.funnies.shared.Trace;
 import com.ithaque.funnies.shared.Transform;
 import com.ithaque.funnies.shared.basic.Color;
 import com.ithaque.funnies.shared.basic.Font;
 import com.ithaque.funnies.shared.basic.Graphics;
 import com.ithaque.funnies.shared.basic.Item;
-import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.Token;
 import com.ithaque.funnies.shared.basic.TransformUtil;
 import com.ithaque.funnies.shared.basic.items.AbstractImageItem;
 
 public class GraphicsImpl implements Graphics {
 
-	AbstractGWTPlatform platform;
+	AbstractPlatform platform;
 	int tokenCount = 0;
 	Context2D context2d;
 	Map<String, Token> imageTokens = new HashMap<String, Token>();
@@ -29,7 +29,7 @@ public class GraphicsImpl implements Graphics {
 	
 	boolean debug = false;
 	
-	public GraphicsImpl(AbstractGWTPlatform platform) {
+	public GraphicsImpl(AbstractPlatform platform) {
 		this.platform = platform;
 		Graphics.Singleton.setGraphics(this);
 	}
@@ -151,8 +151,8 @@ public class GraphicsImpl implements Graphics {
 	
 	@Override
 	public void drawPolygon(Item item, Color fillColor, Color lineColor, float lineWidth, float opacity) {
-		Location[] trShape = TransformUtil.transformShape(item, item.getShape());
 		resetContext2d();
+		Shape trShape = TransformUtil.transformShape(item, item.getShape());
 		context2d.setGlobalAlpha(opacity);
 		context2d.setLineWidth(lineWidth);
 		context2d.setLineJoin("round");
@@ -167,6 +167,7 @@ public class GraphicsImpl implements Graphics {
 	@Override
 	public void drawText(Item item, String text, Color color, Font font, float opacity) {
 		//drawShape(item, item.getShape());
+		resetContext2d();
 		context2d.setFont(font.getSize()+"pt "+font.getFontName());
 		context2d.setTextBaseline("top");
 		context2d.setFillStyle(color);
@@ -204,8 +205,8 @@ public class GraphicsImpl implements Graphics {
 		return rowCount*font.getSize()+font.getMargin();
 	}
 	
-	void drawShape(Item item, Location[] shape) {
-		Location[] trShape = TransformUtil.transformShape(item, shape);
+	void drawShape(Item item, Shape shape) {
+		Shape trShape = TransformUtil.transformShape(item, shape);
 		resetContext2d();
 		
 		context2d.setLineWidth(0.0f);
@@ -220,20 +221,20 @@ public class GraphicsImpl implements Graphics {
 		context2d.stroke();
 	}
 
-	void definePath(Context2D context2d, Location[] trShape) {
-		if (trShape.length>0) {
-			context2d.moveTo(trShape[0].getX(), trShape[0].getY());
-			for (int i=1; i<trShape.length; i++) {
-				context2d.lineTo(trShape[i].getX(), trShape[i].getY());
+	void definePath(Context2D context2d, Shape trShape) {
+		if (trShape.size()>0) {
+			context2d.moveTo(trShape.getX(0), trShape.getY(0));
+			for (int i=1; i<trShape.size(); i++) {
+				context2d.lineTo(trShape.getX(i), trShape.getY(i));
 			}		
-			context2d.lineTo(trShape[0].getX(), trShape[0].getY());
+			context2d.lineTo(trShape.getX(0), trShape.getY(0));
 		}
 	}
 
 
 	@Override
-	public void clip(Item item, Location[] shape) {
-		Location[] absShape = TransformUtil.transformShape(item, shape);
+	public void clip(Item item, Shape shape) {
+		Shape absShape = TransformUtil.transformShape(item, shape);
 		definePath(context2d, absShape);
 		context2d.clip();
 	}

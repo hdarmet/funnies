@@ -1,9 +1,9 @@
 package com.ithaque.funnies.shared.basic.items.animations;
 
+import com.ithaque.funnies.shared.Location;
 import com.ithaque.funnies.shared.basic.AnimationContext.LocationFinder;
 import com.ithaque.funnies.shared.basic.AnimationContext.MoveableFinder;
 import com.ithaque.funnies.shared.basic.ItemHolder;
-import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.TransformUtil;
 import com.ithaque.funnies.shared.basic.items.animations.easing.LinearEasing;
 
@@ -38,15 +38,17 @@ public class DragAnimation extends SoftenAnimation {
 	public boolean start(long time) {
 		boolean result = super.start(time);
 		if (result) {
-			if (getDragHolder() != null && getDragHolder()!=getItem().getParent()) {
+			if (getDragHolder() != null) {
 				float rotation = TransformUtil.transformRotation(getItem().getParent(), getDragHolder(), getItem().getRotation());
 				getItem().setRotation(rotation, getUpdateSerial());
 				float scale = TransformUtil.transformScale(getItem().getParent(), getDragHolder(), getItem().getScale());
 				getItem().setScale(scale, getUpdateSerial());
 				getItem().setParent(getDragHolder(), getUpdateSerial());
+				if (getDragHolder()==getItem().getParent()) {
+					this.baseLocation = TransformUtil.transformLocation(getItem().getParent(), getDragHolder(), getItem().getLocation());
+					getItem().setLocation(baseLocation, getUpdateSerial());
+				}
 			}
-			this.baseLocation = TransformUtil.transformLocation(getItem().getParent(), getDragHolder(), getItem().getLocation());
-			getItem().setLocation(baseLocation, getUpdateSerial());		
 			destLocation = getLocation();
 		}
 		return result;

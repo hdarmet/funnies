@@ -3,6 +3,7 @@ package com.ithaque.funnies.shared.funny.standard;
 import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.funny.AbstractFunny;
 import com.ithaque.funnies.shared.funny.FunnyObserver.ChangeType;
+import com.ithaque.funnies.shared.funny.FunnySpy;
 import com.ithaque.funnies.shared.funny.Icon;
 import com.ithaque.funnies.shared.funny.TooledFunny;
 
@@ -43,4 +44,13 @@ public class CommandFunny extends AbstractFunny implements TooledFunny {
 		fire(ChangeType.ENABLING);
 	}
 	
+	@Override
+	public void addSpy(FunnySpy spy) {
+		toolIcon.getIconItem().addObserver(spy);
+	}
+
+	@Override
+	public void removeSpy(FunnySpy spy) {
+		toolIcon.getIconItem().removeObserver(spy);
+	}
 }

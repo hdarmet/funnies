@@ -7,6 +7,8 @@ import java.util.Set;
 
 import com.ithaque.funnies.shared.Geometric;
 import com.ithaque.funnies.shared.IllegalInvokeException;
+import com.ithaque.funnies.shared.Location;
+import com.ithaque.funnies.shared.Shape;
 import com.ithaque.funnies.shared.basic.ItemObserver.ChangeType;
 
 public class Item implements Moveable {
@@ -26,7 +28,7 @@ public class Item implements Moveable {
 	float rotation = ItemHolder.NO_ROTATION;
 	float opacity = 1.0f;
 	Set<Event.Type> eventTypes = new HashSet<Event.Type>();
-	Location[] shape = null;
+	Shape shape = null;
 	int level;
 	
 	List<ItemObserver> observers = null;
@@ -260,7 +262,7 @@ public class Item implements Moveable {
 	}
 	
 	public boolean acceptEvent(MouseEvent event) {		
-		Location[] shape = getShape();
+		Shape shape = getShape();
 		if (shape==null) {
 			return false;
 		}
@@ -269,19 +271,19 @@ public class Item implements Moveable {
 		}
 	}
 	
-	public Location[] getShape() {
+	public Shape getShape() {
 		return shape;
 	}
 	
-	public Location[] getArea() {
+	public Shape getArea() {
 		return getShape();
 	}
 	
-	public void setShape(Location ... shape) {
+	public void setShape(Shape shape) {
 		setShape(Item.getUpdateSerial(), shape);
 	}
 
-	public void setShape(long serial, Location ... shape) {
+	public void setShape(long serial, Shape shape) {
 		if (shapeSerial<=serial) {
 			shapeSerial = serial;
 			if (!Geometric.compareShape(shape, this.shape)) {
@@ -292,6 +294,10 @@ public class Item implements Moveable {
 		}
 	}
 	
+	public void setShape(Location ... locations) {
+		setShape(new Shape(locations));
+	}
+	
 	public void setShape(float ... coords) {
 		setShape(Item.getUpdateSerial(), coords);
 	}
@@ -300,12 +306,12 @@ public class Item implements Moveable {
 		setShape(serial, buildShape(coords));
 	}
 
-	public static Location[] buildShape(float... coords) {
-		Location[] shape = new Location[coords.length/2];
-		for (int i=0; i<shape.length; i++) {
-			shape[i] = new Location(coords[i*2], coords[i*2+1]);
+	public static Shape buildShape(float... coords) {
+		Location[] content = new Location[coords.length/2];
+		for (int i=0; i<content.length; i++) {
+			content[i] = new Location(coords[i*2], coords[i*2+1]);
 		}
-		return shape;
+		return new Shape(content);
 	}
 
 	public void render(Graphics graphics, int currentLevel, int level) {
@@ -319,7 +325,7 @@ public class Item implements Moveable {
 		return TransformUtil.transformLocation(getParent(), getLocation());
 	}
 	
-	public Location[] getDisplayShape() {
+	public Shape getDisplayShape() {
 		return TransformUtil.transformShape(getParent(), getShape());
 	}
 	
@@ -351,6 +357,11 @@ public class Item implements Moveable {
 			return (LayoutDevice)getParent();
 		}
 		return getParent().getLayout();
+	}
+	
+	@Override
+	public String toString() {
+		return getClass().getSimpleName();
 	}
 	
 	public static long getUpdateSerial() {

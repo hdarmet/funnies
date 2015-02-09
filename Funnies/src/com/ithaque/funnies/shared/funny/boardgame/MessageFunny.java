@@ -2,11 +2,11 @@ package com.ithaque.funnies.shared.funny.boardgame;
 
 import com.ithaque.funnies.shared.Geometric;
 import com.ithaque.funnies.shared.IllegalInvokeException;
+import com.ithaque.funnies.shared.Location;
 import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.Color;
 import com.ithaque.funnies.shared.basic.Font;
 import com.ithaque.funnies.shared.basic.LayoutDevice;
-import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.TransformUtil;
 import com.ithaque.funnies.shared.basic.items.TextItem;
 import com.ithaque.funnies.shared.basic.items.animations.FadingAnimation;
@@ -16,6 +16,7 @@ import com.ithaque.funnies.shared.basic.items.animations.SequenceAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.easing.LinearEasing;
 import com.ithaque.funnies.shared.funny.AbstractFunny;
 import com.ithaque.funnies.shared.funny.Funny;
+import com.ithaque.funnies.shared.funny.FunnySpy;
 import com.ithaque.funnies.shared.funny.IncompatibleRingException;
 import com.ithaque.funnies.shared.funny.AbstractRing;
 import com.ithaque.funnies.shared.funny.TrackableFunny;
@@ -91,4 +92,15 @@ public class MessageFunny extends AbstractFunny implements Funny {
 	protected LayoutDevice getMessageSupport() {
 		return getRing().infoLayer;
 	}
+	
+	@Override
+	public void addSpy(FunnySpy spy) {
+		item.addObserver(spy);
+	}
+
+	@Override
+	public void removeSpy(FunnySpy spy) {
+		item.removeObserver(spy);
+	}
+
 }

@@ -1,6 +1,8 @@
 package com.ithaque.funnies.shared.basic.processors;
 
 import com.ithaque.funnies.shared.Geometric;
+import com.ithaque.funnies.shared.Location;
+import com.ithaque.funnies.shared.Shape;
 import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.AnimationContext;
 import com.ithaque.funnies.shared.basic.AnimationContext.FactorFinder;
@@ -12,7 +14,6 @@ import com.ithaque.funnies.shared.basic.GraphicsUtil;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.ItemHolder;
 import com.ithaque.funnies.shared.basic.Layer;
-import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.MouseEvent;
 import com.ithaque.funnies.shared.basic.Moveable;
 import com.ithaque.funnies.shared.basic.TransformUtil;
@@ -95,7 +96,7 @@ public abstract class AbstractDragProfile implements DragProfile {
 
 	protected void scrollLayerIfRequired(Layer layer, Board board) {
 		Graphics graphics = board.getGraphics();
-		Location[] absShape = TransformUtil.transformShape(dragged, dragged.getShape());
+		Shape absShape = TransformUtil.transformShape(dragged, dragged.getShape());
 		Location[] area = Geometric.getArea(absShape);
 		Location overhead = GraphicsUtil.inDisplayLimits( 
 			0.0f, 0.0f, graphics.getDisplayWidth(), graphics.getDisplayHeight(),

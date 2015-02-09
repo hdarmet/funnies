@@ -1,11 +1,11 @@
 package com.ithaque.funnies.shared.basic.items;
 
+import com.ithaque.funnies.shared.Shape;
 import com.ithaque.funnies.shared.basic.Color;
 import com.ithaque.funnies.shared.basic.Font;
 import com.ithaque.funnies.shared.basic.Graphics;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.ItemObserver.ChangeType;
-import com.ithaque.funnies.shared.basic.Location;
 
 public class TextItem extends Item {
 
@@ -38,14 +38,9 @@ public class TextItem extends Item {
 	}
 	
 	@Override
-	public Location[] getShape() {
+	public Shape getShape() {
 		float width = Graphics.Singleton.getGraphics().getTextWidth(font, text);
 		float height = Graphics.Singleton.getGraphics().getTextHeight(font, text);
-		return new Location[] {
-			new Location(-width/2.0f, -height/2.0f), 
-			new Location(width/2.0f, -height/2.0f),
-			new Location(width/2.0f, height/2.0f), 
-			new Location(-width/2.0f, height/2.0f)
-		};
+		return new Shape(width, height);
 	}
 }

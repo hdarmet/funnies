@@ -3,7 +3,7 @@ package com.ithaque.funnies.client.platform.gwt.test;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ithaque.funnies.client.platform.gwt.AbstractGWTPlatform;
+import com.ithaque.funnies.client.platform.gwt.AbstractPlatform;
 import com.ithaque.funnies.client.platform.gwt.CanvasInterface;
 import com.ithaque.funnies.client.platform.gwt.GraphicsImpl;
 import com.ithaque.funnies.client.platform.gwt.GraphicsImpl.ImageElementRecord;
@@ -15,7 +15,7 @@ import com.ithaque.funnies.shared.basic.MouseEvent;
 import com.ithaque.funnies.shared.basic.MouseEvent.Button;
 import com.ithaque.funnies.shared.basic.Token;
 
-public class TestPlatform extends AbstractGWTPlatform {
+public class TestPlatform extends AbstractPlatform {
 
 	long now = 0;
 	int canvasCount = 0;

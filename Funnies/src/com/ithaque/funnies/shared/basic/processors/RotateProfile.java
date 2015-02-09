@@ -1,13 +1,13 @@
 package com.ithaque.funnies.shared.basic.processors;
 
 import com.ithaque.funnies.shared.Geometric;
+import com.ithaque.funnies.shared.Location;
 import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.AnimationContext;
 import com.ithaque.funnies.shared.basic.AnimationContext.FactorFinder;
 import com.ithaque.funnies.shared.basic.AnimationContext.MoveableFinder;
 import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Item;
-import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.MouseEvent;
 import com.ithaque.funnies.shared.basic.Moveable;
 import com.ithaque.funnies.shared.basic.TransformUtil;
@@ -49,7 +49,7 @@ public abstract class RotateProfile implements DragProfile {
 	
 	protected boolean acceptRotatable(Item rotatable, Location mouseLocation) {
 		Location anchor = TransformUtil.invertTransformLocation(rotatable, mouseLocation);
-		for (Location location : rotatable.getShape()) {
+		for (Location location : rotatable.getShape().getLocations()) {
 			if (Geometric.computeDistance(location, anchor)<distance) {
 				return true;
 			}

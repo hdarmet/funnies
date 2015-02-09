@@ -1,10 +1,11 @@
 package com.ithaque.funnies.shared.funny.standard;
 
+import com.ithaque.funnies.shared.Location;
+import com.ithaque.funnies.shared.Shape;
 import com.ithaque.funnies.shared.basic.Animation.Factory;
 import com.ithaque.funnies.shared.basic.Color;
 import com.ithaque.funnies.shared.basic.Event.Type;
 import com.ithaque.funnies.shared.basic.Item;
-import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.TransformUtil;
 import com.ithaque.funnies.shared.basic.items.DecoratedItem;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
@@ -18,6 +19,7 @@ import com.ithaque.funnies.shared.basic.items.animations.SequenceAnimation;
 import com.ithaque.funnies.shared.funny.AbstractFunny;
 import com.ithaque.funnies.shared.funny.ActivableFunny;
 import com.ithaque.funnies.shared.funny.FunnyObserver.ChangeType;
+import com.ithaque.funnies.shared.funny.FunnySpy;
 import com.ithaque.funnies.shared.funny.HoverFunny;
 import com.ithaque.funnies.shared.funny.HoverProcessor;
 import com.ithaque.funnies.shared.funny.Icon;
@@ -33,7 +35,7 @@ public class PanelFunny extends AbstractFunny implements TooledFunny, ActivableF
 	
 	public PanelFunny(String id, float panelWidth, float panelHeight, Color fillColor, Color lineColor, float lineWidth) {
 		super(id);
-		backgroundItem = new PolygonItem(fillColor, lineColor, lineWidth, 1.0f, makeShape(panelWidth, panelHeight));
+		backgroundItem = new PolygonItem(fillColor, lineColor, lineWidth, 1.0f, new Shape(panelWidth, panelHeight));
 		closeItem = new ImageItem("close.png");
 		closeItem.addEventType(Type.MOUSE_CLICK);
 		closeItem.addEventType(Type.MOUSE_MOVE);
@@ -41,15 +43,6 @@ public class PanelFunny extends AbstractFunny implements TooledFunny, ActivableF
 		panelItem.addItem(closeItem, panelWidth/2.0f, -panelHeight/2.0f); 
 		panelItem.setOpacity(0.0f);
 		lastIcon = getIcons()[0];
-	}
-
-	Location[] makeShape(float panelWidth, float panelHeight) {
-		return new Location[] {
-			new Location(-panelWidth/2.0f, -panelHeight/2.0f),
-			new Location(panelWidth/2.0f, -panelHeight/2.0f),
-			new Location(panelWidth/2.0f, panelHeight/2.0f),
-			new Location(-panelWidth/2.0f, panelHeight/2.0f)
-		};
 	}
 
 	Icon toolIcon;
@@ -133,4 +126,19 @@ public class PanelFunny extends AbstractFunny implements TooledFunny, ActivableF
 	public void moveOut(Item item) {
 	}
 	
+	@Override
+	public void addSpy(FunnySpy spy) {
+		lastIcon.getIconItem().addObserver(spy);
+		panelItem.addObserver(spy);
+		backgroundItem.addObserver(spy);
+		closeItem.addObserver(spy);
+	}
+
+	@Override
+	public void removeSpy(FunnySpy spy) {
+		lastIcon.getIconItem().removeObserver(spy);
+		panelItem.removeObserver(spy);
+		backgroundItem.removeObserver(spy);
+		closeItem.removeObserver(spy);
+	}
 }

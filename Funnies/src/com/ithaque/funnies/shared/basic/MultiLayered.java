@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.ithaque.funnies.shared.IllegalInvokeException;
+import com.ithaque.funnies.shared.Location;
 
 
 public class MultiLayered extends GroupItem implements BaseDevice {

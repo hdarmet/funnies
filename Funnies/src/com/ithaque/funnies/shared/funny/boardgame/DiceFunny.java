@@ -1,10 +1,10 @@
 package com.ithaque.funnies.shared.funny.boardgame;
 
 import com.ithaque.funnies.shared.IllegalInvokeException;
+import com.ithaque.funnies.shared.Location;
 import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.Event.Type;
 import com.ithaque.funnies.shared.basic.Item;
-import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
 import com.ithaque.funnies.shared.basic.items.animations.BezierAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.ChangeFaceAnimation;
@@ -13,6 +13,7 @@ import com.ithaque.funnies.shared.basic.items.animations.RotateAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.SequenceAnimation;
 import com.ithaque.funnies.shared.funny.AbstractFunny;
 import com.ithaque.funnies.shared.funny.ActivableFunny;
+import com.ithaque.funnies.shared.funny.FunnySpy;
 import com.ithaque.funnies.shared.funny.IncompatibleRingException;
 import com.ithaque.funnies.shared.funny.AbstractRing;
 import com.ithaque.funnies.shared.funny.notifications.ActivateEvent;
@@ -187,6 +188,16 @@ public class DiceFunny extends AbstractFunny implements ActivableFunny {
 	@Override
 	public void activate(Item activated) {
 		getRing().notify(new ActivateEvent(this));
+	}
+
+	@Override
+	public void addSpy(FunnySpy spy) {
+		diceItem.addObserver(spy);
+	}
+
+	@Override
+	public void removeSpy(FunnySpy spy) {
+		diceItem.removeObserver(spy);
 	}
 
 }

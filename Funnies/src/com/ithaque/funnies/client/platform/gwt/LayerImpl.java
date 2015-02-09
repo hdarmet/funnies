@@ -5,7 +5,7 @@ public class LayerImpl {
 	CanvasInterface flipCanvas;
 	CanvasInterface flopCanvas;
 	
-	public LayerImpl(AbstractGWTPlatform platform) {
+	public LayerImpl(AbstractPlatform platform) {
 	    canvas = flipCanvas = platform.createCanvas(true);
 	    flopCanvas = platform.createCanvas(false);
 	}

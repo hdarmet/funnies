@@ -5,9 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ithaque.funnies.shared.Location;
+import com.ithaque.funnies.shared.Shape;
 import com.ithaque.funnies.shared.basic.Graphics;
 import com.ithaque.funnies.shared.basic.Item;
-import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.Token;
 
 public abstract class AbstractImageItem extends Item {
@@ -47,12 +48,12 @@ public abstract class AbstractImageItem extends Item {
 	}
 	
 	@Override
-	public Location[] getShape() {
-		Location[] shape = super.getShape();
+	public Shape getShape() {
+		Shape shape = super.getShape();
 		return shape!=null ? shape : getShapeByImages();
 	}
 
-	public Location[] getShapeByImages() {
+	public Shape getShapeByImages() {
 		float width = 0.0f;
 		float height = 0.0f;
 		for (int index=0; index<facets.size(); index++) {
@@ -69,7 +70,7 @@ public abstract class AbstractImageItem extends Item {
 		Location upperRight = new Location(width/2.0f, -height/2.0f);
 		Location bottomRight = new Location(width/2.0f, height/2.0f);
 		Location bottomLeft = new Location(-width/2.0f, height/2.0f);
-		return new Location[] {upperLeft, upperRight, bottomRight, bottomLeft};
+		return new Shape(upperLeft, upperRight, bottomRight, bottomLeft);
 	}
 
 	public abstract Float getImageLeft(int index);

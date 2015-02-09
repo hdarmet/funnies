@@ -1,9 +1,9 @@
 package com.ithaque.funnies.shared.basic.items;
 
+import com.ithaque.funnies.shared.Shape;
 import com.ithaque.funnies.shared.basic.Color;
 import com.ithaque.funnies.shared.basic.Graphics;
 import com.ithaque.funnies.shared.basic.Item;
-import com.ithaque.funnies.shared.basic.Location;
 
 public class PolygonItem extends Item {
 
@@ -11,7 +11,7 @@ public class PolygonItem extends Item {
 	Color lineColor; 
 	float lineWidth;
 
-	public PolygonItem(Color fillColor, Color lineColor, float lineWidth, float opacity, Location[] shape) {
+	public PolygonItem(Color fillColor, Color lineColor, float lineWidth, float opacity, Shape shape) {
 		setShape(shape);
 		setStyle(fillColor, lineColor, lineWidth, opacity);
 	}
@@ -37,11 +37,7 @@ public class PolygonItem extends Item {
 	}
 	
 	public static PolygonItem createRect(Color fillColor, Color lineColor, float lineWidth, float opacity, float width, float height) {
-		Location[] shape = new Location[] {
-			new Location(-width/2.0f, -height/2.0f), 
-			new Location(width/2.0f, -height/2.0f), 
-			new Location(width/2.0f, height/2.0f), 
-			new Location(-width/2.0f, height/2.0f)};
+		Shape shape = new Shape(width, height);
 		return new PolygonItem(fillColor, lineColor, lineWidth, opacity, shape);
 	}
 }

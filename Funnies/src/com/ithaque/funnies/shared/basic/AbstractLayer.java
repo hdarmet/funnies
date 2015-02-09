@@ -3,6 +3,7 @@ package com.ithaque.funnies.shared.basic;
 import java.util.Collection;
 
 import com.ithaque.funnies.shared.IllegalInvokeException;
+import com.ithaque.funnies.shared.Location;
 import com.ithaque.funnies.shared.Trace;
 
 

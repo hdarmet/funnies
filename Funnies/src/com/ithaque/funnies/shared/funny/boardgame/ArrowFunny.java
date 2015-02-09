@@ -2,15 +2,17 @@ package com.ithaque.funnies.shared.funny.boardgame;
 
 import com.ithaque.funnies.shared.Geometric;
 import com.ithaque.funnies.shared.IllegalInvokeException;
+import com.ithaque.funnies.shared.Location;
+import com.ithaque.funnies.shared.Shape;
 import com.ithaque.funnies.shared.basic.Color;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.Layer;
-import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.TransformUtil;
 import com.ithaque.funnies.shared.basic.items.PolygonItem;
 import com.ithaque.funnies.shared.funny.AbstractFunny;
 import com.ithaque.funnies.shared.funny.Funny;
 import com.ithaque.funnies.shared.funny.FunnyObserver;
+import com.ithaque.funnies.shared.funny.FunnySpy;
 import com.ithaque.funnies.shared.funny.IncompatibleRingException;
 import com.ithaque.funnies.shared.funny.AbstractRing;
 import com.ithaque.funnies.shared.funny.TrackableFunny;
@@ -76,14 +78,14 @@ public class ArrowFunny extends AbstractFunny {
 		if (sourceLocation==null || destLocation==null) {
 			item.setRotation(0.0f);
 			item.setLocation(Location.ORIGIN);
-			item.setShape(Location.EMPTY_SHAPE);
+			item.setShape(Shape.EMPTY_SHAPE);
 		}
 		else {
 			sourceLocation = TransformUtil.invertTransformLocation(getArrowSupport(), source.getLocation());
 			destLocation = TransformUtil.invertTransformLocation(getArrowSupport(), destination.getLocation());
 			float distance = Geometric.computeDistance(sourceLocation, destLocation);
 			float angle = Geometric.computeAngle(sourceLocation, destLocation);
-			Location[] arrowShape = computeArrowShape(distance-margin, headHeight, headWidth, queueWidth);
+			Shape arrowShape = computeArrowShape(distance-margin, headHeight, headWidth, queueWidth);
 			Location location=new Location((sourceLocation.getX()+destLocation.getX())/2.0f, (sourceLocation.getY()+destLocation.getY())/2.0f);
 			item.setRotation(angle);
 			item.setLocation(location);
@@ -100,7 +102,7 @@ public class ArrowFunny extends AbstractFunny {
 		return getRing().animationLayer;
 	}
 
-	protected static Location[] computeArrowShape(float arrowHeight, float headHeight, float headWidth, float queueWidth) {
+	protected static Shape computeArrowShape(float arrowHeight, float headHeight, float headWidth, float queueWidth) {
 		if (headHeight>arrowHeight) {
 			return Item.buildShape(
 				0.0f, -headHeight/2.0f, 
@@ -140,6 +142,16 @@ public class ArrowFunny extends AbstractFunny {
 		this.source.removeObserver(observer);
 		this.destination.removeObserver(observer);
 		super.exitRing(ring);
+	}
+
+	@Override
+	public void addSpy(FunnySpy spy) {
+		arrowItem.addObserver(spy);
+	}
+
+	@Override
+	public void removeSpy(FunnySpy spy) {
+		arrowItem.removeObserver(spy);
 	}
 
 }

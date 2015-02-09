@@ -1,12 +1,13 @@
 package com.ithaque.funnies.shared.basic.items;
 
 import com.ithaque.funnies.shared.IllegalInvokeException;
+import com.ithaque.funnies.shared.Location;
+import com.ithaque.funnies.shared.Shape;
 import com.ithaque.funnies.shared.Transform;
 import com.ithaque.funnies.shared.basic.Graphics;
 import com.ithaque.funnies.shared.basic.GroupItem;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.ItemHolder;
-import com.ithaque.funnies.shared.basic.Location;
 
 public class StackItem extends GroupItem {
 	public static final float MARGIN = 8.0f;
@@ -52,7 +53,7 @@ public class StackItem extends GroupItem {
 	}
 	
 	@Override
-	public Location[] getShape() {
+	public Shape getShape() {
 		return baseItem.getShape();
 	}
 

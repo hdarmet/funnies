@@ -1,12 +1,10 @@
-package com.ithaque.funnies.shared.basic;
+package com.ithaque.funnies.shared;
 
 public class Location {
 	float x, y;
 	
 	public static final Location ORIGIN = new Location(0, 0);
 
-	public static final Location[] EMPTY_SHAPE = new Location[0];
-	
 	public Location(float x, float y) {
 		this.x = x;
 		this.y = y;

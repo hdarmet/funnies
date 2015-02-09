@@ -1,6 +1,5 @@
 package com.ithaque.funnies.shared;
 
-import com.ithaque.funnies.shared.basic.Location;
 
 public class Geometric {
 	public static final float TWO_PI = (float)(Math.PI*2);
@@ -15,16 +14,16 @@ public class Geometric {
 			&& ((ccw(l2p1, l2p2, l1p1) * ccw(l2p1, l2p2, l1p2)) <= 0));
 	}
 		
-	public static boolean inside(Location t, Location ... p) {
+	public static boolean inside(Location t, Shape shape) {
 		int i, count = 0;
-		Location[] poly = new Location[p.length+2];
-		for (i=0; i<p.length; i++) {
-			poly[i] = p[i];
+		Location[] poly = new Location[shape.size()+2];
+		for (i=0; i<shape.size(); i++) {
+			poly[i] = shape.getLocation(i);
 		}
-		poly[p.length] = poly[0];
+		poly[shape.size()] = poly[0];
 		
 		Location farAway = new Location(Integer.MAX_VALUE, t.getY());
-		for (i = 0; i < p.length; i++) {
+		for (i = 0; i < shape.size(); i++) {
 			if (!intersect(poly[i], poly[i], t, farAway) && !intersect(poly[i+1], poly[i+1], t, farAway)) {
 				if (intersect(poly[i+1], poly[i], t, farAway)) {
 					count++;
@@ -35,9 +34,9 @@ public class Geometric {
 			Trace.debug("Inside ?\n");
 			Trace.debug("Point : "+t+"\n");
 			Trace.debug("Shape : ");
-			for (Location l : p) {
+			for (Location l : shape.getLocations()) {
 				Trace.debug(l+", ");
-			}
+			} 
 			Trace.debug("\n");
 			Trace.debug("Count : "+count+"\n");
 			Trace.debug("Inside : "+((count & 1)!=0)+"\n");
@@ -45,23 +44,23 @@ public class Geometric {
 		return (count & 1)!=0;
 	}
 
-	public static Location[] getArea(Location[] shape) {
-		float minX = shape[0].getX();
-		float maxX = shape[0].getX();
-		float minY = shape[0].getY();
-		float maxY = shape[0].getY();
-		for (int i=1; i<shape.length; i++) {
-			if (minX>shape[i].getX()) {
-				minX=shape[i].getX();
+	public static Location[] getArea(Shape shape) {
+		float minX = shape.getX(0);
+		float maxX = shape.getX(0);
+		float minY = shape.getY(0);
+		float maxY = shape.getY(0);
+		for (int i=1; i<shape.size(); i++) {
+			if (minX>shape.getX(i)) {
+				minX=shape.getX(i);
 			}
-			if (maxX<shape[i].getX()) {
-				maxX=shape[i].getX();
+			if (maxX<shape.getX(i)) {
+				maxX=shape.getX(i);
 			}
-			if (minY>shape[i].getY()) {
-				minY=shape[i].getY();
+			if (minY>shape.getY(i)) {
+				minY=shape.getY(i);
 			}
-			if (maxY<shape[i].getY()) {
-				maxY=shape[i].getY();
+			if (maxY<shape.getY(i)) {
+				maxY=shape.getY(i);
 			}
 		}
 		return new Location[] {new Location(minX, minY), new Location(maxX, maxY)};
@@ -137,18 +136,18 @@ public class Geometric {
 		return targetAngle;
 	}
 
-	public static boolean compareShape(Location[] shape1, Location[] shape2) {
+	public static boolean compareShape(Shape shape1, Shape shape2) {
 		if (shape1==shape2) {
 			return true;
 		}
 		if (shape1==null || shape2==null) {
 			return false;
 		}
-		if (shape1.length != shape2.length) {
+		if (shape1.size() != shape2.size()) {
 			return false;
 		}
-		for (int index=0; index<shape1.length; index++) {
-			if (!shape1[index].equals(shape2[index])) {
+		for (int index=0; index<shape1.size(); index++) {
+			if (!shape1.getLocation(index).equals(shape2.getLocation(index))) {
 				return false;
 			}
 		}

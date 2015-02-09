@@ -1,11 +1,11 @@
 package com.ithaque.funnies.shared.basic.items;
 
+import com.ithaque.funnies.shared.Shape;
 import com.ithaque.funnies.shared.basic.Graphics;
 import com.ithaque.funnies.shared.basic.GroupItem;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.ItemObserver.ChangeType;
 import com.ithaque.funnies.shared.basic.LayoutDevice;
-import com.ithaque.funnies.shared.basic.Location;
 
 public class DecoratedItem extends GroupItem {
 
@@ -63,7 +63,7 @@ public class DecoratedItem extends GroupItem {
 	}
 
 	@Override
-	public Location[] getShape() {
+	public Shape getShape() {
 		return baseItem.getShape();
 	}
 

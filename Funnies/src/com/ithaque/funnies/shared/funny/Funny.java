@@ -17,6 +17,7 @@ public interface Funny {
 
 	void removeObserver(FunnyObserver observer);
 
-
+	void addSpy(FunnySpy spy);
 	
+	void removeSpy(FunnySpy spy);
 }

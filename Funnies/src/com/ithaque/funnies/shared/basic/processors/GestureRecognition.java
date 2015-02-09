@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ithaque.funnies.shared.Location;
 import com.ithaque.funnies.shared.Trace;
-import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.MouseEvent;
 
 public class GestureRecognition {

@@ -1,5 +1,6 @@
 package com.ithaque.funnies.shared.basic;
 
+import com.ithaque.funnies.shared.Shape;
 import com.ithaque.funnies.shared.basic.items.AbstractImageItem;
 
 public interface Graphics {
@@ -12,7 +13,7 @@ public interface Graphics {
 
 	void drawText(Item item, String text, Color color, Font font, float opacity);
 	
-	void clip(Item item, Location[] shape);
+	void clip(Item item, Shape shape);
 
 	void clear();
 

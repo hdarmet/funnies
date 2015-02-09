@@ -1,6 +1,5 @@
 package com.ithaque.funnies.shared;
 
-import com.ithaque.funnies.shared.basic.Location;
 
 public class Trace {
 	public static boolean debug = false;

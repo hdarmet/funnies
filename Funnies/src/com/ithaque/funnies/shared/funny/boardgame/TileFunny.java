@@ -1,11 +1,12 @@
 package com.ithaque.funnies.shared.funny.boardgame;
 
 import com.ithaque.funnies.shared.IllegalInvokeException;
+import com.ithaque.funnies.shared.Location;
+import com.ithaque.funnies.shared.Shape;
 import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.GroupItem;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.ItemHolder;
-import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.items.BaseItem;
 import com.ithaque.funnies.shared.basic.items.DecoratedItem;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
@@ -13,6 +14,7 @@ import com.ithaque.funnies.shared.basic.items.animations.FaceFadingAnimation;
 import com.ithaque.funnies.shared.basic.processors.AbstractTargetedDragProfile;
 import com.ithaque.funnies.shared.funny.DecoratedFunny;
 import com.ithaque.funnies.shared.funny.DropTargetFunny;
+import com.ithaque.funnies.shared.funny.FunnySpy;
 import com.ithaque.funnies.shared.funny.IncompatibleRingException;
 import com.ithaque.funnies.shared.funny.AbstractRing;
 import com.ithaque.funnies.shared.funny.TargetFunny;
@@ -52,7 +54,7 @@ public class TileFunny extends DecoratedFunny implements DropTargetFunny, Tracka
 		this.holderItem = createHolderItem();
 	}
 
-	public TileFunny(String id, String tileImageUrl, String activableImageUrl, String targetImageUrl, Location[] shape) {
+	public TileFunny(String id, String tileImageUrl, String activableImageUrl, String targetImageUrl, Shape shape) {
 		this(id,
 			new DecoratedItem(new ImageItem(tileImageUrl)),
 			new ImageItem(activableImageUrl),
@@ -241,17 +243,17 @@ public class TileFunny extends DecoratedFunny implements DropTargetFunny, Tracka
 			setLocation(new Location(x, y));
 		}
 
-		static Location[] buildHHexShape(float radius) {
+		static Shape buildHHexShape(float radius) {
 			float hradius = radius/2.0f;
 			float sqr3radius = (float)(hradius*Math.sqrt(3.0));
-			return new Location[] {
+			return new Shape(
 				new Location(-radius, 0.0f),
 				new Location(-hradius, -sqr3radius),
 				new Location(hradius, -sqr3radius),
 				new Location(radius, 0.0f),
 				new Location(hradius, sqr3radius),
-				new Location(-hradius, sqr3radius),
-			};
+				new Location(-hradius, sqr3radius)
+			);
 		}
 
 	}
@@ -271,17 +273,17 @@ public class TileFunny extends DecoratedFunny implements DropTargetFunny, Tracka
 			setLocation(new Location(x, y));
 		}
 
-		static Location[] buildVHexShape(float radius) {
+		static Shape buildVHexShape(float radius) {
 			float hradius = radius/2.0f;
 			float sqr3radius = (float)(hradius*Math.sqrt(3.0));
-			return new Location[] {
+			return new Shape(
 				new Location(0.0f, -radius),
 				new Location(sqr3radius, -hradius),
 				new Location(sqr3radius, hradius),
 				new Location(0.0f, radius),
 				new Location(-sqr3radius, hradius),
-				new Location(-sqr3radius, -hradius),
-			};
+				new Location(-sqr3radius, -hradius)
+			);
 		}
 
 	}
@@ -299,6 +301,22 @@ public class TileFunny extends DecoratedFunny implements DropTargetFunny, Tracka
 	@Override
 	public DecoratedItem getDecorationSupport() {
 		return tileItem;
+	}
+
+	@Override
+	public void addSpy(FunnySpy spy) {
+		tileItem.addObserver(spy);
+		hilightItem.addObserver(spy);
+		activableItem.addObserver(spy);
+		holderItem.addObserver(spy);
+	}
+
+	@Override
+	public void removeSpy(FunnySpy spy) {
+		tileItem.removeObserver(spy);
+		hilightItem.removeObserver(spy);
+		activableItem.removeObserver(spy);
+		holderItem.removeObserver(spy);
 	}
 
 }

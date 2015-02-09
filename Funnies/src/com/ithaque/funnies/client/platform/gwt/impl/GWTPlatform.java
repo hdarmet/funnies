@@ -5,7 +5,7 @@ import java.util.Date;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.Timer;
-import com.ithaque.funnies.client.platform.gwt.AbstractGWTPlatform;
+import com.ithaque.funnies.client.platform.gwt.AbstractPlatform;
 import com.ithaque.funnies.client.platform.gwt.CanvasInterface;
 import com.ithaque.funnies.client.platform.gwt.GraphicsImpl;
 import com.ithaque.funnies.client.platform.gwt.GraphicsImpl.ImageElementRecord;
@@ -14,7 +14,7 @@ import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Token;
 
-public class GWTPlatform extends AbstractGWTPlatform {
+public class GWTPlatform extends AbstractPlatform {
 
 	GWTEventManager eventManager = new GWTEventManager(this);
 

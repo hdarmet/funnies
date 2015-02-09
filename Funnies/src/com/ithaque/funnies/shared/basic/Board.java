@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.ithaque.funnies.shared.Location;
 import com.ithaque.funnies.shared.Trace;
 import com.ithaque.funnies.shared.basic.items.PolygonItem;
 

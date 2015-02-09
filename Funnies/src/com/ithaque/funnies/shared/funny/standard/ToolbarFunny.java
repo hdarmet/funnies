@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ithaque.funnies.shared.IllegalInvokeException;
+import com.ithaque.funnies.shared.Location;
+import com.ithaque.funnies.shared.Shape;
 import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.Animation.Factory;
 import com.ithaque.funnies.shared.basic.Board;
@@ -11,7 +13,6 @@ import com.ithaque.funnies.shared.basic.Color;
 import com.ithaque.funnies.shared.basic.Event.Type;
 import com.ithaque.funnies.shared.basic.GroupItem;
 import com.ithaque.funnies.shared.basic.Item;
-import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.items.PolygonItem;
 import com.ithaque.funnies.shared.basic.items.animations.CancelableAnimation;
 import com.ithaque.funnies.shared.basic.items.animations.FadingAnimation;
@@ -24,6 +25,7 @@ import com.ithaque.funnies.shared.funny.AbstractFunny;
 import com.ithaque.funnies.shared.funny.AbstractRing;
 import com.ithaque.funnies.shared.funny.Funny;
 import com.ithaque.funnies.shared.funny.FunnyObserver;
+import com.ithaque.funnies.shared.funny.FunnySpy;
 import com.ithaque.funnies.shared.funny.HoverFunny;
 import com.ithaque.funnies.shared.funny.Icon;
 import com.ithaque.funnies.shared.funny.Icon.IconItem;
@@ -80,7 +82,7 @@ public class ToolbarFunny extends AbstractFunny implements HoverFunny, FunnyObse
 		super(toolbarId);
 		this.toolbarItem = new GroupItem();
 		this.toolbarItem.setScale(minimize);
-		this.background = new PolygonItem(Color.BLACK, Color.BLACK, 1, 0.0f, new Location[0]);
+		this.background = new PolygonItem(Color.BLACK, Color.BLACK, 1, 0.0f, Shape.EMPTY_SHAPE);
 		this.positionManager = positionManager;
 		this.backgroundManager = backgroundManager;
 		if (this.backgroundManager != null) {
@@ -103,7 +105,7 @@ public class ToolbarFunny extends AbstractFunny implements HoverFunny, FunnyObse
 		}
 	}
 
-	Location[] getBackgroundShape(float factor) {
+	Shape getBackgroundShape(float factor) {
 		if (backgroundManager!=null) {
 			return backgroundManager.getBackgroundShape(this, factor);
 		}
@@ -671,7 +673,7 @@ public class ToolbarFunny extends AbstractFunny implements HoverFunny, FunnyObse
 		
 		void initLayout(ToolbarFunny toolbar);
 	
-		Location[] getBackgroundShape(ToolbarFunny toolbar, float factor);
+		Shape getBackgroundShape(ToolbarFunny toolbar, float factor);
 
 		Location getBackgroundLocation(ToolbarFunny toolbar, float factor);
 
@@ -702,16 +704,11 @@ public class ToolbarFunny extends AbstractFunny implements HoverFunny, FunnyObse
 		}
 
 		@Override
-		public Location[] getBackgroundShape(ToolbarFunny toolbar, float factor) 
+		public Shape getBackgroundShape(ToolbarFunny toolbar, float factor) 
 		{
 			float width = toolbar.getRing().getWidth();
 			float height = toolbar.getRing().getWidth();
-			return new Location[] {
-				new Location(-width/2.0f, -height/2.0f),
-				new Location(width/2.0f, -height/2.0f),
-				new Location(width/2.0f, height/2.0f),
-				new Location(-width/2.0f, height/2.0f)
-			};
+			return new Shape(width, height);
 		}
 
 	}
@@ -750,17 +747,12 @@ public class ToolbarFunny extends AbstractFunny implements HoverFunny, FunnyObse
 		}
 		
 		@Override
-		public Location[] getBackgroundShape(ToolbarFunny toolbar, float factor) 
+		public Shape getBackgroundShape(ToolbarFunny toolbar, float factor) 
 		{
 			Orientation orientation = toolbar.positionManager.getOrientation();
 			float width = orientation.isHorizontal() ? toolbar.getRing().getWidth() : getRibbonThickness(toolbar, factor);
 			float height = orientation.isHorizontal() ? getRibbonThickness(toolbar, factor) : toolbar.getRing().getHeight();
-			Location[] result = new Location[] {
-				new Location(-width/2.0f, -height/2.0f),
-				new Location(width/2.0f, -height/2.0f),
-				new Location(width/2.0f, height/2.0f),
-				new Location(-width/2.0f, height/2.0f)
-			};
+			Shape result = new Shape(width, height);
 			return result;
 		}
 	
@@ -778,4 +770,15 @@ public class ToolbarFunny extends AbstractFunny implements HoverFunny, FunnyObse
 
 	}
 	
+	@Override
+	public void addSpy(FunnySpy spy) {
+		toolbarItem.addObserver(spy);
+		background.addObserver(spy);
+	}
+
+	@Override
+	public void removeSpy(FunnySpy spy) {
+		toolbarItem.removeObserver(spy);
+		background.removeObserver(spy);
+	}
 }

@@ -1,6 +1,7 @@
 package com.ithaque.funnies.shared.basic;
 
 import com.ithaque.funnies.shared.IllegalInvokeException;
+import com.ithaque.funnies.shared.Shape;
 import com.ithaque.funnies.shared.basic.ItemObserver.ChangeType;
 
 public class WrapperItem extends Item implements ItemHolder {
@@ -65,7 +66,7 @@ public class WrapperItem extends Item implements ItemHolder {
 	}
 	
 	@Override
-	public Location[] getShape() {
+	public Shape getShape() {
 		return wrapped==null ? null : wrapped.getShape();
 	}
 

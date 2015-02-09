@@ -3,6 +3,8 @@ package com.ithaque.funnies.shared.basic;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ithaque.funnies.shared.Location;
+import com.ithaque.funnies.shared.Shape;
 import com.ithaque.funnies.shared.basic.ItemObserver.ChangeType;
 
 public class GroupItem extends Item implements ItemHolder {
@@ -135,8 +137,8 @@ public class GroupItem extends Item implements ItemHolder {
 	}
 
 	@Override
-	public Location[] getShape() {
-		Location[] shape = super.getShape();
+	public Shape getShape() {
+		Shape shape = super.getShape();
 		if (shape!=null) {
 			return shape;
 		}
@@ -148,7 +150,7 @@ public class GroupItem extends Item implements ItemHolder {
 			shape = item.getShape();
 			Location itemLoc = item.getLocation();
 			if (shape!=null) {
-				for (Location location : shape) {
+				for (Location location : shape.getLocations()) {
 					if (location.getX()+itemLoc.getX()<minX) {
 						minX = location.getX()+itemLoc.getX();
 					}
@@ -168,7 +170,7 @@ public class GroupItem extends Item implements ItemHolder {
 			return null;
 		}
 		else {
-			return new Location[] {new Location(minX, minY), new Location(maxX, minY), new Location(maxX, maxY), new Location(minX, maxY)};
+			return new Shape(new Location(minX, minY), new Location(maxX, minY), new Location(maxX, maxY), new Location(minX, maxY));
 		}
 	}
 }

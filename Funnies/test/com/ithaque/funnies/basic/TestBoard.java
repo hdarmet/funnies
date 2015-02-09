@@ -5,9 +5,9 @@ import org.junit.Test;
 import com.ithaque.funnies.client.platform.gwt.test.TestImage;
 import com.ithaque.funnies.client.platform.gwt.test.TestPlatform;
 import com.ithaque.funnies.client.platform.gwt.test.TestRegistry;
+import com.ithaque.funnies.shared.Location;
 import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Layer;
-import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.MultiLayered;
 import com.ithaque.funnies.shared.basic.items.ImageItem;
 

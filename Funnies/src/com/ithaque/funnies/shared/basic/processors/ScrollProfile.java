@@ -1,8 +1,8 @@
 package com.ithaque.funnies.shared.basic.processors;
 
+import com.ithaque.funnies.shared.Location;
 import com.ithaque.funnies.shared.basic.Board;
 import com.ithaque.funnies.shared.basic.Layer;
-import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.MouseEvent;
 import com.ithaque.funnies.shared.basic.processors.DragProcessor.DragProfile;
 

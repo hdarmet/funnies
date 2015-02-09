@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.ithaque.funnies.basic.AbstractTestCase;
-import com.ithaque.funnies.shared.basic.Location;
+import com.ithaque.funnies.shared.Location;
 import com.ithaque.funnies.shared.funny.boardgame.CounterFunny;
 import com.ithaque.funnies.shared.funny.boardgame.GameBoardCircus;
 import com.ithaque.funnies.shared.funny.boardgame.TileFunny;

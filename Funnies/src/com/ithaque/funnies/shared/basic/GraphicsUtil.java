@@ -1,5 +1,7 @@
 package com.ithaque.funnies.shared.basic;
 
+import com.ithaque.funnies.shared.Location;
+
 public class GraphicsUtil {
 	
 	public static Location inDisplayLimits(

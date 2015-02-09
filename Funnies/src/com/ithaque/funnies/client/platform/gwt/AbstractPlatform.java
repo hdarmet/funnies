@@ -7,7 +7,7 @@ import com.ithaque.funnies.shared.basic.Graphics;
 import com.ithaque.funnies.shared.basic.Platform;
 import com.ithaque.funnies.shared.basic.Token;
 
-public abstract class AbstractGWTPlatform implements Platform {
+public abstract class AbstractPlatform implements Platform {
 
 	GraphicsImpl graphics = new GraphicsImpl(this);
 	Board board;

@@ -2,10 +2,10 @@ package com.ithaque.funnies.shared.funny;
 
 import java.util.Collection;
 
+import com.ithaque.funnies.shared.Location;
 import com.ithaque.funnies.shared.basic.Animation;
 import com.ithaque.funnies.shared.basic.Item;
 import com.ithaque.funnies.shared.basic.ItemHolder;
-import com.ithaque.funnies.shared.basic.Location;
 import com.ithaque.funnies.shared.basic.processors.AbstractTargetedDragProfile;
 import com.ithaque.funnies.shared.funny.notifications.AcceptDropTargetQuestion;
 import com.ithaque.funnies.shared.funny.notifications.DropEvent;
